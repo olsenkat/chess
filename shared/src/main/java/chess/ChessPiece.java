@@ -2,6 +2,7 @@ package chess;
 
 import chess.pieceMoves.BishopMovesCalculator;
 import chess.pieceMoves.RookMovesCalculator;
+import chess.pieceMoves.KnightMovesCalculator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,7 +72,8 @@ public class ChessPiece {
                 moves=null;
             }
             case ChessPiece.PieceType.KNIGHT-> {
-                moves=null;
+                KnightMovesCalculator knightCalc = new KnightMovesCalculator();
+                moves = knightCalc.pieceMoves(board, myPosition);
             }
             case ChessPiece.PieceType.PAWN-> {
                 moves=null;
