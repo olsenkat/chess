@@ -36,8 +36,6 @@ public class BishopMovesCalculator
                 if (board.getPiece(end_pos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
-                    // test - remove this
-                    System.out.printf("Move added: (%d, %d)", myPosition.getRow()+i, myPosition.getColumn()+i);
                 }
                 break;
                 // Add functionality to take another piece
@@ -45,8 +43,6 @@ public class BishopMovesCalculator
             else
             {
                 moves.add(temp);
-                // remove this
-                System.out.printf("Move added: (%d, %d)", myPosition.getRow()+i, myPosition.getColumn()+i);
             }
         }
 
@@ -64,8 +60,6 @@ public class BishopMovesCalculator
                 if (board.getPiece(end_pos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
-                    // remove this
-                    System.out.printf("Move added: (%d, %d)", myPosition.getRow()-i, myPosition.getColumn()+i);
                 }
                 break;
                 // Add functionality to take another piece
@@ -73,8 +67,6 @@ public class BishopMovesCalculator
             else
             {
                 moves.add(temp);
-                // remove this
-                System.out.printf("Move added: (%d, %d)", myPosition.getRow()-i, myPosition.getColumn()+i);
             }
         }
 
@@ -92,8 +84,6 @@ public class BishopMovesCalculator
                 if (board.getPiece(end_pos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
-                    // remove this
-                    System.out.printf("Move added: (%d, %d)", myPosition.getRow()-i, myPosition.getColumn()-i);
                 }
                 break;
                 // Add functionality to take another piece
@@ -101,8 +91,6 @@ public class BishopMovesCalculator
             else
             {
                 moves.add(temp);
-                // remove this
-                System.out.printf("Move added: (%d, %d)", myPosition.getRow()-i, myPosition.getColumn()-i);
             }
         }
 
@@ -120,8 +108,6 @@ public class BishopMovesCalculator
                 if (board.getPiece(end_pos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
-                    // remove this
-                    System.out.printf("Move added: (%d, %d)", myPosition.getRow()+i, myPosition.getColumn()-i);
                 }
                 break;
                 // Add functionality to take another piece
@@ -129,8 +115,6 @@ public class BishopMovesCalculator
             else
             {
                 moves.add(temp);
-                // remove this
-                System.out.printf("Move added: (%d, %d)", myPosition.getRow()+i, myPosition.getColumn()-i);
             }
         }
 
