@@ -1,6 +1,7 @@
 package chess;
 
 import chess.pieceMoves.BishopMovesCalculator;
+import chess.pieceMoves.RookMovesCalculator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,7 +80,8 @@ public class ChessPiece {
                 moves=null;
             }
             case ChessPiece.PieceType.ROOK-> {
-                moves=null;
+                RookMovesCalculator rookCalc = new RookMovesCalculator();
+                moves = rookCalc.pieceMoves(board, myPosition);
             }
             default -> moves = null;
         }
