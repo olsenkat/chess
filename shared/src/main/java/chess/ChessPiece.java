@@ -3,6 +3,7 @@ package chess;
 import chess.pieceMoves.BishopMovesCalculator;
 import chess.pieceMoves.RookMovesCalculator;
 import chess.pieceMoves.KnightMovesCalculator;
+import chess.pieceMoves.QueenMovesCalculator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,7 +80,8 @@ public class ChessPiece {
                 moves=null;
             }
             case ChessPiece.PieceType.QUEEN-> {
-                moves=null;
+                QueenMovesCalculator queenCalc = new QueenMovesCalculator();
+                moves = queenCalc.pieceMoves(board, myPosition);
             }
             case ChessPiece.PieceType.ROOK-> {
                 RookMovesCalculator rookCalc = new RookMovesCalculator();
