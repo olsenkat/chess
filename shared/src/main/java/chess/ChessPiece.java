@@ -5,6 +5,7 @@ import chess.pieceMoves.RookMovesCalculator;
 import chess.pieceMoves.KnightMovesCalculator;
 import chess.pieceMoves.QueenMovesCalculator;
 import chess.pieceMoves.KingMovesCalculator;
+import chess.pieceMoves.PawnMovesCalculator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,7 +80,8 @@ public class ChessPiece {
                 moves = knightCalc.pieceMoves(board, myPosition);
             }
             case ChessPiece.PieceType.PAWN-> {
-                moves=null;
+                PawnMovesCalculator pawnCalc = new PawnMovesCalculator();
+                moves = pawnCalc.pieceMoves(board, myPosition);
             }
             case ChessPiece.PieceType.QUEEN-> {
                 QueenMovesCalculator queenCalc = new QueenMovesCalculator();
