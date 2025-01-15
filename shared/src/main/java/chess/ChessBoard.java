@@ -16,6 +16,13 @@ public class ChessBoard {
     }
 
     @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "squares=" + Arrays.deepToString(squares) +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
@@ -57,6 +64,129 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        squares = new ChessPiece[8][8];
+        // Start with white pieces
+        ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
+        int row = 1;
+        int col = 1;
+
+        // Rook1
+        ChessPosition position = new ChessPosition(row, col);
+        ChessPiece new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+        addPiece(position, new_piece);
+
+        // Knight1
+        col = 2;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
+        addPiece(position, new_piece);
+
+        // Bishop1
+        col = 3;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
+        addPiece(position, new_piece);
+
+        // Queen
+        col = 4;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN);
+        addPiece(position, new_piece);
+
+        // King
+        col = 5;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
+        addPiece(position, new_piece);
+
+        // Bishop2
+        col = 6;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
+        addPiece(position, new_piece);
+
+        // Knight2
+        col = 7;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
+        addPiece(position, new_piece);
+
+        // Rook2
+        col = 8;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+        addPiece(position, new_piece);
+
+        // Pawns
+        row = 2;
+        for(col=1; col<9; col++)
+        {
+            position = new ChessPosition(row, col);
+            new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN);
+            addPiece(position, new_piece);
+        }
+
+
+        // PLace black pieces
+        teamColor = ChessGame.TeamColor.BLACK;
+        row = 8;
+        col = 8;
+
+        // Rook1
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+        addPiece(position, new_piece);
+
+        // Knight1
+        col = 7;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
+        addPiece(position, new_piece);
+
+        // Bishop1
+        col = 6;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
+        addPiece(position, new_piece);
+
+        // Queen
+        col = 5;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
+        addPiece(position, new_piece);
+
+        // King
+        col = 4;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN);
+        addPiece(position, new_piece);
+
+        // Bishop2
+        col = 3;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
+        addPiece(position, new_piece);
+
+        // Knight2
+        col = 2;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
+        addPiece(position, new_piece);
+
+        // Rook2
+        col = 1;
+        position = new ChessPosition(row, col);
+        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+        addPiece(position, new_piece);
+
+        // Pawns
+        row = 7;
+        for(col=8; col>0; col--)
+        {
+            position = new ChessPosition(row, col);
+            new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN);
+            addPiece(position, new_piece);
+        }
+
     }
 }
