@@ -12,8 +12,10 @@ import java.util.Collection;
 public class ChessGame {
 
     private ChessBoard board;
+    private TeamColor teamTurn;
     public ChessGame() {
         board = new ChessBoard();
+        teamTurn = TeamColor.WHITE;
     }
 
     /**
@@ -29,7 +31,8 @@ public class ChessGame {
      *
      * @param team the team whose turn it is
      */
-    public void setTeamTurn(TeamColor team) {
+    public void setTeamTurn(TeamColor team)
+    {
         throw new RuntimeException("Not implemented");
     }
 
@@ -100,6 +103,7 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board=board;
+        teamTurn = TeamColor.WHITE;
     }
 
     /**
