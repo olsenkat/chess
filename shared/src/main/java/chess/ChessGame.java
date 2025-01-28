@@ -8,16 +8,19 @@ import java.util.Collection;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
+
 public class ChessGame {
 
+    private ChessBoard board;
     public ChessGame() {
-
+        board = new ChessBoard();
     }
 
     /**
      * @return Which team's turn it is
      */
-    public TeamColor getTeamTurn() {
+    public TeamColor getTeamTurn()
+    {
         throw new RuntimeException("Not implemented");
     }
 
