@@ -9,7 +9,7 @@ import java.util.Objects;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard implements Cloneable {
     private ChessPiece[][] squares = new ChessPiece[8][8];
     public ChessBoard() {
         
@@ -188,5 +188,33 @@ public class ChessBoard {
             addPiece(position, new_piece);
         }
 
+    }
+
+    @Override
+    public ChessBoard clone() {
+        try {
+            ChessBoard clone = (ChessBoard) super.clone();
+            // Copy all instances of squares
+            for (int i = 1; i < 8; i++)
+            {
+                for (int j = 1; j < 8; j++)
+                {
+                    // Create current position to add to new board
+                    ChessPosition current_pos = new ChessPosition(i,j);
+                    // Locate the new piece to transfer over
+                    ChessPiece old_piece = this.getPiece(current_pos);
+                    // Determine the team color
+                    ChessGame.TeamColor team_color = old_piece.getTeamColor();
+                    // Determine the piece type
+                    ChessPiece.PieceType piece_type = old_piece.getPieceType();
+                    // Create the new piece and add it to the clone.
+                    ChessPiece new_piece = new ChessPiece(team_color, piece_type);
+                    clone.addPiece(current_pos, new_piece);
+                }
+            }
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
