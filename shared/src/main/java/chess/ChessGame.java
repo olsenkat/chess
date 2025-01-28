@@ -14,9 +14,13 @@ public class ChessGame {
 
     private ChessBoard board;
     private TeamColor teamTurn;
+    private ChessPosition kingLocationWhite;
+    private ChessPosition kingLocationBlack;
     public ChessGame() {
         board = new ChessBoard();
         teamTurn = TeamColor.WHITE;
+        kingLocationWhite = new ChessPosition(1,5);
+        kingLocationBlack = new ChessPosition(8,5);
     }
 
     /**
@@ -61,9 +65,21 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition)
     {
+        // Get initial moves from Chess piece.
         ChessPiece currentPiece = board.getPiece(startPosition);
 
+        // If there is no piece at this location, return null.
+        if (currentPiece==null)
+        {
+            return null;
+        }
         Collection<ChessMove> moves = currentPiece.pieceMoves(board, startPosition);
+
+        // Filter for checkmate moves
+        for (var move: moves)
+        {
+            break;
+        }
 
         return moves;
     }
@@ -74,7 +90,8 @@ public class ChessGame {
      * @param move chess move to preform
      * @throws InvalidMoveException if move is invalid
      */
-    public void makeMove(ChessMove move) throws InvalidMoveException {
+    public void makeMove(ChessMove move) throws InvalidMoveException
+    {
         throw new RuntimeException("Not implemented");
     }
 
@@ -117,6 +134,8 @@ public class ChessGame {
     public void setBoard(ChessBoard board) {
         this.board=board;
         teamTurn = TeamColor.WHITE;
+        kingLocationWhite = new ChessPosition(1,5);
+        kingLocationBlack = new ChessPosition(8,5);
     }
 
     /**
