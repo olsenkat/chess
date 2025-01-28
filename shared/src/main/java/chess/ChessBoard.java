@@ -149,13 +149,13 @@ public class ChessBoard {
         new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
         addPiece(position, new_piece);
 
-        // Queen
+        // King
         col = 5;
         position = new ChessPosition(row, col);
         new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
         addPiece(position, new_piece);
 
-        // King
+        // Queen
         col = 4;
         position = new ChessPosition(row, col);
         new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN);
