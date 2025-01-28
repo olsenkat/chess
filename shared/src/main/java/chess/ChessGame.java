@@ -33,7 +33,14 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team)
     {
-        throw new RuntimeException("Not implemented");
+        if (teamTurn == TeamColor.WHITE)
+        {
+            teamTurn = TeamColor.BLACK;
+        }
+        else
+        {
+            teamTurn = TeamColor.WHITE;
+        }
     }
 
     /**
