@@ -16,6 +16,7 @@ public class ChessGame {
     private TeamColor teamTurn;
     private ChessPosition kingLocationWhite;
     private ChessPosition kingLocationBlack;
+
     public ChessGame() {
         board = new ChessBoard();
         teamTurn = TeamColor.WHITE;
@@ -38,14 +39,7 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team)
     {
-        if (teamTurn == TeamColor.WHITE)
-        {
-            teamTurn = TeamColor.BLACK;
-        }
-        else
-        {
-            teamTurn = TeamColor.WHITE;
-        }
+        teamTurn = team;
     }
 
     /**
@@ -73,15 +67,36 @@ public class ChessGame {
         {
             return null;
         }
+        // Initialize current valid moves and new valid moves
         Collection<ChessMove> moves = currentPiece.pieceMoves(board, startPosition);
+        Collection<ChessMove> moves_new = new ArrayList<>();
 
-        // Filter for checkmate moves
+        // Filter for check moves
         for (var move: moves)
         {
-            break;
+            // Initialize a test board to test the new moves
+            ChessBoard testBoard = board.clone();
+
+            // Create a new Game class to move the board
+            ChessGame test_game = this;
+            try
+            {
+                test_game.makeMove(move);
+            }
+            catch (InvalidMoveException e) {
+                throw new RuntimeException(e);
+            }
+
+            // Have the clone board create the move
+
+            // If the team is not in check, accept the move.
+            if (!isInCheck(teamTurn))
+            {
+                moves_new.add(move);
+            }
         }
 
-        return moves;
+        return moves_new;
     }
 
     /**
@@ -101,7 +116,8 @@ public class ChessGame {
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor) {
+    public boolean isInCheck(TeamColor teamColor)
+    {
         throw new RuntimeException("Not implemented");
     }
 
