@@ -74,17 +74,12 @@ public class ChessGame {
         // Filter for check moves
         for (var move: moves)
         {
-            // Initialize a test board to test the new moves
-            ChessBoard testBoard = board.clone();
-
-            // Create a new Game class to move the board
-            ChessGame test_game = this;
             try
             {
-                test_game.makeMove(move);
+                makeMove(move);
             }
             catch (InvalidMoveException e) {
-                throw new RuntimeException(e);
+                continue;
             }
 
             // Have the clone board create the move
@@ -107,7 +102,23 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException
     {
-        throw new RuntimeException("Not implemented");
+        // Initialize a test board to test the new moves
+        ChessBoard testBoard = board.clone();
+
+        // Create a new Game class to move the board
+        ChessGame test_game = new ChessGame();
+        test_game.setBoard(testBoard);
+
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        ChessPiece current_piece = testBoard.getPiece(startPosition);
+        if(move.getPromotionPiece()!=null)
+        {
+            current_piece = new ChessPiece(current_piece.getTeamColor(), move.getPromotionPiece());
+        }
+        testBoard.addPiece(startPosition, null);
+        testBoard.addPiece(endPosition, current_piece);
+
     }
 
     /**
