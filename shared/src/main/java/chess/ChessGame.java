@@ -77,6 +77,7 @@ public class ChessGame {
         // Create a new Game class to move the board
         ChessGame test_game = new ChessGame();
         test_game.setBoard(testBoard);
+        test_game.setTeamTurn(teamTurn);
 
         // Filter for check moves
         if (moves != null) {
@@ -116,6 +117,7 @@ public class ChessGame {
         // Create a new Game class to move the board
         ChessGame test_game = new ChessGame();
         test_game.setBoard(testBoard);
+        test_game.setTeamTurn(teamTurn);
 
         // Determine the start and end position of the piece, find the current piece
         ChessPosition startPosition = move.getStartPosition();
@@ -146,6 +148,7 @@ public class ChessGame {
         testBoard.addPiece(startPosition, null);
         testBoard.addPiece(endPosition, current_piece);
         test_game.setBoard(testBoard); // set the test game with the new board
+        test_game.setTeamTurn(teamTurn);
 
         // Check if the new move in the test game puts us in checkmate/check
         boolean check = test_game.isInCheck(test_game.getTeamTurn());
@@ -206,12 +209,24 @@ public class ChessGame {
                     // Make sure that the color of the piece we are checking is an enemy
                     if (current_piece.getTeamColor() != teamColor) {
                         // If the team color is white, we need to see if the white king is in check.
-                        if (teamColor == TeamColor.WHITE) {
-                            ChessPosition end_pos = kingLocationWhite; // king's position
-                            ChessMove test_move = new ChessMove(current_pos, end_pos, null);
+                        if (teamColor == TeamColor.WHITE)
+                        {
+                            ChessMove test_move = new ChessMove(current_pos, kingLocationWhite, null);
                             // If the piece is a pawn, we want to add a promotion piece in there so we can check
                             if (current_piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                                test_move = new ChessMove(current_pos, end_pos, ChessPiece.PieceType.QUEEN);
+                                test_move = new ChessMove(current_pos, kingLocationWhite, ChessPiece.PieceType.QUEEN);
+                            }
+                            // If the piece moves contains the test move, then we have a check!
+                            if (current_piece.pieceMoves(board, current_pos).contains(test_move)) {
+                                return true;
+                            }
+
+                        }
+                        if (teamColor == TeamColor.BLACK) {
+                            ChessMove test_move = new ChessMove(current_pos, kingLocationBlack, null);
+                            // If the piece is a pawn, we want to add a promotion piece in there so we can check
+                            if (current_piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                                test_move = new ChessMove(current_pos, kingLocationBlack, ChessPiece.PieceType.QUEEN);
                             }
                             // If the piece moves contains the test move, then we have a check!
                             if (current_piece.pieceMoves(board, current_pos).contains(test_move)) {
