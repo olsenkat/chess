@@ -118,6 +118,29 @@ public class ChessGame {
         }
         testBoard.addPiece(startPosition, null);
         testBoard.addPiece(endPosition, current_piece);
+        test_game.setBoard(testBoard);
+
+        boolean check = test_game.isInCheck(test_game.getTeamTurn());
+        boolean checkmate = test_game.isInCheckmate(test_game.getTeamTurn());
+        if (check || checkmate)
+        {
+            throw new InvalidMoveException();
+        }
+        else
+        {
+            if (current_piece.getPieceType() == ChessPiece.PieceType.KING)
+            {
+                if (current_piece.getTeamColor()==TeamColor.WHITE)
+                {
+                    kingLocationWhite = endPosition;
+                }
+                else
+                {
+                    kingLocationBlack = endPosition;
+                }
+            }
+            this.setBoard(testBoard);
+        }
 
     }
 
@@ -129,7 +152,35 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor)
     {
-        throw new RuntimeException("Not implemented");
+        // For loop checks all locations on chessboard
+        for (int i=1; i<8; i++)
+        {
+            for (int j=1; j<8; j++)
+            {
+                // Create a current position and current piece
+                ChessPosition current_pos = new ChessPosition(i, j);
+                ChessPiece current_piece = board.getPiece(current_pos);
+                // Make sure that the color of the piece we are checking is an enemy
+                if (current_piece.getTeamColor()!=teamColor) {
+                    // If the team color is white, we need to see if the white king is in check.
+                    if (teamColor == TeamColor.WHITE) {
+                        ChessPosition end_pos = kingLocationWhite; // king's position
+                        ChessMove test_move = new ChessMove(current_pos, end_pos, null);
+                        // If the piece is a pawn, we want to add a promotion piece in there so we can check
+                        if (current_piece.getPieceType()== ChessPiece.PieceType.PAWN)
+                        {
+                            test_move = new ChessMove(current_pos, end_pos, ChessPiece.PieceType.QUEEN);
+                        }
+                        // If the piece moves contains the test move, then we have a check!
+                        if (current_piece.pieceMoves(board, current_pos).contains(test_move)) {
+                            return true;
+                        }
+
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
