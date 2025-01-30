@@ -133,10 +133,12 @@ public class ChessGame {
                 throw new InvalidMoveException();
             }
         }
+        // Add the new move and remove the old move
         testBoard.addPiece(startPosition, null);
         testBoard.addPiece(endPosition, current_piece);
-        test_game.setBoard(testBoard);
+        test_game.setBoard(testBoard); // set the test game with the new board
 
+        // Check if the new move in the test game puts us in checkmate/check
         boolean check = test_game.isInCheck(test_game.getTeamTurn());
         boolean checkmate = test_game.isInCheckmate(test_game.getTeamTurn());
         if (check || checkmate)
@@ -145,25 +147,31 @@ public class ChessGame {
         }
         else
         {
+            // If the current piece is the king, set the position
             if (current_piece.getPieceType() == ChessPiece.PieceType.KING)
             {
+                // White King
                 if (current_piece.getTeamColor()==TeamColor.WHITE)
                 {
                     kingLocationWhite = endPosition;
                 }
+                // Black King
                 else
                 {
                     kingLocationBlack = endPosition;
                 }
             }
+            // If the team color is white, switch turn to black
             if (teamTurn == TeamColor.WHITE)
             {
                 this.teamTurn = TeamColor.BLACK;
             }
+            // If the team color is black, switch turn to white
             else
             {
                 this.teamTurn = TeamColor.WHITE;
             }
+            // set the official board
             this.setBoard(testBoard);
         }
 
