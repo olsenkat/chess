@@ -196,9 +196,9 @@ public class ChessBoard implements Cloneable {
             ChessBoard clone = (ChessBoard) super.clone();
             clone = new ChessBoard();
             // Copy all instances of squares
-            for (int i = 1; i < 8; i++)
+            for (int i = 1; i <= 8; i++)
             {
-                for (int j = 1; j < 8; j++)
+                for (int j = 1; j <= 8; j++)
                 {
                     // Create current position to add to new board
                     ChessPosition current_pos = new ChessPosition(i,j);
