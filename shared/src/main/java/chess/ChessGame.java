@@ -73,17 +73,18 @@ public class ChessGame {
         Collection<ChessMove> moves = currentPiece.pieceMoves(board, startPosition);
         Collection<ChessMove> moves_new = new ArrayList<>();
 
-        // Initialize a test board to test the new moves
-        ChessBoard testBoard = board.clone();
-
-        // Create a new Game class to move the board
-        ChessGame test_game = new ChessGame();
-        test_game.setBoard(testBoard);
-        test_game.setTeamTurn(teamTurn);
-
         // Filter for check moves
         if (moves != null) {
-            for (var move : moves) {
+            for (var move : moves)
+            {
+                // Initialize a test board to test the new moves
+                ChessBoard testBoard = board.clone();
+
+                // Create a new Game class to move the board
+                ChessGame test_game = new ChessGame();
+                test_game.setBoard(testBoard);
+                test_game.setTeamTurn(teamTurn);
+
                 try {
                     test_game.makeMove(move);
                 } catch (InvalidMoveException e) {
