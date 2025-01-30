@@ -217,7 +217,11 @@ public class ChessGame {
                             ChessMove test_move = new ChessMove(current_pos, kingLocationWhite, null);
                             // If the piece is a pawn, we want to add a promotion piece in there so we can check
                             if (current_piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                                test_move = new ChessMove(current_pos, kingLocationWhite, ChessPiece.PieceType.QUEEN);
+                                if (test_move.getEndPosition().getRow()==1)
+                                {
+                                    test_move = new ChessMove(current_pos, kingLocationWhite, ChessPiece.PieceType.QUEEN);
+                                }
+
                             }
                             // If the piece moves contains the test move, then we have a check!
                             if (current_piece.pieceMoves(board, current_pos).contains(test_move)) {
@@ -230,7 +234,10 @@ public class ChessGame {
                             ChessMove test_move = new ChessMove(current_pos, kingLocationBlack, null);
                             // If the piece is a pawn, we want to add a promotion piece in there so we can check
                             if (current_piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                                test_move = new ChessMove(current_pos, kingLocationBlack, ChessPiece.PieceType.QUEEN);
+                                if (test_move.getEndPosition().getRow()==8)
+                                {
+                                    test_move = new ChessMove(current_pos, kingLocationBlack, ChessPiece.PieceType.QUEEN);
+                                }
                             }
                             // If the piece moves contains the test move, then we have a check!
                             if (current_piece.pieceMoves(board, current_pos).contains(test_move)) {
