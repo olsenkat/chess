@@ -100,11 +100,7 @@ public class ChessGame {
                 }
             }
         }
-        // If empty, return null
-//        if (moves_new.isEmpty())
-//        {
-//            return null;
-//        }
+
         return moves_new;
     }
 
@@ -305,7 +301,7 @@ public class ChessGame {
                 // Get the piece at the current location
                 ChessPosition position = new ChessPosition(i, j);
                 ChessPiece piece = this.board.getPiece(position);
-                // If the piece is not null, and it has the same team color, we can see if it have valid moves
+                // If the piece is not null, and it has the same team color, we can see if it has valid moves
                 if ((piece != null) && (piece.getTeamColor()==teamColor))
                 {
                     // Check to see all moves it can make
@@ -331,7 +327,10 @@ public class ChessGame {
                                 }
                             }
                             // An invalid move does not affect us here, we just want to continue.
-                            catch (InvalidMoveException _) {}
+                            catch (InvalidMoveException e)
+                            {
+                                continue;
+                            }
 
 
                         } // end for loop moves
