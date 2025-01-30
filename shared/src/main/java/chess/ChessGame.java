@@ -114,6 +114,12 @@ public class ChessGame {
         ChessPosition startPosition = move.getStartPosition();
         ChessPosition endPosition = move.getEndPosition();
         ChessPiece current_piece = testBoard.getPiece(startPosition);
+        // If there is no piece to move, this is an error
+        if (current_piece==null)
+        {
+            throw new InvalidMoveException();
+        }
+
         // If the promotion piece is not null, change the piece type
         if(move.getPromotionPiece()!=null)
         {
@@ -149,6 +155,14 @@ public class ChessGame {
                 {
                     kingLocationBlack = endPosition;
                 }
+            }
+            if (teamTurn == TeamColor.WHITE)
+            {
+                this.teamTurn = TeamColor.BLACK;
+            }
+            else
+            {
+                this.teamTurn = TeamColor.WHITE;
             }
             this.setBoard(testBoard);
         }
@@ -223,7 +237,6 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board=board;
-        teamTurn = TeamColor.WHITE;
         kingLocationWhite = new ChessPosition(1,5);
         kingLocationBlack = new ChessPosition(8,5);
     }
