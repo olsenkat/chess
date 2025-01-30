@@ -19,6 +19,7 @@ public class ChessGame {
 
     public ChessGame() {
         board = new ChessBoard();
+        board.resetBoard();
         teamTurn = TeamColor.WHITE;
         kingLocationWhite = new ChessPosition(1,5);
         kingLocationBlack = new ChessPosition(8,5);
@@ -200,9 +201,9 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor)
     {
         // For loop checks all locations on chessboard
-        for (int i=1; i<8; i++)
+        for (int i=1; i<=8; i++)
         {
-            for (int j=1; j<8; j++)
+            for (int j=1; j<=8; j++)
             {
                 // Create a current position and current piece
                 ChessPosition current_pos = new ChessPosition(i, j);
@@ -308,6 +309,7 @@ public class ChessGame {
                             ChessBoard testBoard = board.clone();
                             ChessGame testGame = new ChessGame();
                             testGame.setBoard(testBoard);
+                            testGame.setTeamTurn(piece.getTeamColor());
                             // Try to make the move on the test board
                             try
                             {
@@ -318,7 +320,7 @@ public class ChessGame {
                                     return false;
                                 }
                             }
-                            // An invalid move does not effect us here, we just want to continue.
+                            // An invalid move does not affect us here, we just want to continue.
                             catch (InvalidMoveException _) {}
 
 
