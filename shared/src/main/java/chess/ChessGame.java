@@ -83,9 +83,10 @@ public class ChessGame {
                 // Create a new Game class to move the board
                 ChessGame test_game = new ChessGame();
                 test_game.setBoard(testBoard);
-                test_game.setTeamTurn(teamTurn);
 
                 try {
+                    // Set temp team turn. Valid moves does not depend upon the team who is going.
+                    test_game.setTeamTurn(testBoard.getPiece(move.getStartPosition()).getTeamColor());
                     test_game.makeMove(move);
                 } catch (InvalidMoveException e) {
                     continue;
@@ -100,10 +101,10 @@ public class ChessGame {
             }
         }
         // If empty, return null
-        if (moves_new.isEmpty())
-        {
-            return null;
-        }
+//        if (moves_new.isEmpty())
+//        {
+//            return null;
+//        }
         return moves_new;
     }
 
