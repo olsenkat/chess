@@ -200,6 +200,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor)
     {
+//        setKings();
         // For loop checks all locations on chessboard
         for (int i=1; i<=8; i++)
         {
@@ -347,9 +348,15 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         this.board=board;
+        setKings();
+
+    }
+
+    private void setKings()
+    {
         // For loop checks all locations on chessboard
-        for (int i=1; i<8; i++) {
-            for (int j = 1; j < 8; j++) {
+        for (int i=1; i<=8; i++) {
+            for (int j = 1; j <= 8; j++) {
                 // Create a current position and current piece
                 ChessPosition current_pos = new ChessPosition(i, j);
                 ChessPiece current_piece = board.getPiece(current_pos);
@@ -367,9 +374,7 @@ public class ChessGame {
                 }
             }
         }
-
     }
-
     /**
      * Gets the current chessboard
      *
