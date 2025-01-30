@@ -252,10 +252,12 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor)
     {
+        // If the piece is in check, see if there are any moves
         if (isInCheck(teamColor))
         {
             return noMoves(teamColor);
         }
+        // If the piece is not in check, it cannot be in checkmate
         else
         {
             return false;
@@ -271,10 +273,12 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor)
     {
+        // if the piece is in check, it cannot be in stalemate
         if (isInCheck(teamColor))
         {
             return false;
         }
+        // If the piece is not in check, see if there are any moves
         else
         {
             return noMoves(teamColor);
@@ -282,43 +286,48 @@ public class ChessGame {
     }
     private boolean noMoves(TeamColor teamColor)
     {
+        // Parse through al board locations
         for (int i=1; i<=8; i++)
         {
             for (int j=1; j<=8; j++)
             {
+                // Get the piece at the current location
                 ChessPosition position = new ChessPosition(i, j);
-                ChessPiece piece = this.board.getPiece(new ChessPosition(i, j));
+                ChessPiece piece = this.board.getPiece(position);
+                // If the piece is not null, and it has the same team color, we can see if it have valid moves
                 if ((piece != null) && (piece.getTeamColor()==teamColor))
                 {
+                    // Check to see all moves it can make
                     Collection<ChessMove> valid_moves = piece.pieceMoves(board, position);
+                    // If there are moves, we can check them
                     if (valid_moves != null)
                     {
+                        // Check all moves to see if they will get us out of check
                         for (var move : valid_moves) {
-
                             // Initialize a test board to test the new moves
                             ChessBoard testBoard = board.clone();
                             ChessGame testGame = new ChessGame();
-
                             testGame.setBoard(testBoard);
+                            // Try to make the move on the test board
                             try
                             {
                                 testGame.makeMove(move);
+                                // If the move does not place us in check, we are not in checkmate
                                 if (!testGame.isInCheck(teamColor))
                                 {
                                     return false;
                                 }
                             }
-                            catch (InvalidMoveException _)
-                            {
-
-                            }
+                            // An invalid move does not effect us here, we just want to continue.
+                            catch (InvalidMoveException _) {}
 
 
-                        }
-                    }
-                }
-            }
-        }
+                        } // end for loop moves
+                    } // end if statement valid moves not null
+                } // end if statement piece not null, team color same
+            } // end j for loop
+        } // end i for loop
+        // If we do not find a move we can make, there are no moves available
         return true;
     }
 
@@ -335,8 +344,11 @@ public class ChessGame {
                 // Create a current position and current piece
                 ChessPosition current_pos = new ChessPosition(i, j);
                 ChessPiece current_piece = board.getPiece(current_pos);
+                // Check to make sure the piece is not null
                 if (current_piece != null) {
+                    // Check to see if this piece is a king
                     if (current_piece.getPieceType() == ChessPiece.PieceType.KING) {
+                        // If it is a king, we need to make change the king location
                         if (current_piece.getTeamColor() == TeamColor.WHITE) {
                             kingLocationWhite = current_pos;
                         } else {
