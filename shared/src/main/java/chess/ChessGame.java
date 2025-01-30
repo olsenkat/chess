@@ -67,6 +67,7 @@ public class ChessGame {
         {
             return null;
         }
+
         // Initialize current valid moves and new valid moves
         Collection<ChessMove> moves = currentPiece.pieceMoves(board, startPosition);
         Collection<ChessMove> moves_new = new ArrayList<>();
@@ -96,6 +97,7 @@ public class ChessGame {
                 }
             }
         }
+        // If empty, return null
         if (moves_new.isEmpty())
         {
             return null;
@@ -222,6 +224,7 @@ public class ChessGame {
                             }
 
                         }
+                        // If the team color is black, we need to see if the black king is in check.
                         if (teamColor == TeamColor.BLACK) {
                             ChessMove test_move = new ChessMove(current_pos, kingLocationBlack, null);
                             // If the piece is a pawn, we want to add a promotion piece in there so we can check
@@ -247,8 +250,16 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
-    public boolean isInCheckmate(TeamColor teamColor) {
-        return false; // Need to implement
+    public boolean isInCheckmate(TeamColor teamColor)
+    {
+        if (isInCheck(teamColor))
+        {
+            return noMoves(teamColor);
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**
@@ -258,8 +269,57 @@ public class ChessGame {
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
      */
-    public boolean isInStalemate(TeamColor teamColor) {
-        return false; // Need to implement
+    public boolean isInStalemate(TeamColor teamColor)
+    {
+        if (isInCheck(teamColor))
+        {
+            return false;
+        }
+        else
+        {
+            return noMoves(teamColor);
+        }
+    }
+    private boolean noMoves(TeamColor teamColor)
+    {
+        for (int i=1; i<=8; i++)
+        {
+            for (int j=1; j<=8; j++)
+            {
+                ChessPosition position = new ChessPosition(i, j);
+                ChessPiece piece = this.board.getPiece(new ChessPosition(i, j));
+                if ((piece != null) && (piece.getTeamColor()==teamColor))
+                {
+                    Collection<ChessMove> valid_moves = piece.pieceMoves(board, position);
+                    if (valid_moves != null)
+                    {
+                        for (var move : valid_moves) {
+
+                            // Initialize a test board to test the new moves
+                            ChessBoard testBoard = board.clone();
+                            ChessGame testGame = new ChessGame();
+
+                            testGame.setBoard(testBoard);
+                            try
+                            {
+                                testGame.makeMove(move);
+                                if (!testGame.isInCheck(teamColor))
+                                {
+                                    return false;
+                                }
+                            }
+                            catch (InvalidMoveException _)
+                            {
+
+                            }
+
+
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
