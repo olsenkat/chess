@@ -72,25 +72,26 @@ public class ChessGame {
         Collection<ChessMove> moves_new = new ArrayList<>();
 
         // Filter for check moves
-        for (var move: moves)
-        {
-            try
-            {
-                makeMove(move);
-            }
-            catch (InvalidMoveException e) {
-                continue;
-            }
+        if (moves != null) {
+            for (var move : moves) {
+                try {
+                    makeMove(move);
+                } catch (InvalidMoveException e) {
+                    continue;
+                }
 
-            // Have the clone board create the move
+                // Have the clone board create the move
 
-            // If the team is not in check, accept the move.
-            if (!isInCheck(teamTurn))
-            {
-                moves_new.add(move);
+                // If the team is not in check, accept the move.
+                if (!isInCheck(teamTurn)) {
+                    moves_new.add(move);
+                }
             }
         }
-
+        if (moves_new.isEmpty())
+        {
+            return null;
+        }
         return moves_new;
     }
 
