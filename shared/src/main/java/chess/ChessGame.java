@@ -110,12 +110,22 @@ public class ChessGame {
         ChessGame test_game = new ChessGame();
         test_game.setBoard(testBoard);
 
+        // Determine the start and end position of the piece, find the current piece
         ChessPosition startPosition = move.getStartPosition();
         ChessPosition endPosition = move.getEndPosition();
         ChessPiece current_piece = testBoard.getPiece(startPosition);
+        // If the promotion piece is not null, change the piece type
         if(move.getPromotionPiece()!=null)
         {
             current_piece = new ChessPiece(current_piece.getTeamColor(), move.getPromotionPiece());
+        }
+        // Check that the end location piece is not null
+        if (board.getPiece(endPosition)!=null)
+        {
+            // If there is a piece in this spot, which is our team color, this is invalid
+            if (board.getPiece(endPosition).getTeamColor() == board.getPiece(startPosition).getTeamColor()) {
+                throw new InvalidMoveException();
+            }
         }
         testBoard.addPiece(startPosition, null);
         testBoard.addPiece(endPosition, current_piece);
