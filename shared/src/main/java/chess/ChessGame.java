@@ -154,8 +154,8 @@ public class ChessGame {
 
         // Check if the new move in the test game puts us in checkmate/check
         boolean check = test_game.isInCheck(test_game.getTeamTurn());
-        boolean checkmate = test_game.isInCheckmate(test_game.getTeamTurn());
-        if (check || checkmate)
+//        boolean checkmate = test_game.isInCheckmate(test_game.getTeamTurn());
+        if (check)
         {
             throw new InvalidMoveException();
         }
