@@ -194,6 +194,7 @@ public class ChessBoard implements Cloneable {
     public ChessBoard clone() {
         try {
             ChessBoard clone = (ChessBoard) super.clone();
+            clone = new ChessBoard();
             // Copy all instances of squares
             for (int i = 1; i < 8; i++)
             {
@@ -203,13 +204,16 @@ public class ChessBoard implements Cloneable {
                     ChessPosition current_pos = new ChessPosition(i,j);
                     // Locate the new piece to transfer over
                     ChessPiece old_piece = this.getPiece(current_pos);
-                    // Determine the team color
-                    ChessGame.TeamColor team_color = old_piece.getTeamColor();
-                    // Determine the piece type
-                    ChessPiece.PieceType piece_type = old_piece.getPieceType();
-                    // Create the new piece and add it to the clone.
-                    ChessPiece new_piece = new ChessPiece(team_color, piece_type);
-                    clone.addPiece(current_pos, new_piece);
+                    if (old_piece != null)
+                    {
+                        // Determine the team color
+                        ChessGame.TeamColor team_color = old_piece.getTeamColor();
+                        // Determine the piece type
+                        ChessPiece.PieceType piece_type = old_piece.getPieceType();
+                        // Create the new piece and add it to the clone.
+                        ChessPiece new_piece = new ChessPiece(team_color, piece_type);
+                        clone.addPiece(current_pos, new_piece);
+                    }
                 }
             }
             return clone;
