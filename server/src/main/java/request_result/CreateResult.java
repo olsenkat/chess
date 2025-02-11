@@ -1,4 +1,5 @@
 package request_result;
 
-public record CreateResult (Integer gameID)
+public record CreateResult (Integer gameID,
+                            String message)
 { }
