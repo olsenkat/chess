@@ -4,7 +4,7 @@ import model.GameData;
 
 import java.util.ArrayList;
 
-interface GameDAO
+public interface GameDAO
 {
     GameData getGame(int gameID) throws DataAccessException;
 
@@ -15,4 +15,9 @@ interface GameDAO
     GameData updateGame(GameData game) throws DataAccessException;
 
     void clear();
+
+    default int createID()
+    {
+        return 0;
+    }
 }
