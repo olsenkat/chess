@@ -1,5 +1,6 @@
 package request_result;
 
 public record RegisterResult (String username,
-                              String authToken)
+                              String authToken,
+                              String message)
 { }
