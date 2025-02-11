@@ -6,7 +6,8 @@ import java.util.Hashtable;
 
 public class MemoryUserDAO  implements UserDAO
 {
-    private Hashtable<String, UserData> userData;
+    private Hashtable<String, UserData> userData = new Hashtable<>();
+
     @Override
     public UserData getUser(String username) throws DataAccessException {
         if (userData.containsKey(username))
@@ -31,4 +32,5 @@ public class MemoryUserDAO  implements UserDAO
         userData.clear();
         return true;
     }
+
 }
