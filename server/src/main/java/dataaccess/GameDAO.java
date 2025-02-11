@@ -6,13 +6,13 @@ import java.util.ArrayList;
 
 interface GameDAO
 {
-    GameData getGame(int gameID);
+    GameData getGame(int gameID) throws DataAccessException;
 
-    ArrayList<GameData> listGames();
+    ArrayList<GameData> listGames() throws DataAccessException;
 
-    GameData createGame(GameData game);
+    GameData createGame(GameData game) throws DataAccessException;
 
-    GameData updateGame(GameData game);
+    GameData updateGame(GameData game) throws DataAccessException;
 
     GameData clear();
 }
