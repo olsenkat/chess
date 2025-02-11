@@ -4,7 +4,7 @@ import model.UserData;
 
 import javax.xml.crypto.Data;
 
-interface UserDAO
+public interface UserDAO
 {
     UserData getUser(String username) throws DataAccessException;
 

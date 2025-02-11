@@ -2,7 +2,7 @@ package dataaccess;
 
 import model.AuthData;
 
-interface AuthDAO
+public interface AuthDAO
 {
     AuthData getAuth(String authToken) throws DataAccessException;
 
