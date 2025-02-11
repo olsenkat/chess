@@ -18,14 +18,14 @@ public class UserService
         }
         catch (DataAccessException e)
         {
-            return new RegisterResult(null, null, "Error: User Creation Error");
+            return new RegisterResult(null, null, "Error: Unable to create User");
         }
         try {
             auth.createAuth(new AuthData(r.username(),token));
         }
         catch (DataAccessException e)
         {
-            return new RegisterResult(null, null, "Error: Auth Creation Error");
+            return new RegisterResult(null, null, "Error: Unable to create Auth");
         }
         return new RegisterResult(r.username(), token, null);
     }
@@ -39,20 +39,37 @@ public class UserService
         }
         catch (DataAccessException e)
         {
-            return new LoginResult(null, null, "Error: User Login Error");
+            return new LoginResult(null, null, "Error: Unable to find User");
         }
         try {
             auth.createAuth(new AuthData(r.username(),token));
         }
         catch (DataAccessException e)
         {
-            return new LoginResult(null, null, "Error: Auth Creation Error");
+            return new LoginResult(null, null, "Error: Unable to create Auth");
         }
         return new LoginResult(r.username(), token, null);
     }
 
     LogoutResult logout(LogoutRequest r)
     {
-        return null;
+        AuthData current_auth;
+        try
+        {
+            current_auth = auth.getAuth(r.authToken());
+            try
+            {
+                auth.deleteAuth(current_auth);
+                return new LogoutResult(null);
+            }
+            catch (DataAccessException e)
+            {
+                return new LogoutResult("Error: Unable to delete the authorization");
+            }
+        }
+        catch (DataAccessException e)
+        {
+            return new LogoutResult("Error: Invalid Authorization");
+        }
     }
 }
