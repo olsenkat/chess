@@ -14,5 +14,5 @@ interface GameDAO
 
     GameData updateGame(GameData game) throws DataAccessException;
 
-    GameData clear();
+    void clear();
 }
