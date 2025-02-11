@@ -1,4 +1,4 @@
 package request_result;
 
-record CreateResult (Integer gameID)
+public record CreateResult (Integer gameID)
 { }

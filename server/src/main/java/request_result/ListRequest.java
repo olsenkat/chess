@@ -1,4 +1,4 @@
 package request_result;
 
-record ListRequest (String authToken)
+public record ListRequest (String authToken)
 { }

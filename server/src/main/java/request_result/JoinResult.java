@@ -1,4 +1,4 @@
 package request_result;
 
-record JoinResult ()
+public record JoinResult ()
 { }
