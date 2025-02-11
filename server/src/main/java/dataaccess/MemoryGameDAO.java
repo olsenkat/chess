@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class MemoryGameDAO implements GameDAO{
-    private Hashtable<Integer, GameData> gameData = new Hashtable<>();
+    private final Hashtable<Integer, GameData> gameData = new Hashtable<>();
+    private int currentID = 0;
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         Integer id = gameID;
@@ -53,5 +54,11 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public void clear() {
         gameData.clear();
+    }
+
+    @Override
+    public int createID()
+    {
+        return currentID++;
     }
 }
