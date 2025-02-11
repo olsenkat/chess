@@ -1,4 +1,4 @@
 package request_result;
 
-record LogoutResult ()
+public record LogoutResult ()
 { }
