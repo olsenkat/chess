@@ -1,4 +1,4 @@
 package request_result;
 
-record CreateResult (String gameID)
+record CreateResult (Integer gameID)
 { }
