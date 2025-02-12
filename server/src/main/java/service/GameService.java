@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.*;
+import exception.ResponseException;
 import model.GameData;
 import request_result.*;
 
@@ -19,7 +20,7 @@ public class GameService
         this.games = games;
     }
 
-    public CreateResult create(CreateRequest r)
+    public CreateResult create(CreateRequest r) throws ResponseException
     {
         int gameID = games.createID();
         try
@@ -28,7 +29,7 @@ public class GameService
         }
         catch (DataAccessException e)
         {
-            return new CreateResult(null, "Error: Unable to access authorization");
+            throw new ResponseException(401, "Error: Invalid Authorization");
         }
         try
         {
@@ -37,12 +38,12 @@ public class GameService
         }
         catch (DataAccessException e)
         {
-            return new CreateResult(null, "Error: Unable to create Game");
+            throw new ResponseException(401, "Error: Unable to create game");
         }
-        return new CreateResult(gameID, null);
+        return new CreateResult(gameID);
     }
 
-    public JoinResult join(JoinRequest r)
+    public JoinResult join(JoinRequest r) throws ResponseException
     {
         GameData currentGame;
         int gameID = r.gameID();
@@ -52,25 +53,25 @@ public class GameService
         }
         catch (DataAccessException e)
         {
-            return new JoinResult("Error: Unable to access authorization");
+            throw new ResponseException(401, "Error: Invalid Authorization");
         }
         try
         {
             currentGame = games.getGame(gameID);
             if (!checkTeamColor(currentGame, r.playerColor()))
             {
-                return new JoinResult("Error: Team Color is already taken");
+                throw new ResponseException(401, "Error: Invalid Team Color");
             }
         }
         catch (DataAccessException e)
         {
-            return new JoinResult("Error: Unable to access authorization");
+            throw new ResponseException(401, "Error: Invalid Game ID");
         }
 
-        return new JoinResult(null);
+        return new JoinResult();
     }
 
-    public ListResult list(ListRequest r)
+    public ListResult list(ListRequest r) throws ResponseException
     {
         try
         {
@@ -78,15 +79,15 @@ public class GameService
         }
         catch (DataAccessException e)
         {
-            return new ListResult(null, "Error: Unable to access authorization");
+            throw new ResponseException(401, "Error: Invalid Authorization");
         }
         try
         {
-            return new ListResult(games.listGames(), null);
+            return new ListResult(games.listGames());
         }
         catch (DataAccessException e)
         {
-            return new ListResult(null, "Error: Unable to list games");
+            throw new ResponseException(401, "Error: Invalid List Game Result");
         }
 
     }

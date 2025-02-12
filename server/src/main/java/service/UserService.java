@@ -1,9 +1,12 @@
 package service;
 
 import dataaccess.*;
+import exception.ResponseException;
 import request_result.*;
 import model.UserData;
 import model.AuthData;
+
+import java.util.Objects;
 
 public class UserService
 {
@@ -16,7 +19,7 @@ public class UserService
         this.auth = auth;
     }
 
-    public RegisterResult register(RegisterRequest r)
+    public RegisterResult register(RegisterRequest r) throws ResponseException
     {
         UserData new_user = new UserData(r.username(), r.password(), r.email());
         String token = AuthDAO.generateToken();
@@ -25,40 +28,47 @@ public class UserService
         }
         catch (DataAccessException e)
         {
-            return new RegisterResult(null, null, "Error: Unable to create User");
+            throw new ResponseException(403, "Error: Forbidden Action");
         }
         try {
-            auth.createAuth(new AuthData(r.username(),token));
+            auth.createAuth(new AuthData(token,r.username()));
         }
         catch (DataAccessException e)
         {
-            return new RegisterResult(null, null, "Error: Unable to create Auth");
+            throw new ResponseException(401, "Error: Unauthorized Access");
         }
-        return new RegisterResult(r.username(), token, null);
+        return new RegisterResult(r.username(), token);
     }
 
-    public LoginResult login(LoginRequest r)
+    public LoginResult login(LoginRequest r) throws ResponseException
     {
+        UserData user;
         String token = AuthDAO.generateToken();
+        // Is all the data accounted for?
+
         try
         {
-            users.getUser(r.username());
+            user = users.getUser(r.username());
+            if (!Objects.equals(user.password(), r.password()))
+            {
+                throw new ResponseException(401, "Error: Invalid User");
+            }
         }
         catch (DataAccessException e)
         {
-            return new LoginResult(null, null, "Error: Unable to find User");
+            throw new ResponseException(401, "Error: Invalid User");//            return new LoginResult(null, null, "Error: Unable to find User");
         }
         try {
-            auth.createAuth(new AuthData(r.username(),token));
+            auth.createAuth(new AuthData(token,r.username()));
         }
         catch (DataAccessException e)
         {
-            return new LoginResult(null, null, "Error: Unable to create Auth");
+            throw new ResponseException(401, "Error: Unauthorized Access");//            return new LoginResult(null, null, "Error: Unable to create Auth");
         }
-        return new LoginResult(r.username(), token, null);
+        return new LoginResult(r.username(), token);
     }
 
-    public LogoutResult logout(LogoutRequest r)
+    public LogoutResult logout(LogoutRequest r) throws ResponseException
     {
         AuthData current_auth;
         try
@@ -67,16 +77,16 @@ public class UserService
             try
             {
                 auth.deleteAuth(current_auth);
-                return new LogoutResult(null);
+                return new LogoutResult();
             }
             catch (DataAccessException e)
             {
-                return new LogoutResult("Error: Unable to delete the authorization");
+                throw new ResponseException(401, "Error: Invalid Authorization");
             }
         }
         catch (DataAccessException e)
         {
-            return new LogoutResult("Error: Invalid Authorization");
+            throw new ResponseException(401, "Error: Unauthorized Access");
         }
     }
 }
