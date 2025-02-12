@@ -10,9 +10,15 @@ import java.util.Objects;
 
 public class GameService
 {
-    private final UserDAO users = new MemoryUserDAO();
-    private final AuthDAO auth = new MemoryAuthDAO();
-    private final GameDAO games = new MemoryGameDAO();
+    private final AuthDAO auth;
+    private final GameDAO games;
+
+    public GameService(AuthDAO auth, GameDAO games)
+    {
+        this.auth = auth;
+        this.games = games;
+    }
+
     public CreateResult create(CreateRequest r)
     {
         int gameID = games.createID();

@@ -7,8 +7,15 @@ import model.AuthData;
 
 public class UserService
 {
-    private final UserDAO users = new MemoryUserDAO();
-    private final AuthDAO auth = new MemoryAuthDAO();
+    private final UserDAO users;
+    private final AuthDAO auth;
+
+    public UserService(UserDAO users, AuthDAO auth)
+    {
+        this.users = users;
+        this.auth = auth;
+    }
+
     public RegisterResult register(RegisterRequest r)
     {
         UserData new_user = new UserData(r.username(), r.password(), r.email());

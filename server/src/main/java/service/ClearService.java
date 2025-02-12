@@ -5,9 +5,17 @@ import request_result.ClearResult;
 
 public class ClearService
 {
-    private final UserDAO users = new MemoryUserDAO();
-    private final AuthDAO auth = new MemoryAuthDAO();
-    private final GameDAO games = new MemoryGameDAO();
+    private final UserDAO users;
+    private final AuthDAO auth;
+    private final GameDAO games;
+
+    public ClearService(UserDAO users, AuthDAO auth, GameDAO games)
+    {
+        this.users = users;
+        this.auth = auth;
+        this.games = games;
+    }
+
     public ClearResult clear()
     {
         // Clear User Data
