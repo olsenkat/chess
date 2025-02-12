@@ -9,7 +9,7 @@ public class UserService
 {
     private final UserDAO users = new MemoryUserDAO();
     private final AuthDAO auth = new MemoryAuthDAO();
-    RegisterResult register(RegisterRequest r)
+    public RegisterResult register(RegisterRequest r)
     {
         UserData new_user = new UserData(r.username(), r.password(), r.email());
         String token = AuthDAO.generateToken();
@@ -30,7 +30,7 @@ public class UserService
         return new RegisterResult(r.username(), token, null);
     }
 
-    LoginResult login(LoginRequest r)
+    public LoginResult login(LoginRequest r)
     {
         String token = AuthDAO.generateToken();
         try
@@ -51,7 +51,7 @@ public class UserService
         return new LoginResult(r.username(), token, null);
     }
 
-    LogoutResult logout(LogoutRequest r)
+    public LogoutResult logout(LogoutRequest r)
     {
         AuthData current_auth;
         try

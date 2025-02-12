@@ -13,7 +13,7 @@ public class GameService
     private final UserDAO users = new MemoryUserDAO();
     private final AuthDAO auth = new MemoryAuthDAO();
     private final GameDAO games = new MemoryGameDAO();
-    CreateResult create(CreateRequest r)
+    public CreateResult create(CreateRequest r)
     {
         int gameID = games.createID();
         try
@@ -36,7 +36,7 @@ public class GameService
         return new CreateResult(gameID, null);
     }
 
-    JoinResult join(JoinRequest r)
+    public JoinResult join(JoinRequest r)
     {
         GameData currentGame;
         int gameID = r.gameID();
@@ -64,7 +64,7 @@ public class GameService
         return new JoinResult(null);
     }
 
-    ListResult list(ListRequest r)
+    public ListResult list(ListRequest r)
     {
         try
         {

@@ -8,7 +8,7 @@ public class ClearService
     private final UserDAO users = new MemoryUserDAO();
     private final AuthDAO auth = new MemoryAuthDAO();
     private final GameDAO games = new MemoryGameDAO();
-    ClearResult clear()
+    public ClearResult clear()
     {
         // Clear User Data
         users.clear();
