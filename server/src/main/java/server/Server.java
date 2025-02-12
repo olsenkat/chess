@@ -43,9 +43,15 @@ public class Server {
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
+        Spark.exception(ResponseException.class, this::exceptionHandler);
 
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    private void exceptionHandler(ResponseException ex, Request req, Response res) {
+        res.status(ex.StatusCode());
+        res.body(ex.toJson());
     }
 
     public void stop() {
