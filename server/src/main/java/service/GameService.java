@@ -5,6 +5,7 @@ import dataaccess.*;
 import model.GameData;
 import request_result.*;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class GameService
@@ -65,7 +66,23 @@ public class GameService
 
     ListResult list(ListRequest r)
     {
-        return null;
+        try
+        {
+            auth.getAuth(r.authToken());
+        }
+        catch (DataAccessException e)
+        {
+            return new ListResult(null, "Error: Unable to access authorization");
+        }
+        try
+        {
+            return new ListResult(games.listGames(), null);
+        }
+        catch (DataAccessException e)
+        {
+            return new ListResult(null, "Error: Unable to list games");
+        }
+
     }
 
     private boolean checkTeamColor (GameData data, String color)
