@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.*;
 import exception.ResponseException;
 import request_result.*;
 import service.ClearService;
@@ -18,6 +19,14 @@ public class Server {
         this.clearService = clearService;
         this.userService = userService;
         this.gameService = gameService;
+    }
+    public Server() {
+        GameDAO gameDataAccess = new MemoryGameDAO();
+        UserDAO userDataAccess = new MemoryUserDAO();
+        AuthDAO authDataAccess = new MemoryAuthDAO();
+        this.clearService = new ClearService(userDataAccess, authDataAccess, gameDataAccess);
+        this.userService = new UserService(userDataAccess, authDataAccess);
+        this.gameService = new GameService(authDataAccess, gameDataAccess);
     }
 
     //    private final WebSocketHandler webSocketHandler;
