@@ -4,9 +4,11 @@ import chess.ChessGame;
 import dataaccess.*;
 import exception.ResponseException;
 import model.GameData;
+import model.UserData;
 import request_result.*;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 public class GameService
@@ -46,10 +48,16 @@ public class GameService
     public JoinResult join(JoinRequest r) throws ResponseException
     {
         GameData currentGame;
+        String username;
+        if
+        (r.gameID()==null)
+        {
+            throw new ResponseException(400, "Error: Invalid ID");
+        }
         int gameID = r.gameID();
         try
         {
-            auth.getAuth(r.authToken());
+            username = auth.getAuth(r.authToken()).username();
         }
         catch (DataAccessException e)
         {
@@ -58,16 +66,42 @@ public class GameService
         try
         {
             currentGame = games.getGame(gameID);
-            if (!checkTeamColor(currentGame, r.playerColor()))
-            {
-                throw new ResponseException(401, "Error: Invalid Team Color");
-            }
         }
         catch (DataAccessException e)
         {
             throw new ResponseException(401, "Error: Invalid Game ID");
         }
+        if (r.playerColor()==null)
+        {
+            throw new ResponseException(400, "Error: No color specified");
+        }
+        checkTeamColor(currentGame, r.playerColor());
+        try {
+            if (r.playerColor().toLowerCase(Locale.ROOT).equals("white")) {
+                if (!Objects.equals(currentGame.whiteUsername(), null))
+                {
+                    throw new ResponseException(403, "Error: Team Color already taken");
+                }
+                games.updateGame(new GameData(r.gameID(), username, currentGame.blackUsername(), currentGame.gameName(), currentGame.game()));
+            }
+            else if (r.playerColor().toLowerCase(Locale.ROOT).equals("black"))
+            {
+                if(!Objects.equals(currentGame.blackUsername(), null))
+                {
+                    throw new ResponseException(403, "Error: Team Color already taken");
+                }
+                games.updateGame(new GameData(r.gameID(), currentGame.whiteUsername(),username, currentGame.gameName(), currentGame.game()));
 
+            }
+            else
+            {
+                throw new ResponseException(400, "Error: Invalid Color");
+            }
+        }
+        catch (DataAccessException e)
+        {
+            throw new ResponseException(401, "Error: Unable to access game");
+        }
         return new JoinResult();
     }
 
@@ -92,16 +126,25 @@ public class GameService
 
     }
 
-    private boolean checkTeamColor (GameData data, String color)
+    private void checkTeamColor (GameData data, String color) throws ResponseException
     {
         if (color.equalsIgnoreCase("white"))
         {
-            return Objects.equals(data.whiteUsername(), "");
+            if (!Objects.equals(data.whiteUsername(), null))
+            {
+                throw new ResponseException(403, "Error: Team Color already taken");
+            }
         }
         else if (color.equalsIgnoreCase("black"))
         {
-            return Objects.equals(data.blackUsername(), "");
+            if(!Objects.equals(data.blackUsername(), null))
+            {
+                throw new ResponseException(403, "Error: Team Color already taken");
+            }
         }
-        return false;
+        else
+        {
+            throw new ResponseException(400, "Error: Invalid Color");
+        }
     }
 }
