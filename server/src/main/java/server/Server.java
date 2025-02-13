@@ -80,21 +80,22 @@ public class Server {
 
     private Object logout(Request req, Response res) throws ResponseException {
         // Create a RegisterRequest object by deserializing the request
-        var user = new Gson().fromJson(req.body(), LogoutRequest.class);
+        var user = new LogoutRequest(req.headers("authorization"));
         var user_logout = userService.logout(user); // Generate response
         return new Gson().toJson(user_logout); // Serialize the data
     }
 
     private Object listGames(Request req, Response res) throws ResponseException {
         // Create a RegisterRequest object by deserializing the request
-        var auth = new Gson().fromJson(req.body(), ListRequest.class);
-        var game_list = gameService.list(auth); // Generate response
+        var list = new ListRequest(req.headers("authorization"));
+        var game_list = gameService.list(list); // Generate response
         return new Gson().toJson(game_list); // Serialize the data
     }
 
     private Object createGame(Request req, Response res) throws ResponseException {
         // Serialize the JSON data into the create_request object to pass into gameService
         var game = new Gson().fromJson(req.body(), CreateRequest.class);
+        game = new CreateRequest(req.headers("authorization"), game.gameName());
         // Create the game_response object to be retrieved from gameService
         var new_game = gameService.create(game);
         // Deserialize the JSON data
@@ -104,6 +105,7 @@ public class Server {
     private Object joinGame(Request req, Response res) throws ResponseException {
         // Serialize the JSON data into the create_request object to pass into gameService
         var game = new Gson().fromJson(req.body(), JoinRequest.class);
+        game = new JoinRequest(req.headers("authorization"), game.playerColor(), game.gameID());
         var game_data = gameService.join(game);
         return new Gson().toJson(game_data);
     }
