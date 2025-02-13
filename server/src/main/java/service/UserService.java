@@ -23,6 +23,10 @@ public class UserService
     {
         UserData new_user = new UserData(r.username(), r.password(), r.email());
         String token = AuthDAO.generateToken();
+        if (r.username()==null || r.password()==null || r.email()==null)
+        {
+            throw new ResponseException(400, "Error: Bad Request");
+        }
         try {
             users.createUser(new_user);
         }
@@ -45,6 +49,10 @@ public class UserService
         UserData user;
         String token = AuthDAO.generateToken();
         // Is all the data accounted for?
+        if (r.username()==null || r.password()==null)
+        {
+            throw new ResponseException(400, "Error: Bad Request");
+        }
 
         try
         {
