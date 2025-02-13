@@ -10,5 +10,5 @@ public interface UserDAO
 
     UserData createUser(UserData user) throws DataAccessException;
 
-    boolean clear();
+    void clear();
 }
