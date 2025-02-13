@@ -9,6 +9,7 @@ public class ClearService
     private final AuthDAO auth;
     private final GameDAO games;
 
+    // Create constructor
     public ClearService(UserDAO users, AuthDAO auth, GameDAO games)
     {
         this.users = users;
