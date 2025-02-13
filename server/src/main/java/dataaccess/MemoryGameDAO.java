@@ -7,7 +7,7 @@ import java.util.Hashtable;
 
 public class MemoryGameDAO implements GameDAO{
     private final Hashtable<Integer, GameData> gameData = new Hashtable<>();
-    private int currentID = 0;
+    private int currentID = 1;
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         Integer id = gameID;
