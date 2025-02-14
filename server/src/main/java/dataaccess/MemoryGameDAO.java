@@ -25,7 +25,7 @@ public class MemoryGameDAO implements GameDAO{
 
     // Method to list all games in the database
     @Override
-    public ArrayList<GameData> listGames() throws DataAccessException {
+    public ArrayList<GameData> listGames() {
         // Create an array list to return
         ArrayList<GameData> games = new ArrayList<>();
         // For each key in the database, add its value to the ArrayList
