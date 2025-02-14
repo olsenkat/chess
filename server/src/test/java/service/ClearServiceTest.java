@@ -22,7 +22,7 @@ public class ClearServiceTest
     static String authToken = " ";
 
     @BeforeEach
-    void addAll() throws ResponseException
+    void addAll()
     {
         try {
             // Register a user
@@ -43,8 +43,8 @@ public class ClearServiceTest
     @Test
     void clear()
     {
-        // Create a clear response
-        var clearResponse = clear.clear();
+        // Clear the database
+        clear.clear();
 
         // Ensure all the games are deleted
         assertEquals(0, game.listGames().size());
