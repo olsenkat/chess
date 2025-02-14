@@ -101,15 +101,11 @@ public class GameService
     // List Games
     public ListResult list(ListRequest r) throws ResponseException
     {
+        // Check if Auth Token is null
+        checkAuthToken(r.authToken());
+
         // Try getting the authorization from the database
-        try
-        {
-            auth.getAuth(r.authToken());
-        }
-        catch (DataAccessException e)
-        {
-            throw new ResponseException(401, "Error: Invalid Authorization");
-        }
+        getAuth(r.authToken());
 
         // Try getting all game data from the database
         try
