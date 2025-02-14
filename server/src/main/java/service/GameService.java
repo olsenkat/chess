@@ -6,7 +6,6 @@ import exception.ResponseException;
 import model.GameData;
 import request_result.*;
 
-import java.util.Locale;
 import java.util.Objects;
 
 public class GameService
@@ -29,26 +28,13 @@ public class GameService
         int gameID = games.createID();
 
         // Ensure the game name is not null
-        if (r.gameName()==null)
-        {
-            throw new ResponseException(401, "Error: Game name is null");
-        }
+        checkGameName(r.gameName());
 
         // Ensure the auth token is not null
-        if (r.authToken()==null)
-        {
-            throw new ResponseException(401, "Error: AuthToken is null");
-        }
+        checkAuthToken(r.authToken());
 
         // Try getting the authorization
-        try
-        {
-            auth.getAuth(r.authToken());
-        }
-        catch (DataAccessException e)
-        {
-            throw new ResponseException(401, "Error: Invalid Authorization");
-        }
+        getAuth(r.authToken());
 
         // Try creating the chess game
         try
@@ -68,75 +54,43 @@ public class GameService
     // Join a game
     public JoinResult join(JoinRequest r) throws ResponseException
     {
-        // Set variables for use later in the code
-        GameData currentGame;
-        String username;
         // If the gameID is null, it is invalid, raise an exception
-        if (r.gameID()==null)
-        {
-            throw new ResponseException(400, "Error: Invalid ID");
-        }
+        checkGameID(r.gameID());
+
+        // If player color is null, raise exception
+        checkPlayerColor(r.playerColor());
+
+        // If authorization is null, raise an exception
+        checkAuthToken(r.authToken());
 
         // Set the gameID
         int gameID = r.gameID();
 
         // Try getting the authorization
-        try
-        {
-            username = auth.getAuth(r.authToken()).username();
-        }
-        catch (DataAccessException e)
-        {
-            throw new ResponseException(401, "Error: Invalid Authorization");
-        }
+        String username = getAuth(r.authToken());
 
         // Try getting the game from the data access class
-        try
-        {
-            currentGame = games.getGame(gameID);
-        }
-        catch (DataAccessException e)
-        {
-            throw new ResponseException(401, "Error: Invalid Game ID");
-        }
-
-        // Check the player color is not null
-        if (r.playerColor()==null)
-        {
-            throw new ResponseException(400, "Error: No color specified");
-        }
+        GameData currentGame = getGame(gameID);
 
         // Try to check if the desired player color is taken
         try {
             // If the desired player color is white:
-            if (r.playerColor().toLowerCase(Locale.ROOT).equals("white")) {
-                // If the white username does not equal to null, the color is already taken, raise exception
-                if (!Objects.equals(currentGame.whiteUsername(), null))
-                {
-                    throw new ResponseException(403, "Error: Team Color already taken");
-                }
-                // Else update the game with the new white username
+            boolean whiteColorNotTaken = checkWhiteUsername(r.playerColor(), currentGame);
+            boolean blackColorNotTaken = checkBlackUsername(r.playerColor(), currentGame);
+            if (r.playerColor().equalsIgnoreCase("white") && whiteColorNotTaken)
+            {
                 games.updateGame(new GameData(r.gameID(), username, currentGame.blackUsername(), currentGame.gameName(), currentGame.game()));
             }
-            // If the desired player color is black:
-            else if (r.playerColor().toLowerCase(Locale.ROOT).equals("black"))
+            else if (r.playerColor().equalsIgnoreCase("black") && blackColorNotTaken)
             {
-                // If the black username != null, the color is taken, raise exception
-                if(!Objects.equals(currentGame.blackUsername(), null))
-                {
-                    throw new ResponseException(403, "Error: Team Color already taken");
-                }
-                // Else update the game with the new black username
                 games.updateGame(new GameData(r.gameID(), currentGame.whiteUsername(),username, currentGame.gameName(), currentGame.game()));
-
             }
-            // If the color is not white or black, there is an issue
             else
             {
-                throw new ResponseException(400, "Error: Invalid Color");
+                throw new ResponseException(401, "Error: Something is wrong with the team colors");
             }
         }
-        // If we caught any exceptions in this block, raise a 401 exception
+        // If we caught any exceptions in this from the data access classes, raise a 401 exception
         catch (DataAccessException e)
         {
             throw new ResponseException(401, "Error: Unable to access game");
@@ -168,5 +122,101 @@ public class GameService
             throw new ResponseException(401, "Error: Invalid List Game Result");
         }
 
+    }
+
+    // Check if the Game ID is null
+    private void checkGameID(Integer r) throws ResponseException
+    {
+        if (r == null)
+        {
+            throw new ResponseException(400, "Error: Invalid ID");
+        }
+    }
+
+    // Check if the Game Name is null
+    private void checkGameName(String name) throws ResponseException
+    {
+        if (name==null)
+        {
+            throw new ResponseException(401, "Error: Game name is null");
+        }
+    }
+
+    // Check if the auth token is null
+    private void checkAuthToken(String authToken) throws ResponseException
+    {
+        if (authToken == null)
+        {
+            throw new ResponseException(401, "Error: AuthToken is null");
+        }
+    }
+
+    // Check if the data access class can get the authorization
+    private String getAuth(String authToken) throws ResponseException
+    {
+        try
+        {
+            return auth.getAuth(authToken).username();
+        }
+        catch (DataAccessException e)
+        {
+            throw new ResponseException(401, "Error: Invalid Authorization");
+        }
+    }
+
+    // Return the game given a gameID
+    private GameData getGame(int gameID) throws ResponseException
+    {
+        try
+        {
+            return games.getGame(gameID);
+        }
+        catch (DataAccessException e)
+        {
+            throw new ResponseException(401, "Error: Invalid Game ID");
+        }
+    }
+
+    // Check if the player color is null or invalid
+    private void checkPlayerColor(String color) throws ResponseException
+    {
+        if (color == null)
+        {
+            throw new ResponseException(400, "Error: Player Color is null");
+        }
+        else if (!color.equalsIgnoreCase("white") && !color.equalsIgnoreCase("black"))
+        {
+            throw new ResponseException(400, "Error: Player Color is invalid");
+        }
+    }
+
+    // Check if the white username is taken
+    private boolean checkWhiteUsername (String rPlayerColor, GameData currentGame) throws ResponseException
+    {
+        if (rPlayerColor.equalsIgnoreCase("white")) {
+            // If the white username does not equal to null, the color is already taken, raise exception
+            if (!Objects.equals(currentGame.whiteUsername(), null))
+            {
+                throw new ResponseException(403, "Error: White Team Color already taken");
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    // Check if the black username is taken
+    private boolean checkBlackUsername (String rPlayerColor, GameData currentGame) throws ResponseException
+    {
+        if (rPlayerColor.equalsIgnoreCase("black")) {
+            // If the black username does not equal to null, the color is already taken, raise exception
+            if (!Objects.equals(currentGame.blackUsername(), null))
+            {
+                throw new ResponseException(403, "Error: Black Team Color already taken");
+            }
+
+            return true;
+        }
+        return false;
     }
 }
