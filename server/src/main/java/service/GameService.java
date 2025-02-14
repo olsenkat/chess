@@ -28,6 +28,12 @@ public class GameService
         // Create new game ID
         int gameID = games.createID();
 
+        // Ensure the game name is not null
+        if (r.gameName()==null)
+        {
+            throw new ResponseException(401, "Error: Game name is null");
+        }
+
         // Try getting the authorization
         try
         {
