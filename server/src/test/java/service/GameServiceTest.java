@@ -138,6 +138,56 @@ class GameServiceTest {
 
     }
 
+    @Nested
+    @DisplayName("List Tests")
+    class ListTests
+    {
+        @Test
+        void listValidResponseFull() {
+            createGame();
+            ListResult listResult = null;
+
+            try {
+                listResult = gameService.list(new ListRequest(authToken));
+            } catch (ResponseException e) {
+                fail("No exception expected");
+            }
+            assertFalse(listResult.games().isEmpty(), "Game list should NOT be empty");
+            assertNotNull(listResult, "List Result should not be null");
+        }
+
+        @Test
+        void listValidResponseEmpty() {
+            gameDAO.clear();
+            ListResult listResult = null;
+
+            try {
+                listResult = gameService.list(new ListRequest(authToken));
+            } catch (ResponseException e) {
+                fail("No exception expected: " + e);
+            }
+            assertTrue(listResult.games().isEmpty(), "Game list should be empty");
+            assertNotNull(listResult, "List Result should not be null");
+        }
+
+        @Test
+        void listIncorrectAuth() {
+            createGame();
+
+            assertThrows(ResponseException.class,
+                    () -> gameService.list(new ListRequest("Incorrect")));
+        }
+
+        @Test
+        void listNullAuth() {
+            createGame();
+
+            assertThrows(ResponseException.class,
+                    () -> gameService.list(new ListRequest(null)));
+        }
+
+    }
+
     void clear()
     {
         clear.clear();
