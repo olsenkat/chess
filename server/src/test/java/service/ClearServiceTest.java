@@ -3,12 +3,14 @@ package service;
 import dataaccess.*;
 import exception.ResponseException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import request_result.CreateRequest;
 import request_result.RegisterRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("User Service Tests")
 public class ClearServiceTest
 {
     static final MemoryAuthDAO auth = new MemoryAuthDAO();
@@ -40,6 +42,7 @@ public class ClearServiceTest
         }
     }
 
+    @DisplayName("Clear Test")
     @Test
     void clear()
     {
