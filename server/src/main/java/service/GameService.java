@@ -34,6 +34,12 @@ public class GameService
             throw new ResponseException(401, "Error: Game name is null");
         }
 
+        // Ensure the auth token is not null
+        if (r.authToken()==null)
+        {
+            throw new ResponseException(401, "Error: AuthToken is null");
+        }
+
         // Try getting the authorization
         try
         {
