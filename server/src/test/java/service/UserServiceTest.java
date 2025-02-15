@@ -2,10 +2,8 @@ package service;
 
 import dataaccess.*;
 import exception.ResponseException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Nested;
+import model.UserData;
+import org.junit.jupiter.api.*;
 import request_result.*;
 
 import java.util.Objects;
@@ -73,11 +71,92 @@ class UserServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("Login Tests")
+    class LoginTests {
+
+        @Test
+        void loginValidResponse() {
+            loginUser();
+        }
+
+        @Test
+        @Disabled
+        void loginAlreadyLoggedInUser()
+        {
+            loginUser();
+
+            assertThrows(ResponseException.class,
+                    () -> userService.login(new LoginRequest("TestUsername", "TestPassword")));
+        }
+
+        @Test
+        void loginNullUsername()
+        {
+            addUser();
+
+            assertThrows(ResponseException.class,
+                    () -> userService.login(new LoginRequest(null, "TestPassword")));
+        }
+
+        @Test
+        void loginWrongUsername()
+        {
+            addUser();
+
+            assertThrows(ResponseException.class,
+                    () -> userService.login(new LoginRequest("FakeUser", "TestPassword")));
+        }
+
+        @Test
+        void loginNullPassword()
+        {
+            addUser();
+
+            assertThrows(ResponseException.class,
+                    () -> userService.login(new LoginRequest("TestUsername", null)));
+        }
+
+        @Test
+        void loginWrongPassword()
+        {
+            addUser();
+
+            assertThrows(ResponseException.class,
+                    () -> userService.login(new LoginRequest("TestUsername", "FakePassword")));
+        }
+    }
+
     private void clear()
     {
         clear.clear();
     }
 
+    private void loginUser()
+    {
+        addUser();
+
+        try
+        {
+            userService.login(new LoginRequest("TestUsername", "TestPassword"));
+        }
+        catch (ResponseException e)
+        {
+            fail("Login Response Exception not expected: " + e);
+        }
+    }
+
+    private void addUser()
+    {
+        try
+        {
+            userDAO.createUser(new UserData("TestUsername", "TestPassword", "Test@Email.com"));
+        }
+        catch (DataAccessException e)
+        {
+            fail("No exception expected when creating user");
+        }
+    }
     private void registerUser()
     {
         String username = "username";
