@@ -25,7 +25,7 @@ public class UserService
     public RegisterResult register(RegisterRequest r) throws ResponseException
     {
         // Create a new user with given data
-        UserData new_user = new UserData(r.username(), r.password(), r.email());
+        UserData newUser = new UserData(r.username(), r.password(), r.email());
 
         // Generate an Auth Token
         String token = AuthDAO.generateToken();
@@ -37,7 +37,7 @@ public class UserService
         }
 
         // Try creating the user
-        createUser(new_user);
+        createUser(newUser);
 
         // Try creating the Authorization
         createAuth(token, r.username());
@@ -140,15 +140,15 @@ public class UserService
     private LogoutResult getAuthAndLogout(String authToken) throws ResponseException
     {
         // Create a current_auth variable to access later in the code
-        AuthData current_auth;
+        AuthData currentAuth;
 
         // Try to get authorization and delete it
         try
         {
-            current_auth = auth.getAuth(authToken);
+            currentAuth = auth.getAuth(authToken);
 
             // Try deleting the authorization and returning the LogoutResult
-            return deleteAuth(current_auth);
+            return deleteAuth(currentAuth);
 
         }
         // If the getAuth doesn't work, raise a ResponseException
