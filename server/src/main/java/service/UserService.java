@@ -37,10 +37,10 @@ public class UserService
         }
 
         // Try creating the user
-        CreateUser(new_user);
+        createUser(new_user);
 
         // Try creating the Authorization
-        CreateAuth(token, r.username());
+        createAuth(token, r.username());
 
         // Create the RegisterResult and return it
         return new RegisterResult(r.username(), token);
@@ -62,7 +62,7 @@ public class UserService
         getUserFromDatabase(r.username(), r.password());
 
         // Try creating the authorization
-        CreateAuth(token, r.username());
+        createAuth(token, r.username());
 
         // Create new LoginResult instance and return it
         return new LoginResult(r.username(), token);
@@ -82,7 +82,7 @@ public class UserService
     }
 
     // Create the authorization
-    private void CreateAuth(String token, String username) throws ResponseException
+    private void createAuth(String token, String username) throws ResponseException
     {
         // Try creating the authorization
         try {
@@ -96,7 +96,7 @@ public class UserService
 
 
     // Function to test creating the user and sending a response exception if invalid
-    private void CreateUser(UserData newUser) throws ResponseException
+    private void createUser(UserData newUser) throws ResponseException
     {
         // Try creating the user
         try {
