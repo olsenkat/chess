@@ -4,7 +4,7 @@ import dataaccess.*;
 import exception.ResponseException;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import request_result.*;
+import requestresult.*;
 
 import java.util.Objects;
 

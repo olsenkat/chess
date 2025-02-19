@@ -4,8 +4,8 @@ import dataaccess.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import request_result.CreateRequest;
-import request_result.RegisterRequest;
+import requestresult.CreateRequest;
+import requestresult.RegisterRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 

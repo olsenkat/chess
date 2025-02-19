@@ -3,7 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.*;
 import exception.ResponseException;
-import request_result.*;
+import requestresult.*;
 import service.ClearService;
 import service.GameService;
 import service.UserService;

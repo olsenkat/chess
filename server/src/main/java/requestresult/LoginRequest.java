@@ -1,4 +1,4 @@
-package request_result;
+package requestresult;
 
 public record LoginRequest (String username,
                             String password)

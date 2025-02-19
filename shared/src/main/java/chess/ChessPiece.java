@@ -1,13 +1,12 @@
 package chess;
 
-import chess.pieceMoves.BishopMovesCalculator;
-import chess.pieceMoves.RookMovesCalculator;
-import chess.pieceMoves.KnightMovesCalculator;
-import chess.pieceMoves.QueenMovesCalculator;
-import chess.pieceMoves.KingMovesCalculator;
-import chess.pieceMoves.PawnMovesCalculator;
+import chess.piecemoves.BishopMovesCalculator;
+import chess.piecemoves.RookMovesCalculator;
+import chess.piecemoves.KnightMovesCalculator;
+import chess.piecemoves.QueenMovesCalculator;
+import chess.piecemoves.KingMovesCalculator;
+import chess.piecemoves.PawnMovesCalculator;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
