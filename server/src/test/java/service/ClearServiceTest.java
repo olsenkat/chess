@@ -1,7 +1,6 @@
 package service;
 
 import dataaccess.*;
-import exception.ResponseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,8 @@ public class ClearServiceTest
     @BeforeEach
     void addAll()
     {
-        try {
+        assertDoesNotThrow(() ->
+        {
             // Register a user
             var user = userService.register(new RegisterRequest("username", "password", "test"));
             var authToken = user.authToken();
@@ -35,11 +35,7 @@ public class ClearServiceTest
             gameService.create(new CreateRequest(authToken, "Game1"));
             gameService.create(new CreateRequest(authToken, "Game2"));
             gameService.create(new CreateRequest(authToken, "Game3"));
-        }
-        catch (ResponseException e)
-        {
-            fail();
-        }
+        }, "Error: Users and Games not Added");
     }
 
     @DisplayName("Clear Test")
