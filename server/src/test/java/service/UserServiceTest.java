@@ -80,16 +80,6 @@ class UserServiceTest {
         }
 
         @Test
-        @Disabled
-        void loginAlreadyLoggedInUser()
-        {
-            loginUser();
-
-            assertThrows(ResponseException.class,
-                    () -> userService.login(new LoginRequest("TestUsername", "TestPassword")));
-        }
-
-        @Test
         void loginNullUsername()
         {
             addUser();

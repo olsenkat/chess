@@ -30,16 +30,6 @@ public class MemoryAuthDAO implements AuthDAO
             throw new DataAccessException("Auth Token is already in the database.");
         }
 
-        /* The following would be a check if we wanted Users to not be able to log in more than once
-        for (AuthData data: authData.values())
-        {
-            if (Objects.equals(data.username(), auth.username()))
-            {
-                throw new DataAccessException("User is already logged in");
-            }
-        }
-        */
-
         // Put the token in the database
         authData.put(auth.authToken(), auth);
         return authData.get(auth.authToken());
