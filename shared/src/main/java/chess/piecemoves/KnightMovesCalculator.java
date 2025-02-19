@@ -26,17 +26,8 @@ public class KnightMovesCalculator
         {
             // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()+2);
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            if (board.getPiece(endPos) != null)
-            {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
-                // Add functionality to take another piece
-            }
-            else
+            ChessMove temp = addMove(board, myPosition, teamColor, endPos);
+            if (temp!=null)
             {
                 moves.add(temp);
             }
@@ -46,17 +37,8 @@ public class KnightMovesCalculator
         {
             // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-1,myPosition.getColumn()+2);
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            if (board.getPiece(endPos) != null)
-            {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
-                // Add functionality to take another piece
-            }
-            else
+            ChessMove temp = addMove(board, myPosition, teamColor, endPos);
+            if (temp!=null)
             {
                 moves.add(temp);
             }
@@ -68,17 +50,8 @@ public class KnightMovesCalculator
         {
             // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()-2);
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            if (board.getPiece(endPos) != null)
-            {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
-                // Add functionality to take another piece
-            }
-            else
+            ChessMove temp = addMove(board, myPosition, teamColor, endPos);
+            if (temp!=null)
             {
                 moves.add(temp);
             }
@@ -88,17 +61,8 @@ public class KnightMovesCalculator
         {
             // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-1,myPosition.getColumn()-2);
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            if (board.getPiece(endPos) != null)
-            {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
-                // Add functionality to take another piece
-            }
-            else
+            ChessMove temp = addMove(board, myPosition, teamColor, endPos);
+            if (temp!=null)
             {
                 moves.add(temp);
             }
@@ -109,17 +73,8 @@ public class KnightMovesCalculator
         {
             // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+2,myPosition.getColumn()+1);
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            if (board.getPiece(endPos) != null)
-            {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
-                // Add functionality to take another piece
-            }
-            else
+            ChessMove temp = addMove(board, myPosition, teamColor, endPos);
+            if (temp!=null)
             {
                 moves.add(temp);
             }
@@ -129,17 +84,8 @@ public class KnightMovesCalculator
         {
             // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+2,myPosition.getColumn()-1);
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            if (board.getPiece(endPos) != null)
-            {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
-                // Add functionality to take another piece
-            }
-            else
+            ChessMove temp = addMove(board, myPosition, teamColor, endPos);
+            if (temp!=null)
             {
                 moves.add(temp);
             }
@@ -150,17 +96,8 @@ public class KnightMovesCalculator
         {
             // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-2,myPosition.getColumn()+1);
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            if (board.getPiece(endPos) != null)
-            {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
-                // Add functionality to take another piece
-            }
-            else
+            ChessMove temp = addMove(board, myPosition, teamColor, endPos);
+            if (temp!=null)
             {
                 moves.add(temp);
             }
@@ -170,22 +107,34 @@ public class KnightMovesCalculator
         {
             // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-2,myPosition.getColumn()-1);
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            if (board.getPiece(endPos) != null)
-            {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
-                // Add functionality to take another piece
-            }
-            else
+            ChessMove temp = addMove(board, myPosition, teamColor, endPos);
+            if (temp!=null)
             {
                 moves.add(temp);
             }
         }
 
         return moves;
+    }
+
+    // Add move checks to see if the move is a valid move. If not, it returns null
+    private ChessMove addMove(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor teamColor, ChessPosition endPos)
+    {
+        // Get the end position and move to add;
+        ChessMove temp = new ChessMove(myPosition, endPos, null);
+        if (board.getPiece(endPos) != null)
+        {
+            // If it is yours: ignore. Else: capture and add to moves
+            if (board.getPiece(endPos).getTeamColor()!=teamColor)
+            {
+                return temp;
+            }
+            // Add functionality to take another piece
+        }
+        else
+        {
+            return temp;
+        }
+        return null;
     }
 }
