@@ -385,7 +385,8 @@ public class ChessGame {
         return false;
     }
 
-    private boolean movesGetOutOfCheck(Collection<ChessMove> validMoves, ChessPiece piece, ChessGame.TeamColor teamColor)
+    private boolean movesGetOutOfCheck(Collection<ChessMove> validMoves, ChessPiece piece,
+                                       ChessGame.TeamColor teamColor)
     {
         // Check all moves to see if they will get us out of check
         for (var move : validMoves) {
