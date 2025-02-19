@@ -15,11 +15,11 @@ public class QueenMovesCalculator
     {
         // Initialize variables used
         moves = new ArrayList<>();
-        final int CHESS_WIDTH = 8; // Width of board
+        final int chessWidth = 8; // Width of board
         int chessDown = myPosition.getRow()- 1; // Chess tiles below this piece
-        int chessUp = CHESS_WIDTH - myPosition.getRow(); // Chess tiles above this piece
+        int chessUp = chessWidth - myPosition.getRow(); // Chess tiles above this piece
         int chessLeft = myPosition.getColumn() - 1; // Chess tiles to the left of this piece
-        int chessRight = CHESS_WIDTH - myPosition.getColumn(); // Chess tiles to the right of this piece
+        int chessRight = chessWidth - myPosition.getColumn(); // Chess tiles to the right of this piece
         ChessGame.TeamColor teamColor = board.getPiece(myPosition).getTeamColor(); // Team color
 
         int positionDetermine; // Determines how many times the loop plays (how far the Bishop goes)
