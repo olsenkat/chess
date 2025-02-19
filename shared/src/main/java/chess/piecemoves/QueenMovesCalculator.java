@@ -8,9 +8,8 @@ import chess.ChessPosition;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class QueenMovesCalculator
+public class QueenMovesCalculator extends PieceMovesCalculator
 {
-    ArrayList<ChessMove> moves;
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
         // Initialize variables used
@@ -117,27 +116,5 @@ public class QueenMovesCalculator
         }
 
         return moves;
-    }
-
-    private boolean addMove(ChessBoard board, ChessPosition myPosition,
-                         ChessPosition endPos, ChessGame.TeamColor teamColor)
-    {
-        ChessMove temp = new ChessMove(myPosition, endPos, null);
-        // Check if there is another piece in that location
-        if (board.getPiece(endPos) != null)
-        {
-            // If it is yours: ignore. Else: capture and add to moves
-            if (board.getPiece(endPos).getTeamColor()!=teamColor)
-            {
-                moves.add(temp);
-            }
-            return false;
-            // Add functionality to take another piece
-        }
-        else
-        {
-            moves.add(temp);
-        }
-        return true;
     }
 }

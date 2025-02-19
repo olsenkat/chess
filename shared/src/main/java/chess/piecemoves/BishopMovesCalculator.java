@@ -6,9 +6,7 @@ import java.util.Collection;
 import java.util.*;
 
 
-public class BishopMovesCalculator
-{
-    ArrayList<ChessMove> moves;
+public class BishopMovesCalculator extends PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
         // Initialize variables used
@@ -71,26 +69,5 @@ public class BishopMovesCalculator
         }
 
         return moves;
-    }
-
-    private boolean addMove(ChessBoard board, ChessPosition myPosition, ChessPosition endPos, ChessGame.TeamColor teamColor)
-    {
-        ChessMove temp = new ChessMove(myPosition, endPos, null);
-        // Check if there is another piece in that location
-        if (board.getPiece(endPos) != null)
-        {
-            // If it is yours: ignore. Else: capture and add to moves
-            if (board.getPiece(endPos).getTeamColor()!=teamColor)
-            {
-                moves.add(temp);
-            }
-            return false;
-            // Add functionality to take another piece
-        }
-        else
-        {
-            moves.add(temp);
-        }
-        return true;
     }
 }
