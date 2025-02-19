@@ -14,30 +14,26 @@ public class QueenMovesCalculator
     {
         // Initialize variables used
         var moves = new ArrayList<ChessMove>();
-        int CHESS_WIDTH = 8; // Width of board
-        int chess_down = myPosition.getRow()- 1; // Chess tiles below this piece
-        int chess_up = CHESS_WIDTH - myPosition.getRow(); // Chess tiles above this piece
-        int chess_left = myPosition.getColumn() - 1; // Chess tiles to the left of this piece
-        int chess_right = CHESS_WIDTH - myPosition.getColumn(); // Chess tiles to the right of this piece
+        final int CHESS_WIDTH = 8; // Width of board
+        int chessDown = myPosition.getRow()- 1; // Chess tiles below this piece
+        int chessUp = CHESS_WIDTH - myPosition.getRow(); // Chess tiles above this piece
+        int chessLeft = myPosition.getColumn() - 1; // Chess tiles to the left of this piece
+        int chessRight = CHESS_WIDTH - myPosition.getColumn(); // Chess tiles to the right of this piece
         ChessGame.TeamColor teamColor = board.getPiece(myPosition).getTeamColor(); // Team color
 
-        int position_determine; // Determines how many times the loop plays (how far the Bishop goes)
-        ChessPosition start_pos = myPosition; // Used in new ChessMove instances
+        int positionDetermine; // Determines how many times the loop plays (how far the Bishop goes)
 
-        /** Following moves are
-         * for the Rook movements
-         */
         // Determine available spaces right
-        for (int i = 1; i <= chess_right; i++)
+        for (int i = 1; i <= chessRight; i++)
         {
             // Get the end position and move to add;
-            ChessPosition end_pos = new ChessPosition(myPosition.getRow(),myPosition.getColumn()+i);
-            ChessMove temp = new ChessMove(start_pos, end_pos, null);
+            ChessPosition endPos = new ChessPosition(myPosition.getRow(),myPosition.getColumn()+i);
+            ChessMove temp = new ChessMove(myPosition, endPos, null);
             // Check if there is another piece in that location
-            if (board.getPiece(end_pos) != null)
+            if (board.getPiece(endPos) != null)
             {
                 // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(end_pos).getTeamColor()!=teamColor)
+                if (board.getPiece(endPos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
                 }
@@ -51,16 +47,16 @@ public class QueenMovesCalculator
         }
 
         // Determine available spaces left
-        for (int i = 1; i <= chess_left; i++)
+        for (int i = 1; i <= chessLeft; i++)
         {
             // Get end position and move to add;
-            ChessPosition end_pos = new ChessPosition(myPosition.getRow(),myPosition.getColumn()-i);
-            ChessMove temp = new ChessMove(start_pos, end_pos, null);
+            ChessPosition endPos = new ChessPosition(myPosition.getRow(),myPosition.getColumn()-i);
+            ChessMove temp = new ChessMove(myPosition, endPos, null);
             // Check if there is another piece in that location
-            if (board.getPiece(end_pos) != null)
+            if (board.getPiece(endPos) != null)
             {
                 // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(end_pos).getTeamColor()!=teamColor)
+                if (board.getPiece(endPos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
                 }
@@ -74,16 +70,16 @@ public class QueenMovesCalculator
         }
 
         // Determine available spaces down
-        for (int i = 1; i <= chess_down; i++)
+        for (int i = 1; i <= chessDown; i++)
         {
             // Get end position and move to add;
-            ChessPosition end_pos = new ChessPosition(myPosition.getRow()-i,myPosition.getColumn());
-            ChessMove temp = new ChessMove(start_pos, end_pos, null);
+            ChessPosition endPos = new ChessPosition(myPosition.getRow()-i,myPosition.getColumn());
+            ChessMove temp = new ChessMove(myPosition, endPos, null);
             // Check if there is another piece in that location
-            if (board.getPiece(end_pos) != null)
+            if (board.getPiece(endPos) != null)
             {
                 // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(end_pos).getTeamColor()!=teamColor)
+                if (board.getPiece(endPos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
                 }
@@ -97,16 +93,16 @@ public class QueenMovesCalculator
         }
 
         // Determine available spaces up
-        for (int i = 1; i <= chess_up; i++)
+        for (int i = 1; i <= chessUp; i++)
         {
             // Get end position and move to add;
-            ChessPosition end_pos = new ChessPosition(myPosition.getRow()+i,myPosition.getColumn());
-            ChessMove temp = new ChessMove(start_pos, end_pos, null);
+            ChessPosition endPos = new ChessPosition(myPosition.getRow()+i,myPosition.getColumn());
+            ChessMove temp = new ChessMove(myPosition, endPos, null);
             // Check if there is another piece in that location
-            if (board.getPiece(end_pos) != null)
+            if (board.getPiece(endPos) != null)
             {
                 // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(end_pos).getTeamColor()!=teamColor)
+                if (board.getPiece(endPos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
                 }
@@ -119,21 +115,18 @@ public class QueenMovesCalculator
             }
         }
 
-        /** Following moves are for the
-         * Bishop moves
-         */
         // Determine available spaces right and up
-        position_determine = Math.min(chess_up, chess_right);
-        for (int i = 1; i <= position_determine; i++)
+        positionDetermine = Math.min(chessUp, chessRight);
+        for (int i = 1; i <= positionDetermine; i++)
         {
             // Get the end position and move to add;
-            ChessPosition end_pos = new ChessPosition(myPosition.getRow()+i,myPosition.getColumn()+i);
-            ChessMove temp = new ChessMove(start_pos, end_pos, null);
+            ChessPosition endPos = new ChessPosition(myPosition.getRow()+i,myPosition.getColumn()+i);
+            ChessMove temp = new ChessMove(myPosition, endPos, null);
             // Check if there is another piece in that location
-            if (board.getPiece(end_pos) != null)
+            if (board.getPiece(endPos) != null)
             {
                 // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(end_pos).getTeamColor()!=teamColor)
+                if (board.getPiece(endPos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
                 }
@@ -147,17 +140,17 @@ public class QueenMovesCalculator
         }
 
         // Determine available spaces right and down
-        position_determine = Math.min(chess_down, chess_right);
-        for (int i = 1; i <= position_determine; i++)
+        positionDetermine = Math.min(chessDown, chessRight);
+        for (int i = 1; i <= positionDetermine; i++)
         {
             // Get end position and move to add;
-            ChessPosition end_pos = new ChessPosition(myPosition.getRow()-i,myPosition.getColumn()+i);
-            ChessMove temp = new ChessMove(start_pos, end_pos, null);
+            ChessPosition endPos = new ChessPosition(myPosition.getRow()-i,myPosition.getColumn()+i);
+            ChessMove temp = new ChessMove(myPosition, endPos, null);
             // Check if there is another piece in that location
-            if (board.getPiece(end_pos) != null)
+            if (board.getPiece(endPos) != null)
             {
                 // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(end_pos).getTeamColor()!=teamColor)
+                if (board.getPiece(endPos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
                 }
@@ -171,17 +164,17 @@ public class QueenMovesCalculator
         }
 
         // Determine available spaces left and down
-        position_determine = Math.min(chess_down, chess_left);
-        for (int i = 1; i <= position_determine; i++)
+        positionDetermine = Math.min(chessDown, chessLeft);
+        for (int i = 1; i <= positionDetermine; i++)
         {
             // Get end position and move to add;
-            ChessPosition end_pos = new ChessPosition(myPosition.getRow()-i,myPosition.getColumn()-i);
-            ChessMove temp = new ChessMove(start_pos, end_pos, null);
+            ChessPosition endPos = new ChessPosition(myPosition.getRow()-i,myPosition.getColumn()-i);
+            ChessMove temp = new ChessMove(myPosition, endPos, null);
             // Check if there is another piece in that location
-            if (board.getPiece(end_pos) != null)
+            if (board.getPiece(endPos) != null)
             {
                 // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(end_pos).getTeamColor()!=teamColor)
+                if (board.getPiece(endPos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
                 }
@@ -195,17 +188,17 @@ public class QueenMovesCalculator
         }
 
         // Determine available spaces left and up
-        position_determine = Math.min(chess_up, chess_left);
-        for (int i = 1; i <= position_determine; i++)
+        positionDetermine = Math.min(chessUp, chessLeft);
+        for (int i = 1; i <= positionDetermine; i++)
         {
             // Get end position and move to add;
-            ChessPosition end_pos = new ChessPosition(myPosition.getRow()+i,myPosition.getColumn()-i);
-            ChessMove temp = new ChessMove(start_pos, end_pos, null);
+            ChessPosition endPos = new ChessPosition(myPosition.getRow()+i,myPosition.getColumn()-i);
+            ChessMove temp = new ChessMove(myPosition, endPos, null);
             // Check if there is another piece in that location
-            if (board.getPiece(end_pos) != null)
+            if (board.getPiece(endPos) != null)
             {
                 // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(end_pos).getTeamColor()!=teamColor)
+                if (board.getPiece(endPos).getTeamColor()!=teamColor)
                 {
                     moves.add(temp);
                 }
