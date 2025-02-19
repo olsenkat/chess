@@ -120,15 +120,15 @@ public class KingMovesCalculator
         return moves;
     }
 
-    public ChessMove determineMoves(ChessBoard board, ChessPosition myPosition, ChessPosition end_pos)
+    public ChessMove determineMoves(ChessBoard board, ChessPosition myPosition, ChessPosition endPos)
     {
         ChessMove move = null;
-        ChessMove temp = new ChessMove(myPosition, end_pos, null);
+        ChessMove temp = new ChessMove(myPosition, endPos, null);
         ChessGame.TeamColor teamColor = board.getPiece(myPosition).getTeamColor(); // Team color
-        if (board.getPiece(end_pos) != null)
+        if (board.getPiece(endPos) != null)
         {
             // If it is yours: ignore. Else: capture and add to moves
-            if (board.getPiece(end_pos).getTeamColor()!=teamColor)
+            if (board.getPiece(endPos).getTeamColor()!=teamColor)
             {
                 move = temp;
             }

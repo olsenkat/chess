@@ -139,7 +139,7 @@ public class UserService
     // Ensures the auth is valid. Returns the result of the deleteAuth function
     private LogoutResult getAuthAndLogout(String authToken) throws ResponseException
     {
-        // Create a current_auth variable to access later in the code
+        // Create a currentAuth variable to access later in the code
         AuthData currentAuth;
 
         // Try to get authorization and delete it
@@ -159,11 +159,11 @@ public class UserService
     }
 
     // Ensures that the current authorization can be deleted. Returns a new LogoutResult object
-    private LogoutResult deleteAuth(AuthData current_auth) throws ResponseException
+    private LogoutResult deleteAuth(AuthData currentAuthauth) throws ResponseException
     {
         try
         {
-            auth.deleteAuth(current_auth);
+            auth.deleteAuth(currentAuthauth);
             return new LogoutResult();
         }
         // If the deletion doesn't work, raise a ResponseException

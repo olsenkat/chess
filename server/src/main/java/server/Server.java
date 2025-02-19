@@ -93,17 +93,17 @@ public class Server {
     }
 
     private Object createGame(Request req, Response res) throws ResponseException {
-        // Serialize the JSON data into the create_request object to pass into gameService
+        // Serialize the JSON data into the create request object to pass into gameService
         var game = new Gson().fromJson(req.body(), CreateRequest.class);
         game = new CreateRequest(req.headers("authorization"), game.gameName());
-        // Create the game_response object to be retrieved from gameService
+        // Create the game response object to be retrieved from gameService
         var newGame = gameService.create(game);
         // Deserialize the JSON data
         return new Gson().toJson(newGame);
     }
 
     private Object joinGame(Request req, Response res) throws ResponseException {
-        // Serialize the JSON data into the create_request object to pass into gameService
+        // Serialize the JSON data into the create request object to pass into gameService
         var game = new Gson().fromJson(req.body(), JoinRequest.class);
         game = new JoinRequest(req.headers("authorization"), game.playerColor(), game.gameID());
         var gameData = gameService.join(game);
