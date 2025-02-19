@@ -10,10 +10,11 @@ import java.util.Collection;
 
 public class RookMovesCalculator
 {
+    ArrayList<ChessMove> moves;
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
         // Initialize variables used
-        var moves = new ArrayList<ChessMove>();
+        moves = new ArrayList<ChessMove>();
         final int CHESS_WIDTH = 8; // Width of board
         int chessDown = myPosition.getRow()- 1; // Chess tiles below this piece
         int chessUp = CHESS_WIDTH - myPosition.getRow(); // Chess tiles above this piece
@@ -26,21 +27,9 @@ public class RookMovesCalculator
         {
             // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow(),myPosition.getColumn()+i);
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            // Check if there is another piece in that location
-            if (board.getPiece(endPos) != null)
+            if (!getSpace(board, myPosition, endPos, teamColor))
             {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
                 break;
-                // Add functionality to take another piece
-            }
-            else
-            {
-                moves.add(temp);
             }
         }
 
@@ -49,21 +38,9 @@ public class RookMovesCalculator
         {
             // Get end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow(),myPosition.getColumn()-i);
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            // Check if there is another piece in that location
-            if (board.getPiece(endPos) != null)
+            if (!getSpace(board, myPosition, endPos, teamColor))
             {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
                 break;
-                // Add functionality to take another piece
-            }
-            else
-            {
-                moves.add(temp);
             }
         }
 
@@ -72,49 +49,43 @@ public class RookMovesCalculator
         {
             // Get end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-i,myPosition.getColumn());
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            // Check if there is another piece in that location
-            if (board.getPiece(endPos) != null)
+            if (!getSpace(board, myPosition, endPos, teamColor))
             {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
                 break;
-                // Add functionality to take another piece
-            }
-            else
-            {
-                moves.add(temp);
             }
         }
-
-
 
         // Determine available spaces up
         for (int i = 1; i <= chessUp; i++)
         {
             // Get end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+i,myPosition.getColumn());
-            ChessMove temp = new ChessMove(myPosition, endPos, null);
-            // Check if there is another piece in that location
-            if (board.getPiece(endPos) != null)
+            if (!getSpace(board, myPosition, endPos, teamColor))
             {
-                // If it is yours: ignore. Else: capture and add to moves
-                if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                {
-                    moves.add(temp);
-                }
                 break;
-                // Add functionality to take another piece
-            }
-            else
-            {
-                moves.add(temp);
             }
         }
 
         return moves;
+    }
+
+    private boolean getSpace(ChessBoard board, ChessPosition myPosition, ChessPosition endPos, ChessGame.TeamColor teamColor)
+    {
+        ChessMove temp = new ChessMove(myPosition, endPos, null);
+        // Check if there is another piece in that location
+        if (board.getPiece(endPos) != null)
+        {
+            // If it is yours: ignore. Else: capture and add to moves
+            if (board.getPiece(endPos).getTeamColor()!=teamColor)
+            {
+                moves.add(temp);
+            }
+            return false;
+        }
+        else
+        {
+            moves.add(temp);
+        }
+        return true;
     }
 }
