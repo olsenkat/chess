@@ -17,7 +17,6 @@ class UserServiceTest {
     static final MemoryGameDAO gameDAO = new MemoryGameDAO();
     static final UserService userService = new UserService(userDAO, authDAO);
     static final ClearService clear = new ClearService(userDAO, authDAO, gameDAO);
-    String authToken = " ";
 
     @BeforeEach
     void initTests()
@@ -30,7 +29,7 @@ class UserServiceTest {
 
         @Test
         void registerValidResponse() {
-            registerUser();
+            registerAndCheckUser();
         }
 
         @Test
@@ -63,7 +62,7 @@ class UserServiceTest {
         @Test
         void registerDuplicateUser()
         {
-            registerUser();
+            registerAndCheckUser();
             assertThrows(ResponseException.class,
                     () -> userService.register(new RegisterRequest("username",
                             "password",
@@ -127,11 +126,110 @@ class UserServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("Logout Tests")
+    class LogoutTests {
+
+        @Test
+        void logoutValidResponse() {
+            String authToken = registerAndCheckUser();
+
+            logoutUser(authToken);
+        }
+
+        @Test
+        void logoutNullAuthToken() {
+            registerAndCheckUser();
+
+            assertThrows(ResponseException.class,
+                    () -> userService.logout(new LogoutRequest(null)));
+        }
+
+        @Test
+        void logoutDeletedAuthToken() {
+            String authToken = registerAndCheckUser();
+
+            logoutUser(authToken);
+
+            assertThrows(ResponseException.class,
+                    () -> userService.logout(new LogoutRequest(authToken)));
+        }
+
+        @Test
+        void logoutInvalidAuthToken() {
+            registerAndCheckUser();
+
+            assertThrows(ResponseException.class,
+                    () -> userService.logout(new LogoutRequest("FakeAuthToken")));
+        }
+    }
+
+    /*****************************************
+     Helper Functions
+     ****************************************/
+
+    // Clears the database
     private void clear()
     {
         clear.clear();
     }
 
+    // Registers the user and checks it is inserted
+    private String registerAndCheckUser()
+    {
+        String username = "username";
+        String password = "password";
+        String email = "email@email.com";
+
+        RegisterResult registerResult = registerUser(username, password, email);
+
+        checkUserInserted(username, password, email);
+
+        assertNotNull(registerResult, "Creation Result should not be null");
+        return registerResult.authToken();
+    }
+
+    // Registers the user
+    private RegisterResult registerUser(String username, String password, String email)
+    {
+        try
+        {
+            return userService.register(new RegisterRequest(username, password, email));
+        }
+        catch (ResponseException e) {
+            fail("No exception expected");
+            return null;
+        }
+    }
+
+    // Checks the user got inserted into the database
+    private void checkUserInserted(String username, String password, String email)
+    {
+        try
+        {
+            var user = userDAO.getUser(username);
+            checkUserInfoEqual(user, password, email);
+        }
+        catch (DataAccessException e)
+        {
+            fail("registerUser should have inserted the user into the database");
+        }
+    }
+
+    // Checks to see if the user info matches
+    private void checkUserInfoEqual(UserData user, String password, String email)
+    {
+        if (!Objects.equals(user.password(), password))
+        {
+            fail("registerUser Error: Passwords don't match");
+        }
+        else if (!Objects.equals(user.email(), email))
+        {
+            fail("registerUser Error: Passwords don't match");
+        }
+    }
+
+    // Runs the User Service login API. Fails the test if it finds a Response Exception.
     private void loginUser()
     {
         addUser();
@@ -146,6 +244,7 @@ class UserServiceTest {
         }
     }
 
+    // Runs the Add User DAO. Fails the test if it finds a Data Access Exception.
     private void addUser()
     {
         try
@@ -157,37 +256,17 @@ class UserServiceTest {
             fail("No exception expected when creating user");
         }
     }
-    private void registerUser()
+
+    // Runs the User Service logout API. Fails the test if it finds a Response Exception.
+    private void logoutUser(String authToken)
     {
-        String username = "username";
-        String password = "password";
-        String email = "email@email.com";
-
-        RegisterResult registerResult = null;
-
-        try {
-            registerResult = userService.register(new RegisterRequest(username, password, email));
-        } catch (ResponseException e) {
-            fail("No exception expected");
-        }
-
         try
         {
-            var user = userDAO.getUser("username");
-            if (!Objects.equals(user.password(), password))
-            {
-                fail("registerUser Error: Passwords don't match");
-            }
-            else if (!Objects.equals(user.email(), email))
-            {
-                fail("registerUser Error: Passwords don't match");
-            }
+            userService.logout(new LogoutRequest(authToken));
         }
-        catch (DataAccessException e)
+        catch (ResponseException e)
         {
-            fail("registerUser should have inserted the user into the database");
+            fail("Logout Response Exception not expected: " + e);
         }
-
-        assertNotNull(registerResult, "Creation Result should not be null");
     }
 }
