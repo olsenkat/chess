@@ -12,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("User Service Tests")
 public class ClearServiceTest
 {
-    static final MemoryAuthDAO auth = new MemoryAuthDAO();
-    static final MemoryUserDAO user = new MemoryUserDAO();
-    static final MemoryGameDAO game = new MemoryGameDAO();
+    static MemoryAuthDAO auth = new MemoryAuthDAO();
+    static MemoryUserDAO user = new MemoryUserDAO();
+    static MemoryGameDAO game = new MemoryGameDAO();
 
-    static final ClearService clear = new ClearService(user, auth, game);
-    static final GameService gameService = new GameService(auth, game);
-    static final UserService userService = new UserService(user, auth);
+    static ClearService clear = new ClearService(user, auth, game);
+    static GameService gameService = new GameService(auth, game);
+    static UserService userService = new UserService(user, auth);
 
     static String authToken = " ";
 
