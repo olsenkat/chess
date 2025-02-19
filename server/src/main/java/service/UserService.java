@@ -90,7 +90,7 @@ public class UserService
         }
         catch (DataAccessException e)
         {
-            throw new ResponseException(401, "Error: Unauthorized Access");//            return new LoginResult(null, null, "Error: Unable to create Auth");
+            throw new ResponseException(401, "Error: Unauthorized Access");
         }
     }
 
@@ -132,7 +132,7 @@ public class UserService
         }
         catch (DataAccessException e)
         {
-            throw new ResponseException(401, "Error: Invalid User");//            return new LoginResult(null, null, "Error: Unable to find User");
+            throw new ResponseException(401, "Error: Invalid User");
         }
     }
 
