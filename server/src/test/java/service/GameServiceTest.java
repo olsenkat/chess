@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Game Service Tests")
 class GameServiceTest {
+    // Initialize all class variables
     static final MemoryAuthDAO authDAO = new MemoryAuthDAO();
     static final MemoryUserDAO userDAO = new MemoryUserDAO();
     static final MemoryGameDAO gameDAO = new MemoryGameDAO();
@@ -71,13 +72,9 @@ class GameServiceTest {
         @Test
         void joinValidResponseWhite() {
             Integer gameID = createGame();
-            JoinResult joinResult = null;
-
-            try {
-                joinResult = gameService.join(new JoinRequest(authToken, "White", gameID));
-            } catch (ResponseException e) {
-                fail("No exception expected");
-            }
+            JoinResult joinResult = assertDoesNotThrow(() ->
+                gameService.join(new JoinRequest(authToken, "White", gameID)),
+                "No exception expected");
 
             assertNotNull(joinResult, "Creation Result should not be null");
         }
@@ -85,13 +82,9 @@ class GameServiceTest {
         @Test
         void joinValidResponseBlack() {
             Integer gameID = createGame();
-            JoinResult joinResult = null;
-
-            try {
-                joinResult = gameService.join(new JoinRequest(authToken, "Black", gameID));
-            } catch (ResponseException e) {
-                fail("No exception expected");
-            }
+            JoinResult joinResult = assertDoesNotThrow(() ->
+                    gameService.join(new JoinRequest(authToken, "Black", gameID)),
+                    "No exception expected");
 
             assertNotNull(joinResult, "Creation Result should not be null");
         }
@@ -145,13 +138,10 @@ class GameServiceTest {
         @Test
         void listValidResponseFull() {
             createGame();
-            ListResult listResult = null;
+            ListResult listResult = assertDoesNotThrow(() ->
+                    gameService.list(new ListRequest(authToken)),
+                    "No exception expected");
 
-            try {
-                listResult = gameService.list(new ListRequest(authToken));
-            } catch (ResponseException e) {
-                fail("No exception expected");
-            }
             assertFalse(listResult.games().isEmpty(), "Game list should NOT be empty");
             assertNotNull(listResult, "List Result should not be null");
         }
@@ -159,13 +149,11 @@ class GameServiceTest {
         @Test
         void listValidResponseEmpty() {
             gameDAO.clear();
-            ListResult listResult = null;
+            ListResult listResult = assertDoesNotThrow(() ->
+                    gameService.list(new ListRequest(authToken)),
+                    "No exception expected");
 
-            try {
-                listResult = gameService.list(new ListRequest(authToken));
-            } catch (ResponseException e) {
-                fail("No exception expected: " + e);
-            }
+
             assertTrue(listResult.games().isEmpty(), "Game list should be empty");
             assertNotNull(listResult, "List Result should not be null");
         }
@@ -188,6 +176,11 @@ class GameServiceTest {
 
     }
 
+
+    /**
+     * Helper Functions
+     * **/
+
     void clear()
     {
         clear.clear();
@@ -195,25 +188,20 @@ class GameServiceTest {
 
     void registerUser()
     {
-        try {
-            // Register a user
-            var user = userService.register(new RegisterRequest("username", "password", "test"));
-            authToken = user.authToken();
-        }
-        catch (ResponseException e)
-        {
-            fail("User Registration failed");
-        }
+        assertDoesNotThrow(() ->
+            {
+                // Register a user
+                var user = userService.register(new RegisterRequest("username", "password", "test"));
+                authToken = user.authToken();
+            }, "User Registration failed");
     }
 
     Integer createGame()
     {
-        CreateResult createResult = null;
-        try {
-            createResult = gameService.create(new CreateRequest(authToken, "new game"));
-        } catch (ResponseException e) {
-            fail("No exception expected");
-        }
+        CreateResult createResult = assertDoesNotThrow(() ->
+                gameService.create(new CreateRequest(authToken, "new game")),
+                "No exception expected");
+
         assertNotNull(createResult, "Creation Result should not be null");
         return createResult.gameID();
     }
