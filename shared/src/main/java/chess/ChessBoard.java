@@ -72,58 +72,58 @@ public class ChessBoard implements Cloneable {
 
         // Rook1
         ChessPosition position = new ChessPosition(row, col);
-        ChessPiece new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
-        addPiece(position, new_piece);
+        ChessPiece newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+        addPiece(position, newPiece);
 
         // Knight1
         col = 2;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
+        addPiece(position, newPiece);
 
         // Bishop1
         col = 3;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
+        addPiece(position, newPiece);
 
         // Queen
         col = 4;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN);
+        addPiece(position, newPiece);
 
         // King
         col = 5;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
+        addPiece(position, newPiece);
 
         // Bishop2
         col = 6;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
+        addPiece(position, newPiece);
 
         // Knight2
         col = 7;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
+        addPiece(position, newPiece);
 
         // Rook2
         col = 8;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+        addPiece(position, newPiece);
 
         // Pawns
         row = 2;
         for(col=1; col<9; col++)
         {
             position = new ChessPosition(row, col);
-            new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN);
-            addPiece(position, new_piece);
+            newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN);
+            addPiece(position, newPiece);
         }
 
 
@@ -134,58 +134,58 @@ public class ChessBoard implements Cloneable {
 
         // Rook1
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+        addPiece(position, newPiece);
 
         // Knight1
         col = 7;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
+        addPiece(position, newPiece);
 
         // Bishop1
         col = 6;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
+        addPiece(position, newPiece);
 
         // King
         col = 5;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
+        addPiece(position, newPiece);
 
         // Queen
         col = 4;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.QUEEN);
+        addPiece(position, newPiece);
 
         // Bishop2
         col = 3;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.BISHOP);
+        addPiece(position, newPiece);
 
         // Knight2
         col = 2;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.KNIGHT);
+        addPiece(position, newPiece);
 
         // Rook2
         col = 1;
         position = new ChessPosition(row, col);
-        new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
-        addPiece(position, new_piece);
+        newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.ROOK);
+        addPiece(position, newPiece);
 
         // Pawns
         row = 7;
         for(col=8; col>0; col--)
         {
             position = new ChessPosition(row, col);
-            new_piece = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN);
-            addPiece(position, new_piece);
+            newPiece = new ChessPiece(teamColor, ChessPiece.PieceType.PAWN);
+            addPiece(position, newPiece);
         }
 
     }
@@ -201,18 +201,18 @@ public class ChessBoard implements Cloneable {
                 for (int j = 1; j <= 8; j++)
                 {
                     // Create current position to add to new board
-                    ChessPosition current_pos = new ChessPosition(i,j);
+                    ChessPosition currentPos = new ChessPosition(i,j);
                     // Locate the new piece to transfer over
-                    ChessPiece old_piece = this.getPiece(current_pos);
-                    if (old_piece != null)
+                    ChessPiece oldPiece = this.getPiece(currentPos);
+                    if (oldPiece != null)
                     {
                         // Determine the team color
-                        ChessGame.TeamColor team_color = old_piece.getTeamColor();
+                        ChessGame.TeamColor teamColor = oldPiece.getTeamColor();
                         // Determine the piece type
-                        ChessPiece.PieceType piece_type = old_piece.getPieceType();
+                        ChessPiece.PieceType pieceType = oldPiece.getPieceType();
                         // Create the new piece and add it to the clone.
-                        ChessPiece new_piece = new ChessPiece(team_color, piece_type);
-                        clone.addPiece(current_pos, new_piece);
+                        ChessPiece newPiece = new ChessPiece(teamColor, pieceType);
+                        clone.addPiece(currentPos, newPiece);
                     }
                 }
             }
