@@ -24,7 +24,6 @@ public class KnightMovesCalculator
         // Determine available spaces right (then up)
         if ((chessRight >=2) && (chessUp>=1))
         {
-            // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()+2);
             ChessMove temp = addMove(board, myPosition, teamColor, endPos);
             if (temp!=null)
@@ -35,7 +34,6 @@ public class KnightMovesCalculator
         // Determine available spaces right (then down)
         if ((chessRight >=2) && (chessDown>=1))
         {
-            // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-1,myPosition.getColumn()+2);
             ChessMove temp = addMove(board, myPosition, teamColor, endPos);
             if (temp!=null)
@@ -48,7 +46,6 @@ public class KnightMovesCalculator
         // Determine available spaces left (then up)
         if ((chessLeft >=2) && (chessUp>=1))
         {
-            // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+1,myPosition.getColumn()-2);
             ChessMove temp = addMove(board, myPosition, teamColor, endPos);
             if (temp!=null)
@@ -59,7 +56,6 @@ public class KnightMovesCalculator
         // Determine available spaces left (then down)
         if ((chessLeft >=2) && (chessDown>=1))
         {
-            // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-1,myPosition.getColumn()-2);
             ChessMove temp = addMove(board, myPosition, teamColor, endPos);
             if (temp!=null)
@@ -71,7 +67,6 @@ public class KnightMovesCalculator
         // Determine available spaces up (then right)
         if ((chessUp >=2) && (chessRight>=1))
         {
-            // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+2,myPosition.getColumn()+1);
             ChessMove temp = addMove(board, myPosition, teamColor, endPos);
             if (temp!=null)
@@ -82,7 +77,6 @@ public class KnightMovesCalculator
         // Determine available spaces up (then left)
         if ((chessUp >=2) && (chessLeft>=1))
         {
-            // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+2,myPosition.getColumn()-1);
             ChessMove temp = addMove(board, myPosition, teamColor, endPos);
             if (temp!=null)
@@ -94,7 +88,6 @@ public class KnightMovesCalculator
         // Determine available spaces down (then right)
         if ((chessDown >=2) && (chessRight>=1))
         {
-            // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-2,myPosition.getColumn()+1);
             ChessMove temp = addMove(board, myPosition, teamColor, endPos);
             if (temp!=null)
@@ -105,7 +98,6 @@ public class KnightMovesCalculator
         // Determine available spaces down (then left)
         if ((chessDown >=2) && (chessLeft>=1))
         {
-            // Get the end position and move to add;
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-2,myPosition.getColumn()-1);
             ChessMove temp = addMove(board, myPosition, teamColor, endPos);
             if (temp!=null)

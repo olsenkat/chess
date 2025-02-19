@@ -24,10 +24,7 @@ public class PawnMovesCalculator
             // Move pawn up
             if (chessUp>=1)
             {
-                // Create the end position
                 ChessPosition endPos = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn());
-
-                // Determine if the piece will receive a promotion
                 if ((endPos.getRow()==8))
                 {
                     addPromotionForward(board, myPosition, endPos);
@@ -45,103 +42,69 @@ public class PawnMovesCalculator
                 addMoveIfSpaceFull(board, myPosition, endPos, tempEndPos);
             }
 
-
-            // Pawn can go right/up or left/up diagonal if there is an enemy nearby
             // Move pawn right/up diagonal
-            if ((chessUp>=1) && (chessRight>=1))
-            {
-                // Create the end position
+            if ((chessUp>=1) && (chessRight>=1)) {
                 ChessPosition endPos = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+1);
-                // Check if there is a move, and add
-                // Determine if the piece will receive a promotion
-                if ((endPos.getRow()==8))
-                {
+                if ((endPos.getRow()==8)) {
                     addPromotionDiagonal(board, myPosition, endPos, teamColor);
                 }
-                else
-                {
+                else {
                     getMoveDiagonal(board, endPos, myPosition, teamColor);
                 }
             }
             // Move pawn left/up diagonal
-            if ((chessLeft>=1) && (chessUp>=1))
-            {
-                // Create the end position
+            if ((chessLeft>=1) && (chessUp>=1)) {
                 ChessPosition endPos = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-1);
-                // Check if there is a move, and add
-                // Determine if the piece will receive a promotion
-                if ((endPos.getRow()==8))
-                {
+                if ((endPos.getRow()==8)) {
                     addPromotionDiagonal(board, myPosition, endPos, teamColor);
                 }
-                else
-                {
+                else {
                     getMoveDiagonal(board, endPos, myPosition, teamColor);
                 }
             }
         }
-        if (teamColor== ChessGame.TeamColor.BLACK)
-        {
+        if (teamColor== ChessGame.TeamColor.BLACK) {
             // Move pawn down
-            if (chessDown>=1)
-            {
+            if (chessDown>=1) {
                 ChessPosition endPos = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn());
-
-                // Determine if the piece will receive a promotion
-                if ((endPos.getRow()==1))
-                {
+                if ((endPos.getRow()==1)) {
                     addPromotionForward(board, myPosition, endPos);
                 }
-                else
-                {
+                else {
                     addMoveIfSpaceEmpty(board, endPos, myPosition);
                 }
 
             }
             // Pawn can move 2 when in starting position
-            if ((myPosition.getRow()==7))
-            {
+            if ((myPosition.getRow()==7)) {
                 ChessPosition tempEndPos = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn());
                 ChessPosition endPos = new ChessPosition(myPosition.getRow()-2, myPosition.getColumn());
                 addMoveIfSpaceFull(board, myPosition, endPos, tempEndPos);
             }
 
-
-            // Pawn can go right/up or left/up diagonal if there is an enemy nearby
             // Move pawn right/down diagonal
-            if ((chessDown>=1) && (chessRight>=1))
-            {
-                // Create the end position
+            if ((chessDown>=1) && (chessRight>=1)) {
                 ChessPosition endPos = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+1);
-                // Check if there is a move, and add
-                if ((endPos.getRow()==1))
-                {
+                if ((endPos.getRow()==1)) {
                     addPromotionDiagonal(board, myPosition, endPos, teamColor);
                 }
-                else
-                {
+                else {
                     getMoveDiagonal(board, endPos, myPosition, teamColor);
                 }
             }
+
             // Move pawn left/down diagonal
-            if ((chessLeft>=1) && (chessDown>=1))
-            {
-                // Create the end position
+            if ((chessLeft>=1) && (chessDown>=1)) {
                 ChessPosition endPos = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-1);
-                // Check if there is a move, and add
-                if ((endPos.getRow()==1))
-                {
+                if ((endPos.getRow()==1)) {
                     addPromotionDiagonal(board, myPosition, endPos, teamColor);
                 }
-                else
-                {
+                else {
                     getMoveDiagonal(board, endPos, myPosition, teamColor);
                 }
             }
         }
-
         return moves;
-
     }
     public ChessMove determineMoves(ChessBoard board, ChessPosition myPosition, ChessPosition endPos)
     {

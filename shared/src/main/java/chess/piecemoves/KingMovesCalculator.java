@@ -23,9 +23,7 @@ public class KingMovesCalculator
         // Move king up
         if (chessUp>=1)
         {
-            // Create the end position
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn());
-            // Check if there is a move, and add
             ChessMove move = determineMoves(board, myPosition, endPos);
             if (move!=null)
             {
@@ -35,9 +33,7 @@ public class KingMovesCalculator
         // Move king down
         if (chessDown>=1)
         {
-            // Create the end position
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn());
-            // Check if there is a move, and add
             ChessMove move = determineMoves(board, myPosition, endPos);
             if (move!=null)
             {
@@ -47,9 +43,7 @@ public class KingMovesCalculator
         // Move king right
         if (chessRight>=1)
         {
-            // Create the end position
             ChessPosition endPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn()+1);
-            // Check if there is a move, and add
             ChessMove move = determineMoves(board, myPosition, endPos);
             if (move!=null)
             {
@@ -59,9 +53,7 @@ public class KingMovesCalculator
         // Move king left
         if (chessLeft>=1)
         {
-            // Create the end position
             ChessPosition endPos = new ChessPosition(myPosition.getRow(), myPosition.getColumn()-1);
-            // Check if there is a move, and add
             ChessMove move = determineMoves(board, myPosition, endPos);
             if (move!=null)
             {
@@ -71,9 +63,7 @@ public class KingMovesCalculator
         // Move king right/up diagonal
         if ((chessUp>=1) && (chessRight>=1))
         {
-            // Create the end position
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+1);
-            // Check if there is a move, and add
             ChessMove move = determineMoves(board, myPosition, endPos);
             if (move!=null)
             {
@@ -83,9 +73,7 @@ public class KingMovesCalculator
         // Move king right/down diagonal
         if ((chessDown>=1) && (chessRight>=1))
         {
-            // Create the end position
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+1);
-            // Check if there is a move, and add
             ChessMove move = determineMoves(board, myPosition, endPos);
             if (move!=null)
             {
@@ -95,9 +83,7 @@ public class KingMovesCalculator
         // Move king left/up diagonal
         if ((chessLeft>=1) && (chessUp>=1))
         {
-            // Create the end position
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-1);
-            // Check if there is a move, and add
             ChessMove move = determineMoves(board, myPosition, endPos);
             if (move!=null)
             {
@@ -107,16 +93,13 @@ public class KingMovesCalculator
         // Move king left/down diagonal
         if ((chessLeft>=1) && (chessDown>=1))
         {
-            // Create the end position
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-1);
-            // Check if there is a move, and add
             ChessMove move = determineMoves(board, myPosition, endPos);
             if (move!=null)
             {
                 moves.add(move);
             }
         }
-
         return moves;
     }
 

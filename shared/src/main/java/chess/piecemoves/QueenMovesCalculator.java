@@ -24,97 +24,72 @@ public class QueenMovesCalculator extends PieceMovesCalculator
         int positionDetermine; // Determines how many times the loop plays (how far the Bishop goes)
 
         // Determine available spaces right
-        for (int i = 1; i <= chessRight; i++)
-        {
-            // Get the end position and move to add;
+        for (int i = 1; i <= chessRight; i++) {
             ChessPosition endPos = new ChessPosition(myPosition.getRow(),myPosition.getColumn()+i);
-            if (!addMove(board, myPosition, endPos, teamColor))
-            {
+            if (!addMove(board, myPosition, endPos, teamColor)) {
                 break;
             }
         }
 
         // Determine available spaces left
-        for (int i = 1; i <= chessLeft; i++)
-        {
-            // Get end position and move to add;
+        for (int i = 1; i <= chessLeft; i++) {
             ChessPosition endPos = new ChessPosition(myPosition.getRow(),myPosition.getColumn()-i);
-            if (!addMove(board, myPosition, endPos, teamColor))
-            {
+            if (!addMove(board, myPosition, endPos, teamColor)) {
                 break;
             }
         }
 
         // Determine available spaces down
-        for (int i = 1; i <= chessDown; i++)
-        {
-            // Get end position and move to add;
+        for (int i = 1; i <= chessDown; i++) {
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-i,myPosition.getColumn());
-            if (!addMove(board, myPosition, endPos, teamColor))
-            {
+            if (!addMove(board, myPosition, endPos, teamColor)) {
                 break;
             }
         }
 
         // Determine available spaces up
-        for (int i = 1; i <= chessUp; i++)
-        {
-            // Get end position and move to add;
+        for (int i = 1; i <= chessUp; i++) {
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+i,myPosition.getColumn());
-            if (!addMove(board, myPosition, endPos, teamColor))
-            {
+            if (!addMove(board, myPosition, endPos, teamColor)) {
                 break;
             }
         }
 
         // Determine available spaces right and up
         positionDetermine = Math.min(chessUp, chessRight);
-        for (int i = 1; i <= positionDetermine; i++)
-        {
-            // Get the end position and move to add;
+        for (int i = 1; i <= positionDetermine; i++) {
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+i,myPosition.getColumn()+i);
-            if (!addMove(board, myPosition, endPos, teamColor))
-            {
+            if (!addMove(board, myPosition, endPos, teamColor)) {
                 break;
             }
         }
 
         // Determine available spaces right and down
         positionDetermine = Math.min(chessDown, chessRight);
-        for (int i = 1; i <= positionDetermine; i++)
-        {
-            // Get end position and move to add;
+        for (int i = 1; i <= positionDetermine; i++) {
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-i,myPosition.getColumn()+i);
-            if (!addMove(board, myPosition, endPos, teamColor))
-            {
+            if (!addMove(board, myPosition, endPos, teamColor)) {
                 break;
             }
         }
 
         // Determine available spaces left and down
         positionDetermine = Math.min(chessDown, chessLeft);
-        for (int i = 1; i <= positionDetermine; i++)
-        {
-            // Get end position and move to add;
+        for (int i = 1; i <= positionDetermine; i++) {
             ChessPosition endPos = new ChessPosition(myPosition.getRow()-i,myPosition.getColumn()-i);
-            if (!addMove(board, myPosition, endPos, teamColor))
-            {
+            if (!addMove(board, myPosition, endPos, teamColor)) {
                 break;
             }
         }
 
         // Determine available spaces left and up
         positionDetermine = Math.min(chessUp, chessLeft);
-        for (int i = 1; i <= positionDetermine; i++)
-        {
-            // Get end position and move to add;
+        for (int i = 1; i <= positionDetermine; i++) {
             ChessPosition endPos = new ChessPosition(myPosition.getRow()+i,myPosition.getColumn()-i);
-            if (!addMove(board, myPosition, endPos, teamColor))
-            {
+            if (!addMove(board, myPosition, endPos, teamColor)) {
                 break;
             }
         }
-
         return moves;
     }
 }
