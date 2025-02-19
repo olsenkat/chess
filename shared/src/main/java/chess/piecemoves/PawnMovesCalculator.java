@@ -7,10 +7,11 @@ import java.util.Collection;
 
 public class PawnMovesCalculator
 {
+    ArrayList<ChessMove> moves;
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition)
     {
         // Initialize variables used
-        var moves = new ArrayList<ChessMove>();
+        moves = new ArrayList<>();
         final int CHESS_WIDTH = 8; // Width of board
         int chessDown = myPosition.getRow()- 1; // Chess tiles below this piece
         int chessUp = CHESS_WIDTH - myPosition.getRow(); // Chess tiles above this piece
@@ -29,27 +30,11 @@ public class PawnMovesCalculator
                 // Determine if the piece will receive a promotion
                 if ((endPos.getRow()==8))
                 {
-                    // Change promotion type
-                    for(var piece: ChessPiece.PieceType.values())
-                    {
-                        ChessMove temp = null;
-                        if ((piece!= ChessPiece.PieceType.PAWN) && (piece!= ChessPiece.PieceType.KING))
-                        {
-                            temp = new ChessMove(myPosition, endPos, piece);
-                        }
-                        if ((board.getPiece(endPos) == null) && (temp!=null))
-                        {
-                            moves.add(temp);
-                        }
-                    }
+                    addPromotionForward(board, myPosition, endPos);
                 }
                 else
                 {
-                    ChessMove temp = new ChessMove(myPosition, endPos, null);
-                    if (board.getPiece(endPos) == null)
-                    {
-                        moves.add(temp);
-                    }
+                    addMoveIfSpaceEmpty(board, endPos, myPosition);
                 }
             }
             // Pawn can move 2 when in starting position
@@ -57,12 +42,7 @@ public class PawnMovesCalculator
             {
                 ChessPosition tempEndPos = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn());
                 ChessPosition endPos = new ChessPosition(myPosition.getRow()+2, myPosition.getColumn());
-                // Check if there is a move, and add
-                ChessMove move = determineMoves(board, myPosition, endPos);
-                if ((move!=null) && ((board.getPiece(tempEndPos) == null)))
-                {
-                    moves.add(move);
-                }
+                addMoveIfSpaceFull(board, myPosition, endPos, tempEndPos);
             }
 
 
@@ -76,35 +56,11 @@ public class PawnMovesCalculator
                 // Determine if the piece will receive a promotion
                 if ((endPos.getRow()==8))
                 {
-                    // Change promotion type
-                    for(var piece: ChessPiece.PieceType.values())
-                    {
-                        ChessMove temp = null;
-                        if ((piece!= ChessPiece.PieceType.PAWN) && (piece!= ChessPiece.PieceType.KING))
-                        {
-                            temp = new ChessMove(myPosition, endPos, piece);
-                        }
-                        if ((board.getPiece(endPos) != null) && (temp!=null))
-                        {
-                            // If it is yours: ignore. Else: capture and add to moves
-                            if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                            {
-                                moves.add(temp);
-                            }
-                        }
-                    }
+                    addPromotionDiagonal(board, myPosition, endPos, teamColor);
                 }
                 else
                 {
-                    ChessMove temp = new ChessMove(myPosition, endPos, null);
-                    if (board.getPiece(endPos) != null)
-                    {
-                        // If it is yours: ignore. Else: capture and add to moves
-                        if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                        {
-                            moves.add(temp);
-                        }
-                    }
+                    getMoveDiagonal(board, endPos, myPosition, teamColor);
                 }
             }
             // Move pawn left/up diagonal
@@ -116,35 +72,11 @@ public class PawnMovesCalculator
                 // Determine if the piece will receive a promotion
                 if ((endPos.getRow()==8))
                 {
-                    // Change promotion type
-                    for(var piece: ChessPiece.PieceType.values())
-                    {
-                        ChessMove temp = null;
-                        if ((piece!= ChessPiece.PieceType.PAWN) && (piece!= ChessPiece.PieceType.KING))
-                        {
-                            temp = new ChessMove(myPosition, endPos, piece);
-                        }
-                        if ((board.getPiece(endPos) != null) && (temp!=null))
-                        {
-                            // If it is yours: ignore. Else: capture and add to moves
-                            if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                            {
-                                moves.add(temp);
-                            }
-                        }
-                    }
+                    addPromotionDiagonal(board, myPosition, endPos, teamColor);
                 }
                 else
                 {
-                    ChessMove temp = new ChessMove(myPosition, endPos, null);
-                    if (board.getPiece(endPos) != null)
-                    {
-                        // If it is yours: ignore. Else: capture and add to moves
-                        if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                        {
-                            moves.add(temp);
-                        }
-                    }
+                    getMoveDiagonal(board, endPos, myPosition, teamColor);
                 }
             }
         }
@@ -154,32 +86,15 @@ public class PawnMovesCalculator
             if (chessDown>=1)
             {
                 ChessPosition endPos = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn());
-                // Check if there is a move, and add
 
                 // Determine if the piece will receive a promotion
                 if ((endPos.getRow()==1))
                 {
-                    // Change promotion type
-                    for(var piece: ChessPiece.PieceType.values())
-                    {
-                        ChessMove temp = null;
-                        if ((piece!= ChessPiece.PieceType.PAWN) && (piece!= ChessPiece.PieceType.KING))
-                        {
-                            temp = new ChessMove(myPosition, endPos, piece);
-                        }
-                        if ((board.getPiece(endPos) == null) && (temp!=null))
-                        {
-                            moves.add(temp);
-                        }
-                    }
+                    addPromotionForward(board, myPosition, endPos);
                 }
                 else
                 {
-                    ChessMove temp = new ChessMove(myPosition, endPos, null);
-                    if (board.getPiece(endPos) == null)
-                    {
-                        moves.add(temp);
-                    }
+                    addMoveIfSpaceEmpty(board, endPos, myPosition);
                 }
 
             }
@@ -188,12 +103,7 @@ public class PawnMovesCalculator
             {
                 ChessPosition tempEndPos = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn());
                 ChessPosition endPos = new ChessPosition(myPosition.getRow()-2, myPosition.getColumn());
-                // Check if there is a move, and add
-                ChessMove move = determineMoves(board, myPosition, endPos);
-                if ((move!=null) && ((board.getPiece(tempEndPos) == null)))
-                {
-                    moves.add(move);
-                }
+                addMoveIfSpaceFull(board, myPosition, endPos, tempEndPos);
             }
 
 
@@ -206,35 +116,11 @@ public class PawnMovesCalculator
                 // Check if there is a move, and add
                 if ((endPos.getRow()==1))
                 {
-                    // Change promotion type
-                    for(var piece: ChessPiece.PieceType.values())
-                    {
-                        ChessMove temp = null;
-                        if ((piece!= ChessPiece.PieceType.PAWN) && (piece!= ChessPiece.PieceType.KING))
-                        {
-                            temp = new ChessMove(myPosition, endPos, piece);
-                        }
-                        if ((board.getPiece(endPos) != null) && (temp!=null))
-                        {
-                            // If it is yours: ignore. Else: capture and add to moves
-                            if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                            {
-                                moves.add(temp);
-                            }
-                        }
-                    }
+                    addPromotionDiagonal(board, myPosition, endPos, teamColor);
                 }
                 else
                 {
-                    ChessMove temp = new ChessMove(myPosition, endPos, null);
-                    if (board.getPiece(endPos) != null)
-                    {
-                        // If it is yours: ignore. Else: capture and add to moves
-                        if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                        {
-                            moves.add(temp);
-                        }
-                    }
+                    getMoveDiagonal(board, endPos, myPosition, teamColor);
                 }
             }
             // Move pawn left/down diagonal
@@ -245,35 +131,11 @@ public class PawnMovesCalculator
                 // Check if there is a move, and add
                 if ((endPos.getRow()==1))
                 {
-                    // Change promotion type
-                    for(var piece: ChessPiece.PieceType.values())
-                    {
-                        ChessMove temp = null;
-                        if ((piece!= ChessPiece.PieceType.PAWN) && (piece!= ChessPiece.PieceType.KING))
-                        {
-                            temp = new ChessMove(myPosition, endPos, piece);
-                        }
-                        if ((board.getPiece(endPos) != null) && (temp!=null))
-                        {
-                            // If it is yours: ignore. Else: capture and add to moves
-                            if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                            {
-                                moves.add(temp);
-                            }
-                        }
-                    }
+                    addPromotionDiagonal(board, myPosition, endPos, teamColor);
                 }
                 else
                 {
-                    ChessMove temp = new ChessMove(myPosition, endPos, null);
-                    if (board.getPiece(endPos) != null)
-                    {
-                        // If it is yours: ignore. Else: capture and add to moves
-                        if (board.getPiece(endPos).getTeamColor()!=teamColor)
-                        {
-                            moves.add(temp);
-                        }
-                    }
+                    getMoveDiagonal(board, endPos, myPosition, teamColor);
                 }
             }
         }
@@ -294,5 +156,78 @@ public class PawnMovesCalculator
         // The pawn can't attack straight ahead.
         move = new ChessMove(myPosition, endPos, null);
         return move;
+    }
+
+    private void addPromotionForward(ChessBoard board, ChessPosition myPosition, ChessPosition endPos)
+    {
+        // Change promotion type
+        for(var piece: ChessPiece.PieceType.values())
+        {
+            ChessMove temp = null;
+            if ((piece!= ChessPiece.PieceType.PAWN) && (piece!= ChessPiece.PieceType.KING))
+            {
+                temp = new ChessMove(myPosition, endPos, piece);
+            }
+            if ((board.getPiece(endPos) == null) && (temp!=null))
+            {
+                moves.add(temp);
+            }
+        }
+    }
+
+    private void addPromotionDiagonal(ChessBoard board, ChessPosition myPosition,
+                                      ChessPosition endPos, ChessGame.TeamColor teamColor)
+    {
+        // Change promotion type
+        for(var piece: ChessPiece.PieceType.values())
+        {
+            ChessMove temp = null;
+            if ((piece!= ChessPiece.PieceType.PAWN) && (piece!= ChessPiece.PieceType.KING))
+            {
+                temp = new ChessMove(myPosition, endPos, piece);
+            }
+            if ((board.getPiece(endPos) != null) && (temp!=null))
+            {
+                // If it is yours: ignore. Else: capture and add to moves
+                if (board.getPiece(endPos).getTeamColor()!=teamColor)
+                {
+                    moves.add(temp);
+                }
+            }
+        }
+    }
+
+    private void addMoveIfSpaceEmpty(ChessBoard board, ChessPosition endPos, ChessPosition myPosition)
+    {
+        ChessMove temp = new ChessMove(myPosition, endPos, null);
+        if (board.getPiece(endPos) == null)
+        {
+            moves.add(temp);
+        }
+    }
+
+    private void addMoveIfSpaceFull(ChessBoard board, ChessPosition myPosition,
+                                    ChessPosition endPos, ChessPosition tempEndPos)
+    {
+        // Check if there is a move, and add
+        ChessMove move = determineMoves(board, myPosition, endPos);
+        if ((move!=null) && ((board.getPiece(tempEndPos) == null)))
+        {
+            moves.add(move);
+        }
+    }
+
+    private void getMoveDiagonal(ChessBoard board, ChessPosition endPos,
+                                 ChessPosition myPosition, ChessGame.TeamColor teamColor)
+    {
+        ChessMove temp = new ChessMove(myPosition, endPos, null);
+        if (board.getPiece(endPos) != null)
+        {
+            // If it is yours: ignore. Else: capture and add to moves
+            if (board.getPiece(endPos).getTeamColor()!=teamColor)
+            {
+                moves.add(temp);
+            }
+        }
     }
 }
