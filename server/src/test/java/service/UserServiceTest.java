@@ -192,81 +192,55 @@ class UserServiceTest {
     // Registers the user
     private RegisterResult registerUser(String username, String password, String email)
     {
-        try
-        {
-            return userService.register(new RegisterRequest(username, password, email));
-        }
-        catch (ResponseException e) {
-            fail("No exception expected");
-            return null;
-        }
+        return assertDoesNotThrow(() ->
+                        userService.register(new RegisterRequest(username, password, email))
+                , "No exception expected");
     }
 
     // Checks the user got inserted into the database
     private void checkUserInserted(String username, String password, String email)
     {
-        try
-        {
-            var user = userDAO.getUser(username);
-            checkUserInfoEqual(user, password, email);
-        }
-        catch (DataAccessException e)
-        {
-            fail("registerUser should have inserted the user into the database");
-        }
+        assertDoesNotThrow(() ->
+            {
+                var user = userDAO.getUser(username);
+                checkUserInfoEqual(user, password, email);
+            },"registerUser should have inserted the user into the database");
     }
 
     // Checks to see if the user info matches
     private void checkUserInfoEqual(UserData user, String password, String email)
     {
-        if (!Objects.equals(user.password(), password))
-        {
-            fail("registerUser Error: Passwords don't match");
-        }
-        else if (!Objects.equals(user.email(), email))
-        {
-            fail("registerUser Error: Passwords don't match");
-        }
+        assert (Objects.equals(user.password(), password)) :
+                "registerUser Error: Passwords don't match";
+        assert (Objects.equals(user.email(), email)) :
+                "registerUser Error: Emails don't match";
     }
 
     // Runs the User Service login API. Fails the test if it finds a Response Exception.
     private void loginUser()
     {
         addUser();
-
-        try
+        assertDoesNotThrow(() ->
         {
             userService.login(new LoginRequest("TestUsername", "TestPassword"));
-        }
-        catch (ResponseException e)
-        {
-            fail("Login Response Exception not expected: " + e);
-        }
+        },"Login Response Exception not expected");
     }
 
     // Runs the Add User DAO. Fails the test if it finds a Data Access Exception.
     private void addUser()
     {
-        try
+        assertDoesNotThrow(() ->
         {
             userDAO.createUser(new UserData("TestUsername", "TestPassword", "Test@Email.com"));
-        }
-        catch (DataAccessException e)
-        {
-            fail("No exception expected when creating user");
-        }
+        },"No exception expected when creating user");
     }
 
     // Runs the User Service logout API. Fails the test if it finds a Response Exception.
     private void logoutUser(String authToken)
     {
-        try
+        assertDoesNotThrow(() ->
         {
             userService.logout(new LogoutRequest(authToken));
-        }
-        catch (ResponseException e)
-        {
-            fail("Logout Response Exception not expected: " + e);
-        }
+        },"Logout Response Exception not expected");
     }
 }
