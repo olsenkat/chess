@@ -53,7 +53,7 @@ public class ClearServiceTest
 
         // Ensures the user is deleted
         assertThrows(DataAccessException.class,
-                () -> user.getUser("username", "password"),
+                () -> user.getUser("username"),
                 "Expected user to be deleted");
 
         // Ensure the current authorization is deleted
