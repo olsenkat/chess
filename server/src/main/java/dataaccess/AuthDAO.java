@@ -12,7 +12,7 @@ public interface AuthDAO
 
     boolean deleteAuth(AuthData auth) throws DataAccessException;
 
-    void clear();
+    void clear() throws DataAccessException;
 
     public static String generateToken() {
         return UUID.randomUUID().toString();

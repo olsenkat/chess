@@ -12,6 +12,12 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySqlAuthDAO implements AuthDAO{
+
+    public MySqlAuthDAO() throws ResponseException
+    {
+        configureDatabase();
+    }
+
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
@@ -54,12 +60,25 @@ public class MySqlAuthDAO implements AuthDAO{
 
     @Override
     public boolean deleteAuth(AuthData auth) throws DataAccessException {
-        return false;
+        var statement = "DELETE FROM auth WHERE authToken=?";
+        try {
+            executeUpdate(statement, auth.authToken());
+        } catch (ResponseException e)
+        {
+            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
+        return true;
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException {
+        var statement = "TRUNCATE game";
+        try {
+            executeUpdate(statement);
+        } catch (ResponseException e)
+        {
+            throw new DataAccessException(String.format("Unable to delete data: %s", e.getMessage()));
+        }
     }
 
     private AuthData readAuth(ResultSet rs) throws SQLException {
@@ -92,6 +111,38 @@ public class MySqlAuthDAO implements AuthDAO{
             }
         } catch (SQLException | DataAccessException e) {
             throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
+    }
+
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  auth (
+              `authToken` varchar(256) NOT NULL,
+              `username` varchar(256) NOT NULL,
+              PRIMARY KEY (`authToken`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+
+    private void configureDatabase() throws ResponseException
+    {
+        try
+        {
+            DatabaseManager.createDatabase();
+        }
+        catch (DataAccessException e)
+        {
+            throw new ResponseException(500, String.format("Unable to create database: %s", e.getMessage()));
+        }
+
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException | DataAccessException ex) {
+            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
 }
