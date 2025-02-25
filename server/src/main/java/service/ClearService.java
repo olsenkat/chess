@@ -20,14 +20,19 @@ public class ClearService
 
     public ClearResult clear() throws ResponseException
     {
-        // Clear User Data
-        users.clear();
+        try {// Clear User Data
+            users.clear();
 
-        // Clear Auth Data
-        auth.clear();
+            // Clear Auth Data
+            auth.clear();
 
-        // Clear Game Data
-        games.clear();
+            // Clear Game Data
+            games.clear();
+        }
+        catch (DataAccessException e)
+        {
+            throw new ResponseException(500, (String.format("unable to clear database: %s", e.getMessage())));
+        }
         return new ClearResult();
     }
 }
