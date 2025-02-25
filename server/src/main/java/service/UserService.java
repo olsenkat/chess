@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import exception.ResponseException;
+import org.mindrot.jbcrypt.BCrypt;
 import requestresult.*;
 import model.UserData;
 import model.AuthData;
@@ -100,7 +101,8 @@ public class UserService
     {
         // Try creating the user
         try {
-            users.createUser(newUser);
+            var encryptedPassword = encryptUserPassword(newUser.password());
+            users.createUser(new UserData(newUser.username(), encryptedPassword, newUser.email()));
         }
         catch (DataAccessException e)
         {
@@ -108,15 +110,15 @@ public class UserService
         }
     }
 
-    // Checks to see if the passwords match
-    private void checkPasswordSame(String userPassword, String givenPassword) throws ResponseException
-    {
-        // If the passwords don't match, raise exception
-        if (!Objects.equals(userPassword, givenPassword))
-        {
-            throw new ResponseException(401, "Error: Invalid User");
-        }
-    }
+//    // Checks to see if the passwords match
+//    private void checkPasswordSame(String userPassword, String givenPassword) throws ResponseException
+//    {
+//        // If the passwords don't match, raise exception
+//        if (!Objects.equals(userPassword, givenPassword))
+//        {
+//            throw new ResponseException(401, "Error: Invalid User");
+//        }
+//    }
 
     // Checks to see if the user can be taken from the database. Makes sure the passwords match.
     private void getUserFromDatabase(String username, String password) throws ResponseException
@@ -127,8 +129,9 @@ public class UserService
         // Try getting the user from the database
         try
         {
-            user = users.getUser(username, password);
-            checkPasswordSame(user.password(), password);
+            user = users.getUser(username);
+            verifyUser(password, user.password());
+//            checkPasswordSame(user.password(), password);
         }
         catch (DataAccessException e)
         {
@@ -170,6 +173,18 @@ public class UserService
         catch (DataAccessException e)
         {
             throw new ResponseException(401, "Error: Invalid Authorization");
+        }
+    }
+
+    String encryptUserPassword(String clearTextPassword) {
+        return BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
+    }
+
+    void verifyUser(String clearTextPassword, String hashedPassword) throws ResponseException {
+        // read the previously hashed password from the database
+        if (!BCrypt.checkpw(clearTextPassword, hashedPassword))
+        {
+            throw new ResponseException(401, "Error: Invalid User");
         }
     }
 }
