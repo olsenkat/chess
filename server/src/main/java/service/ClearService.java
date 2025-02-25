@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.*;
+import exception.ResponseException;
 import requestresult.ClearResult;
 
 public class ClearService
@@ -17,7 +18,7 @@ public class ClearService
         this.games = games;
     }
 
-    public ClearResult clear()
+    public ClearResult clear() throws ResponseException
     {
         // Clear User Data
         users.clear();
@@ -28,6 +29,5 @@ public class ClearService
         // Clear Game Data
         games.clear();
         return new ClearResult();
-
     }
 }
