@@ -12,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("User Service Tests")
 public class ClearServiceTest
 {
-    boolean mem = false;
+    boolean sqlDataAccess = true;
     static AuthDAO authDAO = new MemoryAuthDAO();
     static UserDAO userDAO = new MemoryUserDAO();
     static GameDAO gameDAO = new MemoryGameDAO();
     ClearServiceTest()
     {
-        if (mem)
+        if (sqlDataAccess)
         {
             assertDoesNotThrow(() -> authDAO = new MySqlAuthDAO(), "AuthDAO not initialized correctly.");
             assertDoesNotThrow(() -> userDAO = new MySqlUserDAO(), "UserDAO not initialized correctly.");

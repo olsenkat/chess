@@ -4,6 +4,7 @@ import dataaccess.*;
 import exception.ResponseException;
 import model.UserData;
 import org.junit.jupiter.api.*;
+import org.mindrot.jbcrypt.BCrypt;
 import requestresult.*;
 
 import java.util.Objects;
@@ -12,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("User Service Tests")
 class UserServiceTest {
-    boolean mem = false;
+    boolean sqlDataAccess = true;
     static AuthDAO authDAO = new MemoryAuthDAO();
     static UserDAO userDAO = new MemoryUserDAO();
     static GameDAO gameDAO = new MemoryGameDAO();
     UserServiceTest()
     {
-        if (mem)
+        if (sqlDataAccess)
         {
             assertDoesNotThrow(() -> authDAO = new MySqlAuthDAO(), "AuthDAO not initialized correctly.");
             assertDoesNotThrow(() -> userDAO = new MySqlUserDAO(), "UserDAO not initialized correctly.");
@@ -213,8 +214,17 @@ class UserServiceTest {
     // Checks to see if the user info matches
     private void checkUserInfoEqual(UserData user, String password, String email)
     {
-        assert (Objects.equals(user.password(), password)) :
-                "registerUser Error: Passwords don't match";
+        if (sqlDataAccess)
+        {
+            assert(BCrypt.checkpw(password, user.password())) :
+                  "registerUser Error: Passwords don't match";
+        }
+        else
+        {
+            assert (Objects.equals(user.password(), password)) :
+                    "registerUser Error: Passwords don't match";
+        }
+
         assert (Objects.equals(user.email(), email)) :
                 "registerUser Error: Emails don't match";
     }
