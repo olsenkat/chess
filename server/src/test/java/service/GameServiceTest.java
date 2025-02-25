@@ -183,7 +183,10 @@ class GameServiceTest {
 
     void clear()
     {
-        clear.clear();
+        assertDoesNotThrow(() ->
+                        clear.clear()
+                , "No exception expected");
+
     }
 
     void registerUser()

@@ -127,7 +127,7 @@ public class UserService
         // Try getting the user from the database
         try
         {
-            user = users.getUser(username);
+            user = users.getUser(username, password);
             checkPasswordSame(user.password(), password);
         }
         catch (DataAccessException e)

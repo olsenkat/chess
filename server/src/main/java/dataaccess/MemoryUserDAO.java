@@ -11,7 +11,7 @@ public class MemoryUserDAO  implements UserDAO
 
     // Method intended to retrieve user from database
     @Override
-    public UserData getUser(String username) throws DataAccessException {
+    public UserData getUser(String username, String password) throws DataAccessException {
         // If the database contains the username, return the data retrieved
         if (userData.containsKey(username))
         {

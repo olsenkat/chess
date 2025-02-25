@@ -6,7 +6,7 @@ import javax.xml.crypto.Data;
 
 public interface UserDAO
 {
-    UserData getUser(String username) throws DataAccessException;
+    UserData getUser(String username, String password) throws DataAccessException;
 
     UserData createUser(UserData user) throws DataAccessException;
 

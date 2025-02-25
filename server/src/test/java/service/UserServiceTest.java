@@ -161,7 +161,10 @@ class UserServiceTest {
     // Clears the database
     private void clear()
     {
-        clear.clear();
+        assertDoesNotThrow(() ->
+                clear.clear()
+                , "No exception expected");
+
     }
 
     // Registers the user and checks it is inserted
@@ -192,7 +195,7 @@ class UserServiceTest {
     {
         assertDoesNotThrow(() ->
             {
-                var user = userDAO.getUser(username);
+                var user = userDAO.getUser(username, password);
                 checkUserInfoEqual(user, password, email);
             },"registerUser should have inserted the user into the database");
     }

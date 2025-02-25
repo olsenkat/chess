@@ -43,14 +43,17 @@ public class ClearServiceTest
     void clear()
     {
         // Clear the database
-        clear.clear();
+        assertDoesNotThrow(() ->
+                        clear.clear()
+                , "No exception expected");
+
 
         // Ensure all the games are deleted
         assertEquals(0, game.listGames().size());
 
         // Ensures the user is deleted
         assertThrows(DataAccessException.class,
-                () -> user.getUser("username"),
+                () -> user.getUser("username", "password"),
                 "Expected user to be deleted");
 
         // Ensure the current authorization is deleted
