@@ -43,7 +43,23 @@ public class MySqlGameDAO implements GameDAO{
 
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
-        return null;
+        var result = new ArrayList<GameData>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = """
+                        SELECT gameID, whiteUsername, blackUsername,
+                        gameName, game FROM game
+                        """;
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(readGame(rs));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
+        }
+        return result;
     }
 
     @Override
@@ -71,7 +87,29 @@ public class MySqlGameDAO implements GameDAO{
 
     @Override
     public GameData updateGame(GameData game) throws DataAccessException {
-        return null;
+        int id;
+        var statement = """
+                        UPDATE game
+                        SET whiteUsername = ?,
+                            blackUsername = ?,
+                            gameName = ?,
+                            game = ?)
+                        WHERE gameID = ?
+                        """;
+        var json = new Gson().toJson(game);
+        try
+        {
+            id = executeUpdate(statement, game.whiteUsername(),
+                    game.blackUsername(), game.gameName(), json,
+                    game.gameID());
+        }
+        catch (ResponseException e)
+        {
+            throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
+        }
+
+        return new GameData(id, game.whiteUsername(), game.blackUsername(),
+                game.gameName(), game.game());
     }
 
     @Override
