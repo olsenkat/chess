@@ -68,7 +68,7 @@ public class MySqlGameDAO implements GameDAO{
         var statement = """
                         INSERT INTO game
                         (whiteUsername, blackUsername, gameName, game)
-                        VALUES (?, ?, ?)
+                        VALUES (?, ?, ?, ?)
                         """;
         var json = new Gson().toJson(game);
         try
