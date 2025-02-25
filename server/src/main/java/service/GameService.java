@@ -40,7 +40,8 @@ public class GameService
         try
         {
             ChessGame newGame = new ChessGame();
-            games.createGame(new GameData(gameID, null, null, r.gameName(), newGame));
+            GameData game = games.createGame(new GameData(gameID, null, null, r.gameName(), newGame));
+            gameID = game.gameID();
         }
         catch (DataAccessException e)
         {
