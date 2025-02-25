@@ -1,5 +1,6 @@
 package dataaccess;
 
+import exception.ResponseException;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public interface GameDAO
 
     GameData updateGame(GameData game) throws DataAccessException;
 
-    void clear();
+    void clear() throws DataAccessException;
 
     default int createID()
     {

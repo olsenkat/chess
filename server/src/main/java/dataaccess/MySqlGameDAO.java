@@ -113,9 +113,14 @@ public class MySqlGameDAO implements GameDAO{
     }
 
     @Override
-    public void clear() throws ResponseException {
-        var statement = "TRUNCATE pet";
-        executeUpdate(statement);
+    public void clear() throws DataAccessException {
+        var statement = "TRUNCATE game";
+        try {
+            executeUpdate(statement);
+        } catch (ResponseException e)
+        {
+            throw new DataAccessException(String.format("Unable to delete data: %s", e.getMessage()));
+        }
     }
 
     @Override
