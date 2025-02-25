@@ -12,9 +12,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("User Service Tests")
 class UserServiceTest {
-    static MemoryAuthDAO authDAO = new MemoryAuthDAO();
-    static MemoryUserDAO userDAO = new MemoryUserDAO();
-    static MemoryGameDAO gameDAO = new MemoryGameDAO();
+    boolean mem = false;
+    static AuthDAO authDAO = new MemoryAuthDAO();
+    static UserDAO userDAO = new MemoryUserDAO();
+    static GameDAO gameDAO = new MemoryGameDAO();
+    UserServiceTest()
+    {
+        if (mem)
+        {
+            assertDoesNotThrow(() -> authDAO = new MySqlAuthDAO(), "AuthDAO not initialized correctly.");
+            assertDoesNotThrow(() -> userDAO = new MySqlUserDAO(), "UserDAO not initialized correctly.");
+            assertDoesNotThrow(() -> gameDAO = new MySqlGameDAO(), "GameDAO not initialized correctly.");
+        }
+    }
     static UserService userService = new UserService(userDAO, authDAO);
     static ClearService clear = new ClearService(userDAO, authDAO, gameDAO);
 
@@ -195,7 +205,7 @@ class UserServiceTest {
     {
         assertDoesNotThrow(() ->
             {
-                var user = userDAO.getUser(username, password);
+                var user = userDAO.getUser(username);
                 checkUserInfoEqual(user, password, email);
             },"registerUser should have inserted the user into the database");
     }

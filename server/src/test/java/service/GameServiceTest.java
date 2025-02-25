@@ -12,10 +12,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Game Service Tests")
 class GameServiceTest {
-    // Initialize all class variables
-    static MemoryAuthDAO authDAO = new MemoryAuthDAO();
-    static MemoryUserDAO userDAO = new MemoryUserDAO();
-    static MemoryGameDAO gameDAO = new MemoryGameDAO();
+    boolean mem = false;
+    static AuthDAO authDAO = new MemoryAuthDAO();
+    static UserDAO userDAO = new MemoryUserDAO();
+    static GameDAO gameDAO = new MemoryGameDAO();
+    GameServiceTest()
+    {
+        if (mem)
+        {
+            assertDoesNotThrow(() -> authDAO = new MySqlAuthDAO(), "AuthDAO not initialized correctly.");
+            assertDoesNotThrow(() -> userDAO = new MySqlUserDAO(), "UserDAO not initialized correctly.");
+            assertDoesNotThrow(() -> gameDAO = new MySqlGameDAO(), "GameDAO not initialized correctly.");
+        }
+    }
+
     static GameService gameService = new GameService(authDAO, gameDAO);
     static UserService userService = new UserService(userDAO, authDAO);
     static ClearService clear = new ClearService(userDAO, authDAO, gameDAO);
@@ -148,7 +158,8 @@ class GameServiceTest {
 
         @Test
         void listValidResponseEmpty() {
-            gameDAO.clear();
+            assertDoesNotThrow(() -> gameDAO.clear(), "Clear function should not throw anything");
+
             ListResult listResult = assertDoesNotThrow(() ->
                     gameService.list(new ListRequest(authToken)),
                     "No exception expected");
