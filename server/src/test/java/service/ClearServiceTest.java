@@ -9,7 +9,7 @@ import requestresult.RegisterRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("User Service Tests")
+@DisplayName("Clear Service Tests")
 public class ClearServiceTest
 {
     boolean sqlDataAccess = true;
