@@ -4,10 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import requestresult.CreateRequest;
-import requestresult.RegisterRequest;
-import service.ClearService;
-import service.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
