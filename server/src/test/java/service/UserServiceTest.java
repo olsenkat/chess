@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("User Service Tests")
 class UserServiceTest {
     boolean sqlDataAccess = true;
-    static AuthDAO authDAO = new MemoryAuthDAO();
-    static UserDAO userDAO = new MemoryUserDAO();
-    static GameDAO gameDAO = new MemoryGameDAO();
+    static AuthDAO authDAO;
+    static UserDAO userDAO;
+    static GameDAO gameDAO;
 
     static UserService userService;
     static ClearService clear;
@@ -236,16 +236,8 @@ class UserServiceTest {
     // Checks to see if the user info matches
     private void checkUserInfoEqual(UserData user, String password, String email)
     {
-        if (sqlDataAccess)
-        {
-            assert(BCrypt.checkpw(password, user.password())) :
-                  "registerUser Error: Passwords don't match";
-        }
-        else
-        {
-            assert (Objects.equals(user.password(), password)) :
-                    "registerUser Error: Passwords don't match";
-        }
+        assert(BCrypt.checkpw(password, user.password())) :
+                "registerUser Error: Passwords don't match";
 
         assert (Objects.equals(user.email(), email)) :
                 "registerUser Error: Emails don't match";
