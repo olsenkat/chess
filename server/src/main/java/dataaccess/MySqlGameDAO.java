@@ -23,7 +23,7 @@ public class MySqlGameDAO implements GameDAO{
         var conn = DatabaseManager.getConnection();
         var statement = """
                         SELECT gameID, whiteUsername, blackUsername,
-                        gameName, game FROM game WHERE gameID = ?
+                        gameName, game, json FROM game WHERE gameID = ?
                         """;
         try (var ps = conn.prepareStatement(statement))
         {
@@ -38,7 +38,7 @@ public class MySqlGameDAO implements GameDAO{
         } catch (Exception e) {
             throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
         }
-        return null;
+        throw new DataAccessException("Auth Token is not found in the database.");
     }
 
     @Override
@@ -70,20 +70,23 @@ public class MySqlGameDAO implements GameDAO{
                         (whiteUsername, blackUsername, gameName, game, json)
                         VALUES (?, ?, ?, ?, ?)
                         """;
-        var game_data = new Gson().toJson(game.game());
+        GameData gameToReturn;
+        var gameData = new Gson().toJson(game.game());
         var json = new Gson().toJson(game);
         try
         {
             id = executeUpdate(statement, game.whiteUsername(),
-                    game.blackUsername(), game.gameName(), game_data, json);
+                    game.blackUsername(), game.gameName(), gameData, json);
+            gameToReturn = updateGame(new GameData(id, game.whiteUsername(), game.blackUsername(),
+                    game.gameName(), game.game()));
+            updateGame(gameToReturn);
         }
         catch (ResponseException e)
         {
             throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
 
-        return new GameData(id, game.whiteUsername(), game.blackUsername(),
-                game.gameName(), game.game());
+        return gameToReturn;
     }
 
     @Override
@@ -94,14 +97,16 @@ public class MySqlGameDAO implements GameDAO{
                         SET whiteUsername = ?,
                             blackUsername = ?,
                             gameName = ?,
-                            game = ?)
+                            game = ?,
+                            json = ?
                         WHERE gameID = ?
                         """;
+        var game_data = new Gson().toJson(game.game());
         var json = new Gson().toJson(game);
         try
         {
-            id = executeUpdate(statement, game.whiteUsername(),
-                    game.blackUsername(), game.gameName(), json,
+            executeUpdate(statement, game.whiteUsername(),
+                    game.blackUsername(), game.gameName(), game_data, json,
                     game.gameID());
         }
         catch (ResponseException e)
@@ -109,7 +114,7 @@ public class MySqlGameDAO implements GameDAO{
             throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
         }
 
-        return new GameData(id, game.whiteUsername(), game.blackUsername(),
+        return new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(),
                 game.gameName(), game.game());
     }
 
