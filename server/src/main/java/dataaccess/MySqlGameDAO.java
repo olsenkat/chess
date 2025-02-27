@@ -166,8 +166,8 @@ public class MySqlGameDAO implements GameDAO{
             """
             CREATE TABLE IF NOT EXISTS  game (
               `gameID` int NOT NULL AUTO_INCREMENT,
-              `whiteUsername` varchar(256) NOT NULL,
-              `blackUsername` varchar(256) NOT NULL,
+              `whiteUsername` varchar(256) NULL,
+              `blackUsername` varchar(256) NULL,
               `gameName` varchar(256) NOT NULL,
               `game` TEXT DEFAULT NULL,
               `json` TEXT DEFAULT NULL,
