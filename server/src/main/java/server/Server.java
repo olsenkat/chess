@@ -14,6 +14,10 @@ public class Server {
     private final ClearService clearService;
     private final UserService userService;
     private final GameService gameService;
+    GameDAO gameDataAccess;
+    UserDAO userDataAccess;
+    AuthDAO authDataAccess;
+    private boolean sqlDataAccess = true;
 
     public Server(ClearService clearService, UserService userService, GameService gameService) {
         this.clearService = clearService;
@@ -21,9 +25,24 @@ public class Server {
         this.gameService = gameService;
     }
     public Server() {
-        GameDAO gameDataAccess = new MemoryGameDAO();
-        UserDAO userDataAccess = new MemoryUserDAO();
-        AuthDAO authDataAccess = new MemoryAuthDAO();
+        if (sqlDataAccess)
+        {
+            try {
+                gameDataAccess = new MySqlGameDAO();
+                userDataAccess = new MySqlUserDAO();
+                authDataAccess = new MySqlAuthDAO();
+            }
+            catch (Throwable ex)
+            {
+                System.out.printf("Unable to start server: %s%n", ex.getMessage());
+            }
+        }
+        else
+        {
+            gameDataAccess = new MemoryGameDAO();
+            userDataAccess = new MemoryUserDAO();
+            authDataAccess = new MemoryAuthDAO();
+        }
         this.clearService = new ClearService(userDataAccess, authDataAccess, gameDataAccess);
         this.userService = new UserService(userDataAccess, authDataAccess);
         this.gameService = new GameService(authDataAccess, gameDataAccess);
