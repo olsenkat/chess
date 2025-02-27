@@ -39,28 +39,28 @@ public class UserDAOTest {
         void createUserDuplicate() {
             assertDoesNotThrow(() -> createUser(testUser), "Create User should not throw an error.");
             assertThrows(DataAccessException.class, () -> createUser(testUser),
-                    "Create User should not throw an error.");
+                    "Create Invalid User should throw an error.");
         }
 
         @Test
         void createUserNullUsername() {
             var invalidUser = new UserData(null, "password", "email");
             assertThrows(DataAccessException.class, () -> createUser(invalidUser),
-                    "Create User should not throw an error.");
+                    "Create Invalid User should throw an error.");
         }
 
         @Test
         void createUserNullPassword() {
             var invalidUser = new UserData("username", null, "email");
             assertThrows(DataAccessException.class, () -> createUser(invalidUser),
-                    "Create User should not throw an error.");
+                    "Create Invalid User should not throw an error.");
         }
 
         @Test
         void createUserNullEmail() {
             var invalidUser = new UserData("username", "password", null);
             assertThrows(DataAccessException.class, () -> createUser(invalidUser),
-                    "Create User should not throw an error.");
+                    "Create Invalid User should throw an error.");
         }
     }
     @Nested
