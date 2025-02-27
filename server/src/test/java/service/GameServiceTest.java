@@ -16,6 +16,10 @@ class GameServiceTest {
     static AuthDAO authDAO = new MemoryAuthDAO();
     static UserDAO userDAO = new MemoryUserDAO();
     static GameDAO gameDAO = new MemoryGameDAO();
+
+    static GameService gameService;
+    static UserService userService;
+    static ClearService clear;
     GameServiceTest()
     {
         if (sqlDataAccess)
@@ -24,11 +28,17 @@ class GameServiceTest {
             assertDoesNotThrow(() -> userDAO = new MySqlUserDAO(), "UserDAO not initialized correctly.");
             assertDoesNotThrow(() -> gameDAO = new MySqlGameDAO(), "GameDAO not initialized correctly.");
         }
+        else
+        {
+            authDAO = new MemoryAuthDAO();
+            userDAO = new MemoryUserDAO();
+            gameDAO = new MemoryGameDAO();
+        }
+        clear = new ClearService(userDAO, authDAO, gameDAO);
+        gameService = new GameService(authDAO, gameDAO);
+        userService = new UserService(userDAO, authDAO);
     }
 
-    static GameService gameService = new GameService(authDAO, gameDAO);
-    static UserService userService = new UserService(userDAO, authDAO);
-    static ClearService clear = new ClearService(userDAO, authDAO, gameDAO);
     String authToken = " ";
 
 
@@ -43,6 +53,13 @@ class GameServiceTest {
     @Nested
     @DisplayName("Create Tests")
     class CreateTests {
+
+        @BeforeEach
+        void initTests()
+        {
+            clear();
+            registerUser();
+        }
 
         @Test
         void createValidResponse() {
@@ -79,6 +96,14 @@ class GameServiceTest {
     @DisplayName("Join Tests")
     class JoinTests
     {
+
+        @BeforeEach
+        void initTests()
+        {
+            clear();
+            registerUser();
+        }
+
         @Test
         void joinValidResponseWhite() {
             Integer gameID = createGame();
@@ -145,6 +170,14 @@ class GameServiceTest {
     @DisplayName("List Tests")
     class ListTests
     {
+
+        @BeforeEach
+        void initTests()
+        {
+            clear();
+            registerUser();
+        }
+
         @Test
         void listValidResponseFull() {
             createGame();
