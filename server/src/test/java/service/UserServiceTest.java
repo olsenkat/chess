@@ -17,6 +17,9 @@ class UserServiceTest {
     static AuthDAO authDAO = new MemoryAuthDAO();
     static UserDAO userDAO = new MemoryUserDAO();
     static GameDAO gameDAO = new MemoryGameDAO();
+
+    static UserService userService;
+    static ClearService clear;
     UserServiceTest()
     {
         if (sqlDataAccess)
@@ -25,9 +28,16 @@ class UserServiceTest {
             assertDoesNotThrow(() -> userDAO = new MySqlUserDAO(), "UserDAO not initialized correctly.");
             assertDoesNotThrow(() -> gameDAO = new MySqlGameDAO(), "GameDAO not initialized correctly.");
         }
+        else
+        {
+            authDAO = new MemoryAuthDAO();
+            userDAO = new MemoryUserDAO();
+            gameDAO = new MemoryGameDAO();
+        }
+        clear = new ClearService(userDAO, authDAO, gameDAO);
+        userService = new UserService(userDAO, authDAO);
     }
-    static UserService userService = new UserService(userDAO, authDAO);
-    static ClearService clear = new ClearService(userDAO, authDAO, gameDAO);
+
 
     @BeforeEach
     void initTests()
@@ -37,6 +47,12 @@ class UserServiceTest {
     @Nested
     @DisplayName("Register Tests")
     class RegisterTests {
+
+        @BeforeEach
+        void initTests()
+        {
+            clear();
+        }
 
         @Test
         void registerValidResponse() {
@@ -84,6 +100,12 @@ class UserServiceTest {
     @Nested
     @DisplayName("Login Tests")
     class LoginTests {
+
+        @BeforeEach
+        void initTests()
+        {
+            clear();
+        }
 
         @Test
         void loginValidResponse() {
@@ -244,7 +266,8 @@ class UserServiceTest {
     {
         assertDoesNotThrow(() ->
         {
-            userDAO.createUser(new UserData("TestUsername", "TestPassword", "Test@Email.com"));
+            var encryptedPass = userService.encryptUserPassword("TestPassword");
+            userDAO.createUser(new UserData("TestUsername", encryptedPass, "Test@Email.com"));
         },"No exception expected when creating user");
     }
 
