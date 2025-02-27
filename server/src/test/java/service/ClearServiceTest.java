@@ -13,9 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ClearServiceTest
 {
     boolean sqlDataAccess = true;
-    static AuthDAO authDAO = new MemoryAuthDAO();
-    static UserDAO userDAO = new MemoryUserDAO();
-    static GameDAO gameDAO = new MemoryGameDAO();
+    static AuthDAO authDAO;
+    static UserDAO userDAO;
+    static GameDAO gameDAO;
+    static ClearService clear;
+    static GameService gameService;
+    static UserService userService;
+
     ClearServiceTest()
     {
         if (sqlDataAccess)
@@ -24,10 +28,16 @@ public class ClearServiceTest
             assertDoesNotThrow(() -> userDAO = new MySqlUserDAO(), "UserDAO not initialized correctly.");
             assertDoesNotThrow(() -> gameDAO = new MySqlGameDAO(), "GameDAO not initialized correctly.");
         }
+        else
+        {
+            authDAO = new MemoryAuthDAO();
+            userDAO = new MemoryUserDAO();
+            gameDAO = new MemoryGameDAO();
+        }
+        clear = new ClearService(userDAO, authDAO, gameDAO);
+        gameService = new GameService(authDAO, gameDAO);
+        userService = new UserService(userDAO, authDAO);
     }
-    static ClearService clear = new ClearService(userDAO, authDAO, gameDAO);
-    static GameService gameService = new GameService(authDAO, gameDAO);
-    static UserService userService = new UserService(userDAO, authDAO);
 
     static String authToken = " ";
 
@@ -40,11 +50,14 @@ public class ClearServiceTest
             var user = userService.register(new RegisterRequest("username", "password", "test"));
             var authToken = user.authToken();
 
-            // Create a few games to clear later
-            gameService.create(new CreateRequest(authToken, "Game1"));
-            gameService.create(new CreateRequest(authToken, "Game2"));
-            gameService.create(new CreateRequest(authToken, "Game3"));
-        }, "Error: Users and Games not Added");
+            assertDoesNotThrow(() ->
+            {
+                // Create a few games to clear later
+                gameService.create(new CreateRequest(authToken, "Game1"));
+                gameService.create(new CreateRequest(authToken, "Game2"));
+                gameService.create(new CreateRequest(authToken, "Game3"));
+            }, "Error: Games not Added");
+        }, "Error: User/Games not Added");
     }
 
     @DisplayName("Clear Test")
