@@ -62,6 +62,10 @@ public class MySqlAuthDAO implements AuthDAO{
     @Override
     public boolean deleteAuth(AuthData auth) throws DataAccessException {
         var statement = "DELETE FROM auth WHERE authToken=?";
+        if (auth.authToken()==null)
+        {
+            throw new DataAccessException("Auth Token is null");
+        }
         try {
             executeUpdate(statement, auth.authToken());
         } catch (ResponseException e)
