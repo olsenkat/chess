@@ -115,6 +115,30 @@ public class AuthDAOTest {
         }
     }
 
+    @Nested
+    @DisplayName("Clear Auth Tests")
+    class ClearAuthTest {
+
+        @BeforeEach
+        void initTests() {
+            assertDoesNotThrow(() -> authDAO.clear(), "We should be able to clear the Auth Data");
+        }
+
+        @Test
+        void clearAuthFull() {
+            assertDoesNotThrow(() -> createAuth(testAuth), "Create Auth should not throw an error.");
+            assertDoesNotThrow(() -> authDAO.getAuth(testAuthToken),
+                    "Getting the created Auth should not throw an error.");
+            assertDoesNotThrow(() -> authDAO.clear(), "Clear Auth should not throw an error.");
+        }
+
+        @Test
+        void clearUserEmpty() {
+            assertDoesNotThrow(() -> authDAO.clear(), "Clear Auth should not throw an error.");
+        }
+
+    }
+
     void createAuth(AuthData auth) throws DataAccessException {
         authDAO.createAuth(auth);
     }
