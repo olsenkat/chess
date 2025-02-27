@@ -21,7 +21,7 @@ public class MySqlAuthDAO implements AuthDAO{
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
+            var statement = "SELECT authToken, username, json FROM auth WHERE authToken=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, authToken);
                 try (var rs = ps.executeQuery()) {
@@ -41,13 +41,14 @@ public class MySqlAuthDAO implements AuthDAO{
         int id;
         var statement = """
                         INSERT INTO auth
-                        (authToken, username)
-                        VALUES (?, ?)
+                        (authToken, username, json)
+                        VALUES (?, ?, ?)
                         """;
+        var json = new Gson().toJson(auth);
         try
         {
             executeUpdate(statement, auth.authToken(),
-                    auth.username());
+                    auth.username(), json);
         }
         catch (ResponseException e)
         {
@@ -119,6 +120,7 @@ public class MySqlAuthDAO implements AuthDAO{
             CREATE TABLE IF NOT EXISTS  auth (
               `authToken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
+              `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`authToken`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """

@@ -47,7 +47,7 @@ public class MySqlGameDAO implements GameDAO{
         try (var conn = DatabaseManager.getConnection()) {
             var statement = """
                         SELECT gameID, whiteUsername, blackUsername,
-                        gameName, game FROM game
+                        gameName, game, json FROM game
                         """;
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
@@ -67,14 +67,15 @@ public class MySqlGameDAO implements GameDAO{
         int id;
         var statement = """
                         INSERT INTO game
-                        (whiteUsername, blackUsername, gameName, game)
-                        VALUES (?, ?, ?, ?)
+                        (whiteUsername, blackUsername, gameName, game, json)
+                        VALUES (?, ?, ?, ?, ?)
                         """;
+        var game_data = new Gson().toJson(game.game());
         var json = new Gson().toJson(game);
         try
         {
             id = executeUpdate(statement, game.whiteUsername(),
-                    game.blackUsername(), game.gameName(), json);
+                    game.blackUsername(), game.gameName(), game_data, json);
         }
         catch (ResponseException e)
         {
@@ -169,6 +170,7 @@ public class MySqlGameDAO implements GameDAO{
               `blackUsername` varchar(256) NOT NULL,
               `gameName` varchar(256) NOT NULL,
               `game` TEXT DEFAULT NULL,
+              `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`gameID`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """

@@ -21,7 +21,7 @@ public class MySqlUserDAO implements UserDAO{
     @Override
     public UserData getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT username, password, email FROM user WHERE username=?";
+            var statement = "SELECT username, password, email, json FROM user WHERE username=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
@@ -38,10 +38,11 @@ public class MySqlUserDAO implements UserDAO{
 
     @Override
     public UserData createUser(UserData user) throws DataAccessException {
-        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        var statement = "INSERT INTO user (username, password, email, json) VALUES (?, ?, ?, ?)";
+        var json = new Gson().toJson(user);
         try
         {
-            executeUpdate(statement, user.username(), user.password(), user.email());
+            executeUpdate(statement, user.username(), user.password(), user.email(), json);
 
         } catch (ResponseException e)
         {
@@ -100,6 +101,7 @@ public class MySqlUserDAO implements UserDAO{
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
+              `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`username`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
