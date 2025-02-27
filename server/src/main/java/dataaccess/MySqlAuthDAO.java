@@ -73,7 +73,7 @@ public class MySqlAuthDAO implements AuthDAO{
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE game";
+        var statement = "TRUNCATE auth";
         try {
             executeUpdate(statement);
         } catch (ResponseException e)
