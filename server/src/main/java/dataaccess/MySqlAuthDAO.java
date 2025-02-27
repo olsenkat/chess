@@ -33,7 +33,7 @@ public class MySqlAuthDAO implements AuthDAO{
         } catch (Exception e) {
             throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
         }
-        return null;
+        throw new DataAccessException("Auth Token is not found in the database.");
     }
 
     @Override
