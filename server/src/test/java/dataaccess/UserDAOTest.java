@@ -118,7 +118,7 @@ public class UserDAOTest {
 
     }
 
-        void createUser(UserData user) throws DataAccessException
+    void createUser(UserData user) throws DataAccessException
     {
         userDAO.createUser(user);
     }
