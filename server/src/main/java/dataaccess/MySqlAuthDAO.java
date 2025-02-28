@@ -7,16 +7,12 @@ import model.AuthData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import dataaccess.DataAccessHelper;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
 
 public class MySqlAuthDAO implements AuthDAO{
 
     public MySqlAuthDAO() throws ResponseException
     {
-        configureDatabase();
+        DataAccessHelper.configureDatabase(createStatements);
     }
 
     @Override
@@ -103,26 +99,4 @@ public class MySqlAuthDAO implements AuthDAO{
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
-
-    private void configureDatabase() throws ResponseException
-    {
-        try
-        {
-            DatabaseManager.createDatabase();
-        }
-        catch (DataAccessException e)
-        {
-            throw new ResponseException(500, String.format("Unable to create database: %s", e.getMessage()));
-        }
-
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException | DataAccessException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
 }

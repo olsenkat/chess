@@ -4,6 +4,7 @@ import chess.ChessGame;
 import exception.ResponseException;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
@@ -47,5 +48,27 @@ public class DataAccessHelper {
         }
 
 
+    }
+
+    public static void configureDatabase(String[] createStatements) throws ResponseException
+    {
+        try
+        {
+            DatabaseManager.createDatabase();
+        }
+        catch (DataAccessException e)
+        {
+            throw new ResponseException(500, String.format("Unable to create database: %s", e.getMessage()));
+        }
+
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException | DataAccessException ex) {
+            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+        }
     }
 }
