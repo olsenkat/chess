@@ -7,8 +7,6 @@ import requestresult.*;
 import model.UserData;
 import model.AuthData;
 
-import java.util.Objects;
-
 public class UserService
 {
     // Create instances of the database to access it
@@ -109,16 +107,6 @@ public class UserService
             throw new ResponseException(403, "Error: Forbidden Action");
         }
     }
-
-//    // Checks to see if the passwords match
-//    private void checkPasswordSame(String userPassword, String givenPassword) throws ResponseException
-//    {
-//        // If the passwords don't match, raise exception
-//        if (!Objects.equals(userPassword, givenPassword))
-//        {
-//            throw new ResponseException(401, "Error: Invalid User");
-//        }
-//    }
 
     // Checks to see if the user can be taken from the database. Makes sure the passwords match.
     private void getUserFromDatabase(String username, String password) throws ResponseException
