@@ -139,34 +139,6 @@ public class MySqlGameDAO implements GameDAO{
         return new Gson().fromJson(json, GameData.class);
     }
 
-//    private int executeUpdate(String statement, Object... params) throws ResponseException {
-//        try (var conn = DatabaseManager.getConnection()) {
-//            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-//                for (var i = 0; i < params.length; i++) {
-//                    var param = params[i];
-//                    switch (param) {
-//                        case String p -> ps.setString(i + 1, p);
-//                        case Integer p -> ps.setInt(i + 1, p);
-//                        case ChessGame p -> ps.setString(i + 1, p.toString());
-//                        case null -> ps.setNull(i + 1, NULL);
-//                        default -> {
-//                        }
-//                    }
-//                }
-//                ps.executeUpdate();
-//
-//                var rs = ps.getGeneratedKeys();
-//                if (rs.next()) {
-//                    return rs.getInt(1);
-//                }
-//
-//                return 0;
-//            }
-//        } catch (SQLException | DataAccessException e) {
-//            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
-//        }
-//    }
-
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  game (
