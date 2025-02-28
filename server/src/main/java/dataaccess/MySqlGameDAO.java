@@ -38,7 +38,7 @@ public class MySqlGameDAO implements GameDAO{
         } catch (Exception e) {
             throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
         }
-        throw new DataAccessException("Auth Token is not found in the database.");
+        throw new DataAccessException("Game is not found in the database.");
     }
 
     @Override
@@ -91,7 +91,7 @@ public class MySqlGameDAO implements GameDAO{
 
     @Override
     public GameData updateGame(GameData game) throws DataAccessException {
-        int id;
+        getGame(game.gameID());
         var statement = """
                         UPDATE game
                         SET whiteUsername = ?,
