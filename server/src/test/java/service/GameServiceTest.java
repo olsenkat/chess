@@ -11,36 +11,27 @@ import requestresult.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Game Service Tests")
-class GameServiceTest {
+class GameServiceTest extends ServiceTests {
     boolean sqlDataAccess = true;
-    static AuthDAO authDAO = new MemoryAuthDAO();
-    static UserDAO userDAO = new MemoryUserDAO();
-    static GameDAO gameDAO = new MemoryGameDAO();
 
-    static GameService gameService;
-    static UserService userService;
-    static ClearService clear;
-    GameServiceTest()
-    {
-        if (sqlDataAccess)
-        {
-            assertDoesNotThrow(() -> authDAO = new MySqlAuthDAO(), "AuthDAO not initialized correctly.");
-            assertDoesNotThrow(() -> userDAO = new MySqlUserDAO(), "UserDAO not initialized correctly.");
-            assertDoesNotThrow(() -> gameDAO = new MySqlGameDAO(), "GameDAO not initialized correctly.");
-        }
-        else
-        {
-            authDAO = new MemoryAuthDAO();
-            userDAO = new MemoryUserDAO();
-            gameDAO = new MemoryGameDAO();
-        }
-        clear = new ClearService(userDAO, authDAO, gameDAO);
-        gameService = new GameService(authDAO, gameDAO);
-        userService = new UserService(userDAO, authDAO);
-    }
+    AuthDAO authDAO;
+    UserDAO userDAO;
+    GameDAO gameDAO;
 
+    GameService gameService = null;
+    UserService userService;
+    ClearService clear;
     String authToken = " ";
 
+    GameServiceTest()
+    {
+        authDAO = updateAuthDAO(sqlDataAccess);
+        userDAO = updateUserDAO(sqlDataAccess);
+        gameDAO = updateGameDAO(sqlDataAccess);
+        gameService = updateGameService();
+        userService = updateUserService();
+        clear = updateClearService();
+    }
 
     @BeforeEach
     void initTests()

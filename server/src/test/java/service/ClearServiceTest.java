@@ -10,33 +10,38 @@ import requestresult.RegisterRequest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Clear Service Tests")
-public class ClearServiceTest
-{
+public class ClearServiceTest extends ServiceTests {
     boolean sqlDataAccess = true;
-    static AuthDAO authDAO;
-    static UserDAO userDAO;
-    static GameDAO gameDAO;
-    static ClearService clear;
-    static GameService gameService;
-    static UserService userService;
+
+    // Create auth data access
+    AuthDAO authDAO;
+
+    // Create user data access
+    UserDAO userDAO;
+
+    // Create game data access
+    GameDAO gameDAO;
+
+    // Create game service
+    GameService gameService;
+
+    // Create user Service
+    UserService userService;
+
+    // Create clear service
+    ClearService clear;
 
     ClearServiceTest()
     {
-        if (sqlDataAccess)
-        {
-            assertDoesNotThrow(() -> authDAO = new MySqlAuthDAO(), "AuthDAO not initialized correctly.");
-            assertDoesNotThrow(() -> userDAO = new MySqlUserDAO(), "UserDAO not initialized correctly.");
-            assertDoesNotThrow(() -> gameDAO = new MySqlGameDAO(), "GameDAO not initialized correctly.");
-        }
-        else
-        {
-            authDAO = new MemoryAuthDAO();
-            userDAO = new MemoryUserDAO();
-            gameDAO = new MemoryGameDAO();
-        }
-        clear = new ClearService(userDAO, authDAO, gameDAO);
-        gameService = new GameService(authDAO, gameDAO);
-        userService = new UserService(userDAO, authDAO);
+        // Update all class DAO variables
+        authDAO = updateAuthDAO(sqlDataAccess);
+        userDAO = updateUserDAO(sqlDataAccess);
+        gameDAO = updateGameDAO(sqlDataAccess);
+
+        // Update all class Service variables
+        gameService = updateGameService();
+        userService = updateUserService();
+        clear = updateClearService();
     }
 
     static String authToken = " ";
