@@ -42,7 +42,7 @@ public class MySqlUserDAO implements UserDAO{
         var json = new Gson().toJson(user);
         try
         {
-            executeUpdate(statement, user.username(), user.password(), user.email(), json);
+            DataAccessHelper.executeUpdate(statement, user.username(), user.password(), user.email(), json);
 
         } catch (ResponseException e)
         {
@@ -55,7 +55,7 @@ public class MySqlUserDAO implements UserDAO{
     public void clear() throws DataAccessException {
         var statement = "TRUNCATE user";
         try {
-            executeUpdate(statement);
+            DataAccessHelper.executeUpdate(statement);
         } catch (ResponseException e)
         {
             throw new DataAccessException(String.format("Unable to delete data: %s", e.getMessage()));
@@ -67,33 +67,33 @@ public class MySqlUserDAO implements UserDAO{
         return new Gson().fromJson(json, UserData.class);
     }
 
-    private int executeUpdate(String statement, Object... params) throws ResponseException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    switch (param) {
-                        case String p -> ps.setString(i + 1, p);
-                        case Integer p -> ps.setInt(i + 1, p);
-                        case ChessGame p -> ps.setString(i + 1, p.toString());
-                        case null -> ps.setNull(i + 1, NULL);
-                        default -> {
-                        }
-                    }
-                }
-                ps.executeUpdate();
-
-                var rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-
-                return 0;
-            }
-        } catch (SQLException | DataAccessException e) {
-            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
-        }
-    }
+//    private int executeUpdate(String statement, Object... params) throws ResponseException {
+//        try (var conn = DatabaseManager.getConnection()) {
+//            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+//                for (var i = 0; i < params.length; i++) {
+//                    var param = params[i];
+//                    switch (param) {
+//                        case String p -> ps.setString(i + 1, p);
+//                        case Integer p -> ps.setInt(i + 1, p);
+//                        case ChessGame p -> ps.setString(i + 1, p.toString());
+//                        case null -> ps.setNull(i + 1, NULL);
+//                        default -> {
+//                        }
+//                    }
+//                }
+//                ps.executeUpdate();
+//
+//                var rs = ps.getGeneratedKeys();
+//                if (rs.next()) {
+//                    return rs.getInt(1);
+//                }
+//
+//                return 0;
+//            }
+//        } catch (SQLException | DataAccessException e) {
+//            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+//        }
+//    }
 
     private final String[] createStatements = {
             """

@@ -7,6 +7,7 @@ import model.AuthData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import dataaccess.DataAccessHelper;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
@@ -47,7 +48,7 @@ public class MySqlAuthDAO implements AuthDAO{
         var json = new Gson().toJson(auth);
         try
         {
-            executeUpdate(statement, auth.authToken(),
+            DataAccessHelper.executeUpdate(statement, auth.authToken(),
                     auth.username(), json);
         }
         catch (ResponseException e)
@@ -68,7 +69,7 @@ public class MySqlAuthDAO implements AuthDAO{
             throw new DataAccessException("Auth Token is null");
         }
         try {
-            executeUpdate(statement, auth.authToken());
+            DataAccessHelper.executeUpdate(statement, auth.authToken());
         } catch (ResponseException e)
         {
             throw new DataAccessException(String.format("unable to update database: %s, %s", statement, e.getMessage()));
@@ -80,7 +81,7 @@ public class MySqlAuthDAO implements AuthDAO{
     public void clear() throws DataAccessException {
         var statement = "TRUNCATE auth";
         try {
-            executeUpdate(statement);
+            DataAccessHelper.executeUpdate(statement);
         } catch (ResponseException e)
         {
             throw new DataAccessException(String.format("Unable to delete data: %s", e.getMessage()));
@@ -92,33 +93,33 @@ public class MySqlAuthDAO implements AuthDAO{
         return new Gson().fromJson(json, AuthData.class);
     }
 
-    private String executeUpdate(String statement, Object... params) throws ResponseException {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    switch (param) {
-                        case String p -> ps.setString(i + 1, p);
-                        case Integer p -> ps.setInt(i + 1, p);
-                        case ChessGame p -> ps.setString(i + 1, p.toString());
-                        case null -> ps.setNull(i + 1, NULL);
-                        default -> {
-                        }
-                    }
-                }
-                ps.executeUpdate();
-
-                var rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getString(1);
-                }
-
-                return "0";
-            }
-        } catch (SQLException | DataAccessException e) {
-            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
-        }
-    }
+//    private String executeUpdate(String statement, Object... params) throws ResponseException {
+//        try (var conn = DatabaseManager.getConnection()) {
+//            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+//                for (var i = 0; i < params.length; i++) {
+//                    var param = params[i];
+//                    switch (param) {
+//                        case String p -> ps.setString(i + 1, p);
+//                        case Integer p -> ps.setInt(i + 1, p);
+//                        case ChessGame p -> ps.setString(i + 1, p.toString());
+//                        case null -> ps.setNull(i + 1, NULL);
+//                        default -> {
+//                        }
+//                    }
+//                }
+//                ps.executeUpdate();
+//
+//                var rs = ps.getGeneratedKeys();
+//                if (rs.next()) {
+//                    return rs.getString(1);
+//                }
+//
+//                return "0";
+//            }
+//        } catch (SQLException | DataAccessException e) {
+//            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
+//        }
+//    }
 
     private final String[] createStatements = {
             """
