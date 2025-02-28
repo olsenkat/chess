@@ -5,7 +5,10 @@ import exception.ResponseException;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import org.mindrot.jbcrypt.BCrypt;
-import requestresult.*;
+import requestresult.LoginRequest;
+import requestresult.LogoutRequest;
+import requestresult.RegisterRequest;
+import requestresult.RegisterResult;
 
 import java.util.Objects;
 

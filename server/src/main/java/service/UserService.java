@@ -3,9 +3,9 @@ package service;
 import dataaccess.*;
 import exception.ResponseException;
 import org.mindrot.jbcrypt.BCrypt;
-import requestresult.*;
 import model.UserData;
 import model.AuthData;
+import requestresult.*;
 
 public class UserService
 {
