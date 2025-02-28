@@ -113,6 +113,14 @@ public class AuthDAOTest {
             assertThrows(DataAccessException.class, () -> authDAO.deleteAuth(new AuthData(null,
                             "username")), "Get Deleted Auth Token should throw an error.");
         }
+
+        @Test
+        void deleteInvalidAuthToken() {
+            assertDoesNotThrow(() -> createAuth(testAuth), "Create Auth should not throw an error.");
+            assertDoesNotThrow(() -> authDAO.getAuth(testAuthToken), "Get Auth should not throw an error.");
+            assertThrows(DataAccessException.class, () -> authDAO.deleteAuth(new AuthData("InvalidAuth",
+                    "username")), "Get Deleted Auth Token should throw an error.");
+        }
     }
 
     @Nested
@@ -130,10 +138,12 @@ public class AuthDAOTest {
             assertDoesNotThrow(() -> authDAO.getAuth(testAuthToken),
                     "Getting the created Auth should not throw an error.");
             assertDoesNotThrow(() -> authDAO.clear(), "Clear Auth should not throw an error.");
+            assertThrows(DataAccessException.class, () -> authDAO.getAuth(testAuthToken),
+                    "Getting the deleted Auth should throw an error.");
         }
 
         @Test
-        void clearUserEmpty() {
+        void clearAuthEmpty() {
             assertDoesNotThrow(() -> authDAO.clear(), "Clear Auth should not throw an error.");
         }
 
