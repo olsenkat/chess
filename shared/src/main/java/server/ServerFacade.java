@@ -65,6 +65,8 @@ public class ServerFacade {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
+
+            // Check if the method is a GET method, if so, don't write the body
             if (Objects.equals(method, "GET"))
             {
                 addHeaders(request, http);
@@ -134,7 +136,7 @@ public class ServerFacade {
             // Invoke the authToken() method in the request record
             String authorization = (String) request.getClass().getMethod("authToken").invoke(request);
 
-            // Add this authorization to "authorization" header IF it is a String. Else Invalid Auth
+            // Add this authorization to "authorization" header
             http.addRequestProperty("authorization", authorization);
 
             // Add the base header for all requests
