@@ -6,7 +6,6 @@ import requestresult.*;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.*;
 import java.util.Objects;
 
@@ -131,17 +130,12 @@ public class ServerFacade {
     {
         try
         {
-            // Check if the request had the method "authToken()"
-            Method getAuth;
-            getAuth = request.getClass().getMethod("authToken");
-
+            // Check if the request had the method "authToken()" and
             // Invoke the authToken() method in the request record
-            Object authorization;
-            authorization = getAuth.invoke(request);
+            String authorization = (String) request.getClass().getMethod("authToken").invoke(request);
 
             // Add this authorization to "authorization" header IF it is a String. Else Invalid Auth
-            String auth = (authorization instanceof String) ? (String) authorization : "Invalid Auth";
-            http.addRequestProperty("authorization", auth);
+            http.addRequestProperty("authorization", authorization);
 
             // Add the base header for all requests
             http.addRequestProperty("Content-Type", "application/json");
