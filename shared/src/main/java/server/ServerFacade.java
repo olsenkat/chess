@@ -132,14 +132,16 @@ public class ServerFacade {
         try
         {
             // Check if the request had the method "authToken()"
-            Method getAuth = request.getClass().getMethod("authToken");
+            Method getAuth;
+            getAuth = request.getClass().getMethod("authToken");
 
-            // Invoke the authToken() method in the record
-            Object authorization = getAuth.invoke(request);
+            // Invoke the authToken() method in the request record
+            Object authorization;
+            authorization = getAuth.invoke(request);
 
             // Add this authorization to "authorization" header IF it is a String. Else Invalid Auth
-            http.addRequestProperty("authorization",
-                    (authorization instanceof String) ? (String) authorization : "Invalid Auth");
+            String auth = (authorization instanceof String) ? (String) authorization : "Invalid Auth";
+            http.addRequestProperty("authorization", auth);
 
             // Add the base header for all requests
             http.addRequestProperty("Content-Type", "application/json");
