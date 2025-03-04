@@ -17,7 +17,7 @@ public class Main {
         AuthDAO authDataAccess = new MemoryAuthDAO();
 
         try {
-            if (args.length >= 2 && args[1].equals("sql")) {
+            if (args.length >= 1 && args[0].equals("sql")) {
                 gameDataAccess = new MySqlGameDAO();
                 userDataAccess = new MySqlUserDAO();
                 authDataAccess = new MySqlAuthDAO();
