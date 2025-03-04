@@ -11,3 +11,8 @@ out/
 
 ### Chess project ###
 server/**/db.properties
+client.iml
+server.iml
+shared.iml
+misc.xml
+pom.xml
