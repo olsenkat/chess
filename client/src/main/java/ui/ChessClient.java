@@ -12,6 +12,9 @@ import websocket.NotificationHandler;
 import server.ServerFacade;
 import websocket.WebSocketFacade;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ChessClient {
     private String username = null;
     private final ServerFacade server;
@@ -23,6 +26,7 @@ public class ChessClient {
     private HashMap<Integer, Integer> serverToClientGameID;
     private HashMap<Integer, ChessGame> chessGame;
     private ChessGame currentGame;
+    private static Logger logger;
 
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
@@ -31,6 +35,10 @@ public class ChessClient {
         this.notificationHandler = notificationHandler;
         authToken = null;
         serverToClientGameID = new HashMap<>();
+        logger = Logger.getLogger("ChessClient");
+        logger.finest("Beginning logger");
+        serverToClientGameID = new HashMap<>();
+        chessGame = new HashMap<>();
     }
 
     public String evalPreLogin(String input) {
@@ -54,13 +62,13 @@ public class ChessClient {
                     case "join" -> joinGame(params);
                     case "observe" -> observeGame(params);
                     case "logout" -> logoutUser();
-                    case "quit" -> "quit";
+                    case "quit" -> quitLogout();
                     default -> help();
                 };
             }
             else
             {
-                return "quit";
+                return quitLogout();
             }
         } catch (ResponseException ex) {
             return ex.getMessage();
@@ -76,14 +84,11 @@ public class ChessClient {
             username = params[0];
             String password = params[1];
 
-            // Set up websocket and enter Chess session
-            ws = new WebSocketFacade(serverUrl, notificationHandler);
-            ws.enterChessSession(username);
-
             // Get the login result, set the authToken, and output data
             var loginResult = server.loginUser(new LoginRequest(username, password));
             authToken = loginResult.authToken();
             listAddGames();
+            state = State.SIGNEDIN;
             return String.format("You signed in as %s.", loginResult.username());
         }
         throw new ResponseException(400, "Expected: <username> <password>");
@@ -91,65 +96,31 @@ public class ChessClient {
 
     public String registerUser(String... params) throws ResponseException {
         if (params.length >= 3) {
-            // Ensure we move to the signed-in state
-            state = State.SIGNEDIN;
-
             // Set username, password, email
             username = params[0];
             String password = params[1];
             String email = params[2];
 
-            // Set up web socket connection with the server
-            ws = new WebSocketFacade(serverUrl, notificationHandler);
-            ws.enterChessSession(username);
-
             // Register the user, retrieve the authToken, and return the username
             var registerResult = server.registerUser(new RegisterRequest(username, password, email));
             authToken = registerResult.authToken();
             listAddGames();
+            state = State.SIGNEDIN;
             return String.format("You signed in as %s.", registerResult.username());
         }
         throw new ResponseException(400, "Expected: <username> <password> <email>");
     }
 
-    public String help() {
-        if (state == State.SIGNEDOUT) {
-            return """
-                    - register <username> <password> <email> - to create an account
-                    - login <username> <password> - to play chess
-                    - quit - playing chess
-                    - help - with possible commands
-                    """;
-        }
-        else if (state == State.SIGNEDIN)
-        {
-            return """
-                    - logout - return to start
-                    - create <NAME> - a game
-                    - list - games
-                    - join <ID> [WHITE|BLACK] - a game
-                    - observe <ID> - a game
-                    - quit - playing chess
-                    - help - with possible commands
-                    """;
-        }
-        return """
-                - help
-                - register <username> <password> <email>
-                - login <username> <password>
-                - quit
-                """;
-    }
+
 
     public String logoutUser() throws ResponseException {
         // Sign out of ws
         assertSignedIn();
-        ws.leaveChessSession(username);
-        ws = null;
-        state = State.SIGNEDOUT;
+
 
         // Log out of chess client
         server.logoutUser(new LogoutRequest(authToken));
+
 
         // Reset class info to null. Return logout script.
         authToken = null;
@@ -157,7 +128,7 @@ public class ChessClient {
         username = null;
         serverToClientGameID = new HashMap<>();
         chessGame = new HashMap<>();
-
+        state = State.SIGNEDOUT;
         return String.format("You logged out as %s.", oldUser);
     }
 
@@ -233,18 +204,54 @@ public class ChessClient {
         var listResult = server.listGames(new ListRequest(authToken));
         StringBuilder gameList = new StringBuilder();
         ArrayList<GameData> games = listResult.games();
-        for (int i = 1; i < listResult.games().size(); i++)
+        for (int i = 1; i <= listResult.games().size(); i++)
         {
-            String gameName = games.get(i).gameName();
-            String whiteUsername = games.get(i).whiteUsername();
-            String blackUsername = games.get(i).blackUsername();
+            int j = i-1;
+            String gameName = games.get(j).gameName();
+            String whiteUsername = games.get(j).whiteUsername();
+            String blackUsername = games.get(j).blackUsername();
             String game = i + ". Game name: " + gameName + " White: " + whiteUsername +
                     " Black: " + blackUsername + "\n";
             gameList.append(game);
-            serverToClientGameID.put(games.get(i).gameID(), i);
-            chessGame.put(i, games.get(i).game());
+            serverToClientGameID.put(games.get(j).gameID(), i);
+            chessGame.put(i, games.get(j).game());
         }
         return gameList.toString();
+    }
+
+    public String help() {
+        if (state == State.SIGNEDOUT) {
+            return """
+                    - register <username> <password> <email> - to create an account
+                    - login <username> <password> - to play chess
+                    - quit - playing chess
+                    - help - with possible commands
+                    """;
+        }
+        else if (state == State.SIGNEDIN)
+        {
+            return """
+                    - logout - return to start
+                    - create <NAME> - a game
+                    - list - games
+                    - join <ID> [WHITE|BLACK] - a game
+                    - observe <ID> - a game
+                    - quit - playing chess
+                    - help - with possible commands
+                    """;
+        }
+        return """
+                - help
+                - register <username> <password> <email>
+                - login <username> <password>
+                - quit
+                """;
+    }
+
+    private String quitLogout() throws ResponseException
+    {
+        logoutUser();
+        return "quit";
     }
 
 }
