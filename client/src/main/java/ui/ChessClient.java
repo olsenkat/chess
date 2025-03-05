@@ -7,7 +7,6 @@ import java.util.HashMap;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
-import chess.ChessPosition;
 import exception.ResponseException;
 import model.GameData;
 import requestresult.*;
@@ -15,7 +14,6 @@ import websocket.NotificationHandler;
 import server.ServerFacade;
 import websocket.WebSocketFacade;
 import static ui.EscapeSequences.*;
-import ui.DrawBoard.*;
 
 import java.util.logging.Logger;
 
