@@ -11,6 +11,7 @@ import requestresult.*;
 import websocket.NotificationHandler;
 import server.ServerFacade;
 import websocket.WebSocketFacade;
+import static ui.EscapeSequences.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,9 +90,9 @@ public class ChessClient {
             authToken = loginResult.authToken();
             listAddGames();
             state = State.SIGNEDIN;
-            return String.format("You signed in as %s.", loginResult.username());
+            return String.format("You signed in as %s.\n", loginResult.username());
         }
-        throw new ResponseException(400, "Expected: <username> <password>");
+        throw new ResponseException(400, "Expected: <username> <password>\n");
     }
 
     public String registerUser(String... params) throws ResponseException {
@@ -106,9 +107,9 @@ public class ChessClient {
             authToken = registerResult.authToken();
             listAddGames();
             state = State.SIGNEDIN;
-            return String.format("You signed in as %s.", registerResult.username());
+            return String.format("You registered %s.\n", registerResult.username());
         }
-        throw new ResponseException(400, "Expected: <username> <password> <email>");
+        throw new ResponseException(400, "Expected: <username> <password> <email>\n");
     }
 
 
@@ -129,12 +130,12 @@ public class ChessClient {
         serverToClientGameID = new HashMap<>();
         chessGame = new HashMap<>();
         state = State.SIGNEDOUT;
-        return String.format("You logged out as %s.", oldUser);
+        return String.format("You logged out as %s.\n", oldUser);
     }
 
     private void assertSignedIn() throws ResponseException {
         if (state == State.SIGNEDOUT) {
-            throw new ResponseException(400, "You must sign in");
+            throw new ResponseException(400, "You must sign in\n");
         }
     }
 
@@ -145,9 +146,9 @@ public class ChessClient {
 
             var createResult = server.createGame(new CreateRequest(authToken, gameName));
             listAddGames();
-            return String.format("You created a game with ID = %d.", createResult.gameID());
+            return String.format("You created a game with ID = %d.\n", createResult.gameID());
         }
-        throw new ResponseException(400, "Expected: <NAME>");
+        throw new ResponseException(400, "Expected: <NAME>\n");
     }
 
     public String listGames() throws ResponseException {
@@ -166,9 +167,9 @@ public class ChessClient {
 
             state = State.INGAME;
             currentGame = chessGame.get(serverToClientGameID.get(gameID));
-            return String.format("You successfully joined a game with ID = %d.", gameID);
+            return String.format("You successfully joined game %d.\n", gameID);
         }
-        throw new ResponseException(400, "Expected: <ID>");
+        throw new ResponseException(400, "Expected: <ID>\n");
     }
 
     private int isInt(String integer) throws ResponseException
@@ -178,7 +179,7 @@ public class ChessClient {
         }
         catch (NumberFormatException e)
         {
-            throw new ResponseException(400, "Expected: <ID>");
+            throw new ResponseException(400, "Expected: <ID>\n");
         }
     }
 
@@ -191,9 +192,9 @@ public class ChessClient {
             state = State.INGAME;
             currentGame = chessGame.get(serverToClientGameID.get(gameID));
 
-            return String.format("You successfully are observing a game with ID = %d.", gameID);
+            return String.format("You successfully are observing game %d.\n", gameID);
         }
-        throw new ResponseException(400, "Expected: <NAME>");
+        throw new ResponseException(400, "Expected: <ID>\n");
     }
 
     private String listAddGames() throws ResponseException
@@ -210,8 +211,9 @@ public class ChessClient {
             String gameName = games.get(j).gameName();
             String whiteUsername = games.get(j).whiteUsername();
             String blackUsername = games.get(j).blackUsername();
-            String game = i + ". Game name: " + gameName + " White: " + whiteUsername +
-                    " Black: " + blackUsername + "\n";
+            String game = i + ". Game Name: " + SET_TEXT_COLOR_LIGHT_GREY + gameName + EMPTY + SET_TEXT_COLOR_MAGENTA
+                    +" White: " + SET_TEXT_COLOR_LIGHT_GREY + whiteUsername + EMPTY + SET_TEXT_COLOR_MAGENTA +
+                    " Black: " + SET_TEXT_COLOR_LIGHT_GREY + blackUsername + "\n" + SET_TEXT_COLOR_MAGENTA;
             gameList.append(game);
             serverToClientGameID.put(games.get(j).gameID(), i);
             chessGame.put(i, games.get(j).game());
@@ -221,31 +223,27 @@ public class ChessClient {
 
     public String help() {
         if (state == State.SIGNEDOUT) {
-            return """
-                    - register <username> <password> <email> - to create an account
-                    - login <username> <password> - to play chess
-                    - quit - playing chess
-                    - help - with possible commands
-                    """;
+            return "- register <username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY +
+                    " - to create an account\n" + SET_TEXT_COLOR_MAGENTA + "- login <username> <password>" +
+                    SET_TEXT_COLOR_LIGHT_GREY + " - to play chess\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- quit" + SET_TEXT_COLOR_LIGHT_GREY + " - playing chess\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
         }
         else if (state == State.SIGNEDIN)
         {
-            return """
-                    - logout - return to start
-                    - create <NAME> - a game
-                    - list - games
-                    - join <ID> [WHITE|BLACK] - a game
-                    - observe <ID> - a game
-                    - quit - playing chess
-                    - help - with possible commands
-                    """;
+            return "- logout" + SET_TEXT_COLOR_LIGHT_GREY + " - return to start\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- create <NAME>" + SET_TEXT_COLOR_LIGHT_GREY + " - a game\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- list" + SET_TEXT_COLOR_LIGHT_GREY + " - games\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- join <ID> [WHITE|BLACK]" + SET_TEXT_COLOR_LIGHT_GREY + " - a game\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- observe <ID>" + SET_TEXT_COLOR_LIGHT_GREY + " - a game\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- quit" + SET_TEXT_COLOR_LIGHT_GREY + " - playing chess\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
         }
-        return """
-                - help
-                - register <username> <password> <email>
-                - login <username> <password>
-                - quit
-                """;
+        return "- register <username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY +
+                " - to create an account\n" + SET_TEXT_COLOR_MAGENTA + "- login <username> <password>" +
+                SET_TEXT_COLOR_LIGHT_GREY + " - to play chess\n" + SET_TEXT_COLOR_MAGENTA +
+                "- quit" + SET_TEXT_COLOR_LIGHT_GREY + " - playing chess\n" + SET_TEXT_COLOR_MAGENTA +
+                "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
     }
 
     private String quitLogout() throws ResponseException

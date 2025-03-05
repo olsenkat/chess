@@ -14,8 +14,8 @@ public class Repl implements NotificationHandler {
     }
 
     public void run() {
-        System.out.println("\uD83D\uDC36 Welcome to the chess server. Register or login in to start.");
-        System.out.print(client.help());
+        System.out.println(SET_TEXT_COLOR_MAGENTA + BLACK_KNIGHT + "Welcome to Katie's Chess Server." + BLACK_KNIGHT +
+                "\n" + WHITE_KING + "Type 'help' to get started!" + WHITE_KING + SET_TEXT_COLOR_WHITE);
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -25,7 +25,7 @@ public class Repl implements NotificationHandler {
 
             try {
                 result = client.evalPreLogin(line);
-                System.out.print(SET_TEXT_COLOR_BLUE + result);
+                System.out.print(SET_TEXT_COLOR_MAGENTA + result + SET_TEXT_COLOR_WHITE);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
