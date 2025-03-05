@@ -2,15 +2,14 @@ package websocket;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
-import webSocketMessages.Action;
-import webSocketMessages.Notification;
+import websocketmessages.Action;
+import websocketmessages.Notification;
 
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //need to extend Endpoint for websocket to work properly
@@ -50,25 +49,6 @@ public class WebSocketFacade extends Endpoint {
     //Endpoint requires this method, but you don't have to do anything
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
-    }
-
-    public void enterChessSession(String username) throws ResponseException {
-        try {
-            var action = new Action(Action.Type.ENTER, username);
-            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-        } catch (IOException ex) {
-            throw new ResponseException(500, ex.getMessage());
-        }
-    }
-
-    public void leaveChessSession(String username) throws ResponseException {
-        try {
-            var action = new Action(Action.Type.EXIT, username);
-            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-            this.session.close();
-        } catch (IOException ex) {
-            throw new ResponseException(500, ex.getMessage());
-        }
     }
 
 }
