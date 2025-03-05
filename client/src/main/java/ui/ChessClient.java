@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import exception.ResponseException;
 import model.GameData;
 import requestresult.*;
@@ -12,8 +15,8 @@ import websocket.NotificationHandler;
 import server.ServerFacade;
 import websocket.WebSocketFacade;
 import static ui.EscapeSequences.*;
+import ui.DrawBoard.*;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ChessClient {
@@ -28,6 +31,8 @@ public class ChessClient {
     private HashMap<Integer, ChessGame> chessGame;
     private ChessGame currentGame;
     private static Logger logger;
+    private ChessGame.TeamColor teamColor;
+    private DrawBoard drawBoard;
 
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
@@ -40,6 +45,7 @@ public class ChessClient {
         logger.finest("Beginning logger");
         serverToClientGameID = new HashMap<>();
         chessGame = new HashMap<>();
+        this.teamColor = null;
     }
 
     public String evalPreLogin(String input) {
@@ -54,9 +60,7 @@ public class ChessClient {
                     case "quit" -> "quit";
                     default -> help();
                 };
-            }
-            else if (state.equals(State.SIGNEDIN))
-            {
+            } else if (state.equals(State.SIGNEDIN)) {
                 return switch (cmd) {
                     case "create" -> createGame(params);
                     case "list" -> listGames();
@@ -66,9 +70,8 @@ public class ChessClient {
                     case "quit" -> quitLogout();
                     default -> help();
                 };
-            }
-            else
-            {
+            } else {
+                displayBoard();
                 return quitLogout();
             }
         } catch (ResponseException ex) {
@@ -78,9 +81,6 @@ public class ChessClient {
 
     public String loginUser(String... params) throws ResponseException {
         if (params.length >= 2) {
-            // Ensure we move to the signed in state
-            state = State.SIGNEDIN;
-
             // Set username and password
             username = params[0];
             String password = params[1];
@@ -111,7 +111,6 @@ public class ChessClient {
         }
         throw new ResponseException(400, "Expected: <username> <password> <email>\n");
     }
-
 
 
     public String logoutUser() throws ResponseException {
@@ -146,14 +145,18 @@ public class ChessClient {
 
             var createResult = server.createGame(new CreateRequest(authToken, gameName));
             listAddGames();
-            return String.format("You created a game with ID = %d.\n", createResult.gameID());
+            ChessBoard newBoard = new ChessBoard();
+            newBoard.resetBoard();
+            int gameID = serverToClientGameID.get(createResult.gameID());
+            chessGame.get(gameID).setBoard(newBoard);
+            return String.format("You created a game with ID = %d.\n", gameID);
         }
         throw new ResponseException(400, "Expected: <NAME>\n");
     }
 
     public String listGames() throws ResponseException {
-            assertSignedIn();
-            return listAddGames();
+        assertSignedIn();
+        return listAddGames();
     }
 
     public String joinGame(String... params) throws ResponseException {
@@ -167,18 +170,16 @@ public class ChessClient {
 
             state = State.INGAME;
             currentGame = chessGame.get(serverToClientGameID.get(gameID));
+            setTeamColor(playerColor);
             return String.format("You successfully joined game %d.\n", gameID);
         }
         throw new ResponseException(400, "Expected: <ID>\n");
     }
 
-    private int isInt(String integer) throws ResponseException
-    {
+    private int isInt(String integer) throws ResponseException {
         try {
             return Integer.parseInt(integer);
-        }
-        catch (NumberFormatException e)
-        {
+        } catch (NumberFormatException e) {
             throw new ResponseException(400, "Expected: <ID>\n");
         }
     }
@@ -197,22 +198,20 @@ public class ChessClient {
         throw new ResponseException(400, "Expected: <ID>\n");
     }
 
-    private String listAddGames() throws ResponseException
-    {
+    private String listAddGames() throws ResponseException {
         serverToClientGameID = new HashMap<>();
         chessGame = new HashMap<>();
 
         var listResult = server.listGames(new ListRequest(authToken));
         StringBuilder gameList = new StringBuilder();
         ArrayList<GameData> games = listResult.games();
-        for (int i = 1; i <= listResult.games().size(); i++)
-        {
-            int j = i-1;
+        for (int i = 1; i <= listResult.games().size(); i++) {
+            int j = i - 1;
             String gameName = games.get(j).gameName();
             String whiteUsername = games.get(j).whiteUsername();
             String blackUsername = games.get(j).blackUsername();
             String game = i + ". Game Name: " + SET_TEXT_COLOR_LIGHT_GREY + gameName + EMPTY + SET_TEXT_COLOR_MAGENTA
-                    +" White: " + SET_TEXT_COLOR_LIGHT_GREY + whiteUsername + EMPTY + SET_TEXT_COLOR_MAGENTA +
+                    + " White: " + SET_TEXT_COLOR_LIGHT_GREY + whiteUsername + EMPTY + SET_TEXT_COLOR_MAGENTA +
                     " Black: " + SET_TEXT_COLOR_LIGHT_GREY + blackUsername + "\n" + SET_TEXT_COLOR_MAGENTA;
             gameList.append(game);
             serverToClientGameID.put(games.get(j).gameID(), i);
@@ -228,9 +227,7 @@ public class ChessClient {
                     SET_TEXT_COLOR_LIGHT_GREY + " - to play chess\n" + SET_TEXT_COLOR_MAGENTA +
                     "- quit" + SET_TEXT_COLOR_LIGHT_GREY + " - playing chess\n" + SET_TEXT_COLOR_MAGENTA +
                     "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
-        }
-        else if (state == State.SIGNEDIN)
-        {
+        } else if (state == State.SIGNEDIN) {
             return "- logout" + SET_TEXT_COLOR_LIGHT_GREY + " - return to start\n" + SET_TEXT_COLOR_MAGENTA +
                     "- create <NAME>" + SET_TEXT_COLOR_LIGHT_GREY + " - a game\n" + SET_TEXT_COLOR_MAGENTA +
                     "- list" + SET_TEXT_COLOR_LIGHT_GREY + " - games\n" + SET_TEXT_COLOR_MAGENTA +
@@ -246,10 +243,31 @@ public class ChessClient {
                 "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
     }
 
-    private String quitLogout() throws ResponseException
-    {
+    private String quitLogout() throws ResponseException {
         logoutUser();
         return "quit";
+    }
+
+    private void setTeamColor(String playerColor) throws ResponseException {
+        if (playerColor.equalsIgnoreCase("white")) {
+            this.teamColor = ChessGame.TeamColor.WHITE;
+        } else if (playerColor.equalsIgnoreCase("black")) {
+            this.teamColor = ChessGame.TeamColor.BLACK;
+        } else {
+            throw new ResponseException(400, "Expected: <WHITE|BLACK>\n");
+        }
+    }
+
+    private void displayBoard() {
+        drawBoard = new DrawBoard(new ChessPiece[8][8], new String[8][8], currentGame);
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            drawBoard.drawWhiteBoard();
+        } else if (teamColor == ChessGame.TeamColor.BLACK) {
+            drawBoard.drawBlackBoard();
+        } else {
+            drawBoard.drawWhiteBoard();
+            drawBoard.drawBlackBoard();
+        }
     }
 
 }
