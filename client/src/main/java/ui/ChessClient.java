@@ -47,7 +47,7 @@ public class ChessClient {
         logger.finest("Beginning logger");
         serverToClientGameID = new HashMap<>();
         chessGame = new HashMap<>();
-        this.teamColor = null;
+        this.teamColor = ChessGame.TeamColor.WHITE;
     }
 
     // Evaluates user input
@@ -237,6 +237,7 @@ public class ChessClient {
             // Get chess game and display the board
             currentGame = chessGame.get(serverToClientGameID.get(gameID));
             System.out.printf("You are observing game %d.\n%n", gameID);
+            setTeamColor("WHITE");
             displayBoard();
             return "";
         }
@@ -334,7 +335,6 @@ public class ChessClient {
             drawBoard.drawBlackBoard();
         } else {
             drawBoard.drawWhiteBoard();
-            drawBoard.drawBlackBoard();
         }
     }
 
