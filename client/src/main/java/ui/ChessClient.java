@@ -77,7 +77,6 @@ public class ChessClient {
                     default -> help();
                 };
             } else {
-                displayBoard();
                 return quitLogout();
             }
         } catch (ResponseException ex) {
