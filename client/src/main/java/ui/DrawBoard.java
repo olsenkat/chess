@@ -8,23 +8,32 @@ import static ui.EscapeSequences.*;
 
 public class DrawBoard
 {
+    // Set class variables
     private final ChessPiece[][] chessPieces;
     private final String[][] stringChessPieces;
     private final ChessGame currentGame;
+
+    // Pass in constructor values
     DrawBoard(ChessPiece[][] chessPieces, String[][] stringChessPieces, ChessGame currentGame)
     {
         this.chessPieces = chessPieces;
         this.stringChessPieces = stringChessPieces;
         this.currentGame = currentGame;
     }
+
+    // Function to draw the ChessBoard with White side in front
     public void drawWhiteBoard() {
+        // Set light and dark square colors, and board color
         String darkSquares = SET_BG_COLOR_PURPLE;
         String lightSquares = SET_BG_COLOR_MAGENTA;
         String boardColor = SET_BG_COLOR_LIGHT_GREY;
+
+        // Set up board and set top and bottom strings
         boardSetup();
         String top = SET_TEXT_COLOR_WHITE + boardColor + EMPTY + "a  " + " b   " + "c " + " d" + EMPTY + "e  " + "f   " + "g  " +
                 "h "  + EMPTY + SET_BG_COLOR_BLACK + "\n";
 
+        // Set lines (White)
         String line8 = setLineEight(boardColor,lightSquares, darkSquares);
         String line7 = setLineSeven(boardColor,lightSquares, darkSquares);
         String line6 = setLineSix(boardColor,lightSquares, darkSquares);
@@ -34,9 +43,11 @@ public class DrawBoard
         String line2 = setLineTwo(boardColor,lightSquares, darkSquares);
         String line1 = setLineOne(boardColor,lightSquares, darkSquares);
 
+        // Print Board normally
         System.out.println(top + line8 + line7 + line6 + line5 + line4 + line3 + line2 + line1 + top);
     }
 
+    // Sets up the board arrays
     private void boardSetup()
     {
         getPieces();
@@ -123,15 +134,20 @@ public class DrawBoard
                 SET_TEXT_COLOR_WHITE + " 1 " + SET_BG_COLOR_BLACK + "\n";
     }
 
+    // Draws the Chess Board from the black side
     public void drawBlackBoard()
     {
+        // Set board color variables
         String darkSquares = SET_BG_COLOR_MAGENTA;
         String lightSquares = SET_BG_COLOR_PURPLE;
         String boardColor = SET_BG_COLOR_LIGHT_GREY;
+
+        // Set up board and create top/bottom string
         boardSetup();
         String top = SET_TEXT_COLOR_WHITE + boardColor + EMPTY + "h  " + " g   " + "f " + " e" + EMPTY + "d  " + "c   " + "b  " +
                 "a "  + EMPTY + SET_BG_COLOR_BLACK + "\n";
 
+        // Print lines backwards
         String line8 = setLineEightBlack(boardColor,lightSquares, darkSquares);
         String line7 = setLineSevenBlack(boardColor,lightSquares, darkSquares);
         String line6 = setLineSixBlack(boardColor,lightSquares, darkSquares);
@@ -224,6 +240,7 @@ public class DrawBoard
                 SET_TEXT_COLOR_WHITE + " 1 " + SET_BG_COLOR_BLACK + "\n";
     }
 
+    // Creates an array with all the chess pieces
     private void getPieces() {
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
@@ -235,17 +252,23 @@ public class DrawBoard
         }
     }
 
+    // Updates the chess pieces to strings
     private void getStringPieces() {
+        // Loop through entire board
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
+                // Get piece
                 ChessPiece piece = chessPieces[i][j];
+                // If the piece is null, the space is empty
                 if (piece==null)
                 {
                     stringChessPieces[i][j] = EMPTY;
                     continue;
                 }
+                // Get the type and color
                 ChessPiece.PieceType type = piece.getPieceType();
                 ChessGame.TeamColor color = piece.getTeamColor();
+                // Add type and color to String array
                 if (color== ChessGame.TeamColor.WHITE) {
                     if (type == ChessPiece.PieceType.PAWN)
                     {

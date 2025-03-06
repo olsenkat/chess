@@ -24,7 +24,7 @@ public class Repl implements NotificationHandler {
             String line = scanner.nextLine();
 
             try {
-                result = client.evalPreLogin(line);
+                result = client.eval(line);
                 System.out.print(SET_TEXT_COLOR_MAGENTA + result + SET_TEXT_COLOR_WHITE);
             } catch (Throwable e) {
                 var msg = e.toString();
