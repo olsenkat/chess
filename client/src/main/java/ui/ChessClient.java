@@ -77,7 +77,11 @@ public class ChessClient {
                     default -> help();
                 };
             } else {
-                return quitLogout();
+                return switch (cmd) {
+                    case "return" -> returnFromGame();
+                    case "quit" -> quitLogout();
+                    default -> help();
+                };
             }
         } catch (ResponseException ex) {
             return ex.getMessage();
@@ -292,11 +296,16 @@ public class ChessClient {
                     "- quit" + SET_TEXT_COLOR_LIGHT_GREY + " - playing chess\n" + SET_TEXT_COLOR_MAGENTA +
                     "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
         }
-        return "- register <username> <password> <email>" + SET_TEXT_COLOR_LIGHT_GREY +
-                " - to create an account\n" + SET_TEXT_COLOR_MAGENTA + "- login <username> <password>" +
-                SET_TEXT_COLOR_LIGHT_GREY + " - to play chess\n" + SET_TEXT_COLOR_MAGENTA +
+        return "- return" + SET_TEXT_COLOR_LIGHT_GREY +
+                " - to exit the game\n" + SET_TEXT_COLOR_MAGENTA +
                 "- quit" + SET_TEXT_COLOR_LIGHT_GREY + " - playing chess\n" + SET_TEXT_COLOR_MAGENTA +
                 "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
+    }
+
+    public String returnFromGame()
+    {
+        state = State.SIGNEDIN;
+        return "You exited the chess game";
     }
 
     // Quits and logs out of server
