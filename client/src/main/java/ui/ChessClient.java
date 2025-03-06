@@ -182,6 +182,10 @@ public class ChessClient {
             String gameIDString = params[0];
             String playerColor = params[1];
             int gameID = isInt(gameIDString); // Determine the game ID is an int
+            if (!serverToClientGameID.containsValue(gameID))
+            {
+                throw new ResponseException(400, "Game ID is invalid \n");
+            }
 
             // Join the game
             server.joinGame(new JoinRequest(authToken, playerColor, gameID));
@@ -219,6 +223,10 @@ public class ChessClient {
             // Set gameID, determine it is an integer
             String gameIDString = params[0];
             int gameID = isInt(gameIDString);
+            if (!serverToClientGameID.containsValue(gameID))
+            {
+                throw new ResponseException(400, "Game ID is invalid \n");
+            }
             
             state = State.INGAME; // Set state
             
