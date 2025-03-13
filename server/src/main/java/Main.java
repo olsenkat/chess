@@ -1,6 +1,7 @@
 import chess.*;
 import dataaccess.*;
 import exception.ResponseException;
+import server.websocket.WebSocketHandler;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -31,7 +32,8 @@ public class Main {
         ClearService clearService = new ClearService(userDataAccess, authDataAccess, gameDataAccess);
         GameService gameService = new GameService(authDataAccess, gameDataAccess);
         UserService userService = new UserService(userDataAccess, authDataAccess);
-        Server newServer = new Server(clearService, userService, gameService);
+        WebSocketHandler ws = new WebSocketHandler(userDataAccess, gameDataAccess, authDataAccess);
+        Server newServer = new Server(clearService, userService, gameService, ws);
         int port = 8080;
         newServer.run(port);
     }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import exception.ResponseException;
 import requestresult.*;
+import server.websocket.WebSocketHandler;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -14,15 +15,17 @@ public class Server {
     private final ClearService clearService;
     private final UserService userService;
     private final GameService gameService;
+    private final WebSocketHandler webSocketHandler;
     GameDAO gameDataAccess;
     UserDAO userDataAccess;
     AuthDAO authDataAccess;
     private boolean sqlDataAccess = true;
 
-    public Server(ClearService clearService, UserService userService, GameService gameService) {
+    public Server(ClearService clearService, UserService userService, GameService gameService, WebSocketHandler ws) {
         this.clearService = clearService;
         this.userService = userService;
         this.gameService = gameService;
+        webSocketHandler = ws;
     }
     public Server() {
         if (sqlDataAccess)
@@ -46,6 +49,7 @@ public class Server {
         this.clearService = new ClearService(userDataAccess, authDataAccess, gameDataAccess);
         this.userService = new UserService(userDataAccess, authDataAccess);
         this.gameService = new GameService(authDataAccess, gameDataAccess);
+        webSocketHandler = new WebSocketHandler(userDataAccess, gameDataAccess, authDataAccess);
     }
 
     //    private final WebSocketHandler webSocketHandler;
@@ -53,6 +57,8 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
