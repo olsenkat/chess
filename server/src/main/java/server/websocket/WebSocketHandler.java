@@ -203,8 +203,5 @@ public class WebSocketHandler {
             case 8-> row = "8";
         }
         return column + row;
-
     }
-
-
 }
