@@ -21,6 +21,7 @@ import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 import static ui.EscapeSequences.*;
 import java.util.logging.Logger;
+import javax.websocket.*;
 
 public class ChessClient {
     // Set initial
@@ -34,6 +35,7 @@ public class ChessClient {
     private static Logger logger;
     private ChessGame.TeamColor teamColor;
 
+    private Session session;
     private final NotificationHandler notificationHandler;
     private WebSocketFacade ws;
 
@@ -78,8 +80,14 @@ public class ChessClient {
                 };
             } else {
                 return switch (cmd) {
-                    case "return" -> returnFromGame();
-                    case "quit" -> quitLogout();
+                    case "redraw" -> {
+                        displayBoard();
+                        yield "";
+                    }
+                    case "leave" -> leaveGame();
+                    case "move" -> movePiece();
+                    case "resign" -> resignFromGame();
+                    case "highlight" -> highlightMoves();
                     default -> help();
                 };
             }
@@ -297,17 +305,40 @@ public class ChessClient {
                     "- quit" + SET_TEXT_COLOR_LIGHT_GREY + " - playing chess\n" + SET_TEXT_COLOR_MAGENTA +
                     "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
         }
-        return "- return" + SET_TEXT_COLOR_LIGHT_GREY +
-                " - to exit the game\n" + SET_TEXT_COLOR_MAGENTA +
-                "- quit" + SET_TEXT_COLOR_LIGHT_GREY + " - playing chess\n" + SET_TEXT_COLOR_MAGENTA +
+        return "- highlight" + SET_TEXT_COLOR_LIGHT_GREY +
+                " - to highlight legal moves\n" + SET_TEXT_COLOR_MAGENTA +
+                "- move <startLocation> <endLocation>" + SET_TEXT_COLOR_LIGHT_GREY + " - to make move\n" +
+                SET_TEXT_COLOR_MAGENTA + "- redraw" + SET_TEXT_COLOR_LIGHT_GREY + " - to redraw board\n" +
+                SET_TEXT_COLOR_MAGENTA + "- resign" + SET_TEXT_COLOR_LIGHT_GREY + " - to forfeit the game\n" +
+                SET_TEXT_COLOR_MAGENTA + "- leave" + SET_TEXT_COLOR_LIGHT_GREY +
+                " - leave game (you will be removed from the game)\n" + SET_TEXT_COLOR_MAGENTA +
                 "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
     }
 
-    public String returnFromGame()
+    public String leaveGame()
     {
+        // websocket leave the game!!
+
         state = State.SIGNEDIN;
         return "You exited the chess game";
     }
+
+    private String movePiece()
+    {
+        return null;
+    }
+
+    private String resignFromGame()
+    {
+        return null;
+    }
+
+    private String highlightMoves()
+    {
+        return null;
+    }
+
+
 
     // Quits and logs out of server
     private String quitLogout() throws ResponseException {
