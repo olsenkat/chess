@@ -1,5 +1,6 @@
 package websocket;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import exception.UnauthorizedException;
@@ -55,37 +56,68 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    private void sendMessage(RemoteEndpoint remote, ErrorMessage error)
-    {
-
-    }
-
-    private void connect(String username) throws UnauthorizedException
+    private void connect(String authToken, Integer gameID) throws UnauthorizedException
     {
         try
         {
             UserGameCommand.CommandType command = UserGameCommand.CommandType.CONNECT;
-            String connectString = "username: \"" + username + "\", command: \"" + command + "\"";
+            UserGameCommand newUserGameCommand = new UserGameCommand(command, authToken, gameID);
+
+            String connectString = new Gson().toJson(newUserGameCommand);
             var action = new Action(Action.Type.ENTER, connectString);
+
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException e) {
             throw new UnauthorizedException(500, "Error: " + e.getMessage());
         }
     }
 
-    private String makeMove(Session session, String username, MakeMoveCommand command) throws UnauthorizedException
+    private void makeMove(Session session, String authToken, Integer gameID, ChessMove move) throws UnauthorizedException
     {
-        return null;
+        try
+        {
+            UserGameCommand.CommandType command = UserGameCommand.CommandType.MAKE_MOVE;
+            MakeMoveCommand newMakeMoveCommand = new MakeMoveCommand(command, authToken, gameID, move);
+
+            String connectString = new Gson().toJson(newMakeMoveCommand);
+            var action = new Action(Action.Type.ENTER, connectString);
+
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException e) {
+            throw new UnauthorizedException(500, "Error: " + e.getMessage());
+        }
     }
 
-    private String leaveGame(Session session, String username, UserGameCommand command) throws UnauthorizedException
+    private void leaveGame(Session session, String authToken, Integer gameID) throws UnauthorizedException
     {
-        return null;
+        try
+        {
+            UserGameCommand.CommandType command = UserGameCommand.CommandType.LEAVE;
+            UserGameCommand newUserGameCommand = new UserGameCommand(command, authToken, gameID);
+
+            String connectString = new Gson().toJson(newUserGameCommand);
+            var action = new Action(Action.Type.EXIT, connectString);
+
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException e) {
+            throw new UnauthorizedException(500, "Error: " + e.getMessage());
+        }
     }
 
-    private String resign(Session session, String username, UserGameCommand command) throws UnauthorizedException
+    private void resign(Session session, String authToken, Integer gameID) throws UnauthorizedException
     {
-        return null;
+        try
+        {
+            UserGameCommand.CommandType command = UserGameCommand.CommandType.LEAVE;
+            UserGameCommand newUserGameCommand = new UserGameCommand(command, authToken, gameID);
+
+            String connectString = new Gson().toJson(newUserGameCommand);
+            var action = new Action(Action.Type.EXIT, connectString);
+
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException e) {
+        throw new UnauthorizedException(500, "Error: " + e.getMessage());
+        }
     }
 
 }
