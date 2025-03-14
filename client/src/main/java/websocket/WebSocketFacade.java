@@ -56,7 +56,7 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    private void connect(String authToken, Integer gameID) throws UnauthorizedException
+    public void connect(String authToken, Integer gameID) throws UnauthorizedException
     {
         try
         {
@@ -72,7 +72,7 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    private void makeMove(Session session, String authToken, Integer gameID, ChessMove move) throws UnauthorizedException
+    public void makeMove(Session session, String authToken, Integer gameID, ChessMove move) throws UnauthorizedException
     {
         try
         {
@@ -88,7 +88,7 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    private void leaveGame(Session session, String authToken, Integer gameID) throws UnauthorizedException
+    public void leaveGame(Session session, String authToken, Integer gameID) throws UnauthorizedException
     {
         try
         {
@@ -104,7 +104,7 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    private void resign(Session session, String authToken, Integer gameID) throws UnauthorizedException
+    public void resign(Session session, String authToken, Integer gameID) throws UnauthorizedException
     {
         try
         {
