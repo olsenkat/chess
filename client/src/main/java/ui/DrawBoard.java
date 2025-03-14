@@ -1,8 +1,11 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
+
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
@@ -19,6 +22,74 @@ public class DrawBoard
         this.chessPieces = chessPieces;
         this.stringChessPieces = stringChessPieces;
         this.currentGame = currentGame;
+    }
+
+    public void drawWhiteHighlighted(ChessPosition startPos, Collection<ChessMove> validMoves)
+    {
+        String darkSquares = SET_BG_COLOR_PURPLE;
+        String lightSquares = SET_BG_COLOR_MAGENTA;
+        String boardColor = SET_BG_COLOR_LIGHT_GREY;
+        String darkHighlight = SET_BG_COLOR_DARK_GREEN;
+        String lightHighlight = SET_BG_COLOR_GREEN;
+
+        String dark = darkSquares;
+        String light = lightSquares;
+
+        boardSetup();
+        String top = SET_TEXT_COLOR_WHITE + boardColor + EMPTY + "a  " + " b   " + "c " + " d" + EMPTY + "e  " + "f   " + "g  " +
+                "h "  + EMPTY + SET_BG_COLOR_BLACK + "\n";
+        boolean oddRow;
+        boolean oddCol;
+        StringBuilder board = new StringBuilder();
+        board.append(top);
+
+        for (int i = 1; i < 8; i++)
+        {
+            board.append(boardColor).append(" ").append(i).append(" ");
+            oddRow =  ((i % 2) != 0);
+            int iArray = i-1;
+            for (int j = 1; j < 8; j++)
+            {
+                oddCol =  ((j % 2) != 0);
+                int jArray = j-1;
+                ChessPosition currentPos = new ChessPosition(i, j);
+
+                if (((startPos.getColumn() == j) && (startPos.getRow() == i)) ||
+                        validMoves.contains(new ChessMove(startPos, currentPos, null)) ||
+                        validMoves.contains(new ChessMove(startPos, currentPos, ChessPiece.PieceType.QUEEN))
+                )
+                {
+                    dark = darkHighlight;
+                    light = lightHighlight;
+                }
+                else
+                {
+                    dark = darkSquares;
+                    light = lightSquares;
+                }
+
+                if ((oddRow && oddCol) || (!oddRow && !oddCol))
+                {
+                    board.append(dark);
+                    board.append(stringChessPieces[iArray][jArray]);
+                }
+                else
+                {
+                    board.append(light);
+                    board.append(stringChessPieces[iArray][jArray]);
+                }
+
+            }
+            board.append(boardColor).append(SET_TEXT_COLOR_WHITE).append(" ");
+            board.append(i).append(" ").append(SET_BG_COLOR_BLACK + "\n");
+        }
+        board.append(top);
+        System.out.println(board);
+    }
+
+    public void drawBlackHighlighted(ChessPosition startPos, Collection<ChessMove> validMoves)
+    {
+
     }
 
     // Function to draw the ChessBoard with White side in front
