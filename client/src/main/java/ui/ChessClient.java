@@ -3,14 +3,14 @@ package ui;
 // Data Structure Imports
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 
 // Chess imports
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
+import chess.*;
 
 // Game imports
+import exception.UnauthorizedException;
 import model.GameData;
 import requestresult.*;
 import server.ServerFacade;
@@ -38,8 +38,11 @@ public class ChessClient {
     private Session session;
     private final NotificationHandler notificationHandler;
     private WebSocketFacade ws;
+    private int serverGameID;
+    private String serverUrl;
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
+        this.serverUrl = serverUrl;
         server = new ServerFacade(serverUrl);
         // Set web socket variables
         this.notificationHandler = notificationHandler;
@@ -50,6 +53,8 @@ public class ChessClient {
         serverToClientGameID = new HashMap<>();
         chessGame = new HashMap<>();
         this.teamColor = ChessGame.TeamColor.WHITE;
+        ws=null;
+        serverGameID = 0;
     }
 
     // Evaluates user input
@@ -78,20 +83,28 @@ public class ChessClient {
                     case "quit" -> quitLogout();
                     default -> help();
                 };
-            } else {
+            } else if (state.equals(State.INGAME)){
                 return switch (cmd) {
                     case "redraw" -> {
                         displayBoard();
                         yield "";
                     }
                     case "leave" -> leaveGame();
-                    case "move" -> movePiece();
+                    case "move" -> movePiece(params);
                     case "resign" -> resignFromGame();
                     case "highlight" -> highlightMoves();
                     default -> help();
                 };
             }
-        } catch (ResponseException ex) {
+            else
+            {
+                return switch (cmd)
+                {
+                    case "return" -> leaveGame();
+                    default ->  help();
+                };
+            }
+        } catch (ResponseException | UnauthorizedException ex) {
             return ex.getMessage();
         }
     }
@@ -208,6 +221,10 @@ public class ChessClient {
             // create currentGame variable to reference our game
             currentGame = chessGame.get(serverToClientGameID.get(gameID));
             setTeamColor(playerColor);
+            serverGameID = gameID;
+
+            // Start websocket
+            ws = new WebSocketFacade(serverUrl, notificationHandler, logger);
 
             // Display our board
             System.out.printf("You successfully joined game %d.\n", gameID);
@@ -241,9 +258,13 @@ public class ChessClient {
             }
             
             state = State.INGAME; // Set state
+
+            // Start websocket
+            ws = new WebSocketFacade(serverUrl, notificationHandler, logger);
             
             // Get chess game and display the board
             currentGame = chessGame.get(serverToClientGameID.get(gameID));
+            serverGameID = gameID;
             System.out.printf("You are observing game %d.\n%n", gameID);
             setTeamColor("WHITE");
             displayBoard();
@@ -304,38 +325,83 @@ public class ChessClient {
                     "- observe <ID>" + SET_TEXT_COLOR_LIGHT_GREY + " - a game\n" + SET_TEXT_COLOR_MAGENTA +
                     "- quit" + SET_TEXT_COLOR_LIGHT_GREY + " - playing chess\n" + SET_TEXT_COLOR_MAGENTA +
                     "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
+        } else if (state == State.INGAME) {
+            return "- highlight" + SET_TEXT_COLOR_LIGHT_GREY +
+                    " - to highlight legal moves\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- move <startLocation> <endLocation> <promotion>" + SET_TEXT_COLOR_LIGHT_GREY +
+                    " - to move pawn with promotion.\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- move <startLocation> <endLocation>" + SET_TEXT_COLOR_LIGHT_GREY + " - to make move.\n" +
+                    SET_TEXT_COLOR_MAGENTA + "- redraw" + SET_TEXT_COLOR_LIGHT_GREY + " - to redraw board\n" +
+                    SET_TEXT_COLOR_MAGENTA + "- resign" + SET_TEXT_COLOR_LIGHT_GREY + " - to forfeit the game\n" +
+                    SET_TEXT_COLOR_MAGENTA + "- leave" + SET_TEXT_COLOR_LIGHT_GREY +
+                    " - leave game (you will be removed from the game)\n" + SET_TEXT_COLOR_MAGENTA +
+                    "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
         }
-        return "- highlight" + SET_TEXT_COLOR_LIGHT_GREY +
-                " - to highlight legal moves\n" + SET_TEXT_COLOR_MAGENTA +
-                "- move <startLocation> <endLocation>" + SET_TEXT_COLOR_LIGHT_GREY + " - to make move\n" +
-                SET_TEXT_COLOR_MAGENTA + "- redraw" + SET_TEXT_COLOR_LIGHT_GREY + " - to redraw board\n" +
-                SET_TEXT_COLOR_MAGENTA + "- resign" + SET_TEXT_COLOR_LIGHT_GREY + " - to forfeit the game\n" +
-                SET_TEXT_COLOR_MAGENTA + "- leave" + SET_TEXT_COLOR_LIGHT_GREY +
-                " - leave game (you will be removed from the game)\n" + SET_TEXT_COLOR_MAGENTA +
+        return " - leave game (you will be removed from the game)\n" + SET_TEXT_COLOR_MAGENTA +
                 "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
+
+
     }
 
-    public String leaveGame()
+    public String leaveGame() throws UnauthorizedException
     {
         // websocket leave the game!!
+        ws.leaveGame(session, authToken, serverGameID);
+        ws=null;
 
         state = State.SIGNEDIN;
         return "You exited the chess game";
     }
 
-    private String movePiece()
-    {
-        return null;
+    private String movePiece(String... params) throws UnauthorizedException {
+        if (params.length<2)
+        {
+            throw new UnauthorizedException(500, "Expected move <startLocation> <endLocation>");
+        }
+        else
+        {
+            int startCol = getColumn(params[0].charAt(0));
+            int startRow = getRow(params[0].charAt(1));
+            int endCol = getColumn(params[1].charAt(0));
+            int endRow = getRow(params[1].charAt(1));
+            ChessPiece.PieceType promotionPiece = null;
+            String returnString = "You moved from " + params[0] + " to " + params[1];
+
+            if (params.length>=3)
+            {
+                promotionPiece = getPromotionPiece(params[2]);
+                returnString+= " with a promotion piece of " + params[2];
+            }
+
+            returnString += ".\n";
+            ChessPosition start = new ChessPosition(startRow, startCol);
+            ChessPosition end = new ChessPosition(endCol, endRow);
+            ChessMove move = new ChessMove(start, end, promotionPiece);
+            ws.makeMove(session, authToken, serverGameID, move);
+            return returnString;
+        }
+
     }
 
-    private String resignFromGame()
-    {
-        return null;
+    private String resignFromGame() throws UnauthorizedException {
+        ws.resign(session, authToken, serverGameID);
+        state = State.GAMEOVER;
+        return username + " has resigned, and therefore forfeits the game";
     }
 
-    private String highlightMoves()
-    {
-        return null;
+    private String highlightMoves(String... params) throws UnauthorizedException {
+        if (params.length<1)
+        {
+            throw new UnauthorizedException(500, "Expected move <startLocation> <endLocation>");
+        }
+        else {
+            int col = getColumn(params[0].charAt(0));
+            int row = getRow(params[0].charAt(1));
+            ChessPosition startPos = new ChessPosition(row, col);
+            Collection<ChessMove> validMoves = currentGame.validMoves(startPos);
+            highlightValidMoves(startPos, validMoves);
+            return "";
+        }
     }
 
 
@@ -367,6 +433,60 @@ public class ChessClient {
         } else {
             drawBoard.drawWhiteBoard();
         }
+    }
+
+    // Runs functions in DrawBoard. Displays the board
+    private void highlightValidMoves(ChessPosition startPos, Collection<ChessMove> validMoves) {
+        DrawBoard drawBoard = new DrawBoard(new ChessPiece[8][8], new String[8][8], currentGame);
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            drawBoard.drawWhiteHighlighted(startPos, validMoves);
+        } else if (teamColor == ChessGame.TeamColor.BLACK) {
+            drawBoard.drawBlackHighlighted(startPos, validMoves);
+        } else {
+            drawBoard.drawWhiteHighlighted(startPos, validMoves);
+        }
+    }
+
+    private int getColumn(char col) throws UnauthorizedException {
+        return switch (col)
+        {
+            case 'a'-> 1;
+            case 'b'-> 2;
+            case 'c'-> 3;
+            case 'd'-> 4;
+            case 'e'-> 5;
+            case 'f'-> 6;
+            case 'g'-> 7;
+            case 'h'-> 8;
+            default -> throw new UnauthorizedException(500, "Invalid Column Letter");
+        };
+    }
+
+    private int getRow(char row) throws UnauthorizedException {
+        return switch (row)
+        {
+            case '1'-> 1;
+            case '2'-> 2;
+            case '3'-> 3;
+            case '4'-> 4;
+            case '5'-> 5;
+            case '6'-> 6;
+            case '7'-> 7;
+            case '8'-> 8;
+            default -> throw new UnauthorizedException(500, "Invalid Row Number");
+        };
+    }
+
+    private ChessPiece.PieceType getPromotionPiece(String piece) throws UnauthorizedException
+    {
+        return switch(piece.toLowerCase())
+        {
+            case "queen" -> ChessPiece.PieceType.QUEEN;
+            case "rook" -> ChessPiece.PieceType.ROOK;
+            case "bishop" -> ChessPiece.PieceType.BISHOP;
+            case "knight" -> ChessPiece.PieceType.KNIGHT;
+            default -> throw new UnauthorizedException(500, "Invalid Promotion Piece");
+        };
     }
 
 }
