@@ -6,9 +6,7 @@ import exception.ResponseException;
 import exception.UnauthorizedException;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
-import websocket.messages.ErrorMessage;
-import websocketmessages.Action;
-import websocketmessages.Notification;
+import websocket.messages.NotificationMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -22,33 +20,37 @@ public class WebSocketFacade extends Endpoint {
 
     Session session;
     NotificationHandler notificationHandler;
+    Logger logger;
 
 
     public WebSocketFacade(String url, NotificationHandler notificationHandler, Logger logger) throws ResponseException {
         try {
-            logger.finer("Beginning WebSocketFacade");
+            this.logger = logger;
+            this.logger.finer("Beginning WebSocketFacade");
+
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
             this.notificationHandler = notificationHandler;
 
-            logger.finer("Getting the Web Socket Container");
+            this.logger.finer("Getting the Web Socket Container");
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            logger.finer("Connecting to server");
+            this.logger.finer("Connecting to server");
             this.session = container.connectToServer(this, socketURI);
+//            this.session.setMaxIdleTimeout(60000000);
 
             //set message handler
-            logger.finer("Adding a message handler");
+            this.logger.finer("Adding a message handler");
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    Notification notification = new Gson().fromJson(message, Notification.class);
+                    NotificationMessage notification = new Gson().fromJson(message, NotificationMessage.class);
                     notificationHandler.notify(notification);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
-        logger.finer("Finishing WebSocketFacade");
+        this.logger.finer("Finishing WebSocketFacade");
     }
 
     //Endpoint requires this method, but you don't have to do anything
@@ -60,14 +62,9 @@ public class WebSocketFacade extends Endpoint {
     {
         try
         {
-            UserGameCommand.CommandType command = UserGameCommand.CommandType.CONNECT;
-            UserGameCommand newUserGameCommand = new UserGameCommand(command, authToken, gameID);
-
-            String connectString = new Gson().toJson(newUserGameCommand);
-            var action = new Action(Action.Type.ENTER, connectString);
-
+            var action = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
             throw new UnauthorizedException(500, "Error: " + e.getMessage());
         }
     }
@@ -76,14 +73,13 @@ public class WebSocketFacade extends Endpoint {
     {
         try
         {
-            UserGameCommand.CommandType command = UserGameCommand.CommandType.MAKE_MOVE;
-            MakeMoveCommand newMakeMoveCommand = new MakeMoveCommand(command, authToken, gameID, move);
-
-            String connectString = new Gson().toJson(newMakeMoveCommand);
-            var action = new Action(Action.Type.ENTER, connectString);
-
+            this.logger.finer("makeMove Start");
+            MakeMoveCommand action =
+                    new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move);
+            this.logger.finer("created action");
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
-        } catch (IOException e) {
+            this.logger.finer("sent text");
+        } catch (IOException | IllegalStateException e) {
             throw new UnauthorizedException(500, "Error: " + e.getMessage());
         }
     }
@@ -92,14 +88,10 @@ public class WebSocketFacade extends Endpoint {
     {
         try
         {
-            UserGameCommand.CommandType command = UserGameCommand.CommandType.LEAVE;
-            UserGameCommand newUserGameCommand = new UserGameCommand(command, authToken, gameID);
-
-            String connectString = new Gson().toJson(newUserGameCommand);
-            var action = new Action(Action.Type.EXIT, connectString);
-
+            var action = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
-        } catch (IOException e) {
+            this.session.close();
+        } catch (IOException | IllegalStateException e) {
             throw new UnauthorizedException(500, "Error: " + e.getMessage());
         }
     }
@@ -108,14 +100,9 @@ public class WebSocketFacade extends Endpoint {
     {
         try
         {
-            UserGameCommand.CommandType command = UserGameCommand.CommandType.LEAVE;
-            UserGameCommand newUserGameCommand = new UserGameCommand(command, authToken, gameID);
-
-            String connectString = new Gson().toJson(newUserGameCommand);
-            var action = new Action(Action.Type.EXIT, connectString);
-
+            var action = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
-        } catch (IOException e) {
+        } catch (IOException | IllegalStateException e) {
         throw new UnauthorizedException(500, "Error: " + e.getMessage());
         }
     }
