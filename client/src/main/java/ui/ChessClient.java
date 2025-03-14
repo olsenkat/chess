@@ -92,7 +92,7 @@ public class ChessClient {
                     case "leave" -> leaveGame();
                     case "move" -> movePiece(params);
                     case "resign" -> resignFromGame();
-                    case "highlight" -> highlightMoves();
+                    case "highlight" -> highlightMoves(params);
                     default -> help();
                 };
             }
@@ -226,6 +226,14 @@ public class ChessClient {
             // Start websocket
             ws = new WebSocketFacade(serverUrl, notificationHandler, logger);
 
+            try
+            {
+                ws.connect(authToken, gameID);
+            } catch (UnauthorizedException e)
+            {
+                throw new ResponseException(400, "Couldn't connect to game");
+            }
+
             // Display our board
             System.out.printf("You successfully joined game %d.\n", gameID);
             displayBoard();
@@ -261,7 +269,15 @@ public class ChessClient {
 
             // Start websocket
             ws = new WebSocketFacade(serverUrl, notificationHandler, logger);
-            
+
+            try
+            {
+                ws.connect(authToken, gameID);
+            } catch (UnauthorizedException e)
+            {
+                throw new ResponseException(400, "Couldn't connect to game");
+            }
+
             // Get chess game and display the board
             currentGame = chessGame.get(serverToClientGameID.get(gameID));
             serverGameID = gameID;
@@ -326,7 +342,7 @@ public class ChessClient {
                     "- quit" + SET_TEXT_COLOR_LIGHT_GREY + " - playing chess\n" + SET_TEXT_COLOR_MAGENTA +
                     "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
         } else if (state == State.INGAME) {
-            return "- highlight" + SET_TEXT_COLOR_LIGHT_GREY +
+            return "- highlight <startLocation>" + SET_TEXT_COLOR_LIGHT_GREY +
                     " - to highlight legal moves\n" + SET_TEXT_COLOR_MAGENTA +
                     "- move <startLocation> <endLocation> <promotion>" + SET_TEXT_COLOR_LIGHT_GREY +
                     " - to move pawn with promotion.\n" + SET_TEXT_COLOR_MAGENTA +
@@ -337,7 +353,8 @@ public class ChessClient {
                     " - leave game (you will be removed from the game)\n" + SET_TEXT_COLOR_MAGENTA +
                     "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
         }
-        return " - leave game (you will be removed from the game)\n" + SET_TEXT_COLOR_MAGENTA +
+        return SET_TEXT_COLOR_MAGENTA + "- return" + SET_TEXT_COLOR_LIGHT_GREY +
+                " - leave game (you will be removed from the game)\n" + SET_TEXT_COLOR_MAGENTA +
                 "- help" + SET_TEXT_COLOR_LIGHT_GREY + " - with possible commands\n";
 
 
@@ -375,12 +392,15 @@ public class ChessClient {
 
             returnString += ".\n";
             ChessPosition start = new ChessPosition(startRow, startCol);
+            if (currentGame.getBoard().getPiece(start) == null)
+            {
+                throw new UnauthorizedException(500, "No piece at start location");
+            }
             ChessPosition end = new ChessPosition(endCol, endRow);
             ChessMove move = new ChessMove(start, end, promotionPiece);
             ws.makeMove(session, authToken, serverGameID, move);
-            return returnString;
+            return "";
         }
-
     }
 
     private String resignFromGame() throws UnauthorizedException {
@@ -392,19 +412,21 @@ public class ChessClient {
     private String highlightMoves(String... params) throws UnauthorizedException {
         if (params.length<1)
         {
-            throw new UnauthorizedException(500, "Expected move <startLocation> <endLocation>");
+            throw new UnauthorizedException(500, "Expected highlight <startLocation>");
         }
         else {
             int col = getColumn(params[0].charAt(0));
             int row = getRow(params[0].charAt(1));
             ChessPosition startPos = new ChessPosition(row, col);
             Collection<ChessMove> validMoves = currentGame.validMoves(startPos);
+            if (validMoves==null)
+            {
+                throw new UnauthorizedException(500, "Given location has no piece");
+            }
             highlightValidMoves(startPos, validMoves);
             return "";
         }
     }
-
-
 
     // Quits and logs out of server
     private String quitLogout() throws ResponseException {
