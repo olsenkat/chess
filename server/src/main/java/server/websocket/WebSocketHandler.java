@@ -27,6 +27,7 @@ import websocket.messages.NotificationMessage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Timer;
 
 @WebSocket
 public class WebSocketHandler {
@@ -56,7 +57,7 @@ public class WebSocketHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, command);
-                case MAKE_MOVE -> makeMove(session, username, (MakeMoveCommand) command);
+                case MAKE_MOVE -> makeMove(session, username, new Gson().fromJson(msg, MakeMoveCommand.class));
                 case LEAVE -> leaveGame(session, username, command);
                 case RESIGN -> resign(session, username, command);
             }

@@ -54,7 +54,6 @@ public class DrawBoard
                 int jArray = j-1;
                 ChessPosition currentPos = new ChessPosition(i, j);
 
-
                 if (((startPos.getColumn() == j) && (startPos.getRow() == i)) || ((validMoves!=null) && (
                         validMoves.contains(new ChessMove(startPos, currentPos, null)) ||
                         validMoves.contains(new ChessMove(startPos, currentPos, ChessPiece.PieceType.QUEEN))
