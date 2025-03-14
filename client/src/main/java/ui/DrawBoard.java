@@ -43,21 +43,22 @@ public class DrawBoard
         StringBuilder board = new StringBuilder();
         board.append(top);
 
-        for (int i = 1; i < 8; i++)
+        for (int i = 8; i >= 1; i--)
         {
             board.append(boardColor).append(" ").append(i).append(" ");
             oddRow =  ((i % 2) != 0);
             int iArray = i-1;
-            for (int j = 1; j < 8; j++)
+            for (int j = 1; j <= 8; j++)
             {
                 oddCol =  ((j % 2) != 0);
                 int jArray = j-1;
                 ChessPosition currentPos = new ChessPosition(i, j);
 
-                if (((startPos.getColumn() == j) && (startPos.getRow() == i)) ||
+
+                if (((startPos.getColumn() == j) && (startPos.getRow() == i)) || ((validMoves!=null) && (
                         validMoves.contains(new ChessMove(startPos, currentPos, null)) ||
                         validMoves.contains(new ChessMove(startPos, currentPos, ChessPiece.PieceType.QUEEN))
-                )
+                )))
                 {
                     dark = darkHighlight;
                     light = lightHighlight;
