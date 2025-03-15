@@ -32,14 +32,11 @@ public class WebSocketFacade extends Endpoint {
             URI socketURI = new URI(url + "/ws");
             this.notificationHandler = notificationHandler;
 
-            this.logger.finer("Getting the Web Socket Container");
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            this.logger.finer("Connecting to server");
             this.session = container.connectToServer(this, socketURI);
 //            this.session.setMaxIdleTimeout(60000000);
 
             //set message handler
-            this.logger.finer("Adding a message handler");
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
@@ -50,7 +47,6 @@ public class WebSocketFacade extends Endpoint {
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
-        this.logger.finer("Finishing WebSocketFacade");
     }
 
     //Endpoint requires this method, but you don't have to do anything
@@ -73,12 +69,9 @@ public class WebSocketFacade extends Endpoint {
     {
         try
         {
-            this.logger.finer("makeMove Start");
             MakeMoveCommand action =
                     new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move);
-            this.logger.finer("created action");
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
-            this.logger.finer("sent text");
         } catch (IOException | IllegalStateException e) {
             throw new UnauthorizedException(500, "Error: " + e.getMessage());
         }
