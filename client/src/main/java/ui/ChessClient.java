@@ -39,7 +39,7 @@ public class ChessClient {
     private final NotificationHandler notificationHandler;
     private WebSocketFacade ws;
     private int serverGameID;
-    private String serverUrl;
+    private final String serverUrl;
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         this.serverUrl = serverUrl;
@@ -396,9 +396,21 @@ public class ChessClient {
             {
                 throw new UnauthorizedException(500, "No piece at start location");
             }
-            ChessPosition end = new ChessPosition(endCol, endRow);
+            ChessPosition end = new ChessPosition(endRow, endCol);
             ChessMove move = new ChessMove(start, end, promotionPiece);
             ws.makeMove(session, authToken, serverGameID, move);
+
+            // Retrieve the updated board
+            try {
+                listAddGames();
+            }
+            catch (ResponseException e)
+            {
+                throw new UnauthorizedException(500, "Can't update game");
+            }
+            currentGame = chessGame.get(serverToClientGameID.get(serverGameID));
+            displayBoard();
+
             return "";
         }
     }
