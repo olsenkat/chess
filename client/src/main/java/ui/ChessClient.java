@@ -520,6 +520,14 @@ public class ChessClient {
         chessGame.replace(serverToClientGameID.get(serverGameID), game);
     }
 
+    public void resignGame()
+    {
+        state = State.GAMEOVER;
+        currentGame.setResign(true);
+        chessGame.replace(serverToClientGameID.get(serverGameID), currentGame);
+
+    }
+
 }
 
 
