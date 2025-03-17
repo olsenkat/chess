@@ -416,7 +416,7 @@ public class ChessClient {
     private String resignFromGame() throws UnauthorizedException {
         ws.resign(session, authToken, serverGameID);
         state = State.GAMEOVER;
-        return username + " has resigned, and therefore forfeits the game";
+        return "";
     }
 
     private String highlightMoves(String... params) throws UnauthorizedException {
