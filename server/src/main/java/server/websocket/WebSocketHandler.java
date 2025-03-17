@@ -18,6 +18,7 @@ import websocket.commands.UserGameCommand;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import java.io.IOException;
 import java.util.HashMap;
@@ -87,7 +88,7 @@ public class WebSocketHandler {
     {
         try {
             connections.add(username, session);
-            var message = String.format("%s has joined the game", username);
+            var message = String.format("%s joined the game", username);
             var notification = new NotificationMessage(message);
             connections.broadcast(username, notification);
         } catch (IOException e) {
@@ -114,6 +115,9 @@ public class WebSocketHandler {
             GameData gameModel  = new GameData(currentGameModel.gameID(), currentGameModel.whiteUsername(),
                     currentGameModel.blackUsername(), currentGameModel.gameName(), currentGame);
             gameDAO.updateGame(gameModel);
+
+            LoadGameMessage newGame = new LoadGameMessage(gameModel.game());
+            connections.broadcast(null, newGame);
 
             var message = String.format("%s moved from %s to %s", username, startPosString, endPosString);
             var notification = new NotificationMessage(message);
@@ -147,7 +151,7 @@ public class WebSocketHandler {
                 gameDAO.updateGame(gameModel);
             }
 
-            var message = String.format("%s has left the game", username);
+            var message = String.format("%s left the game", username);
             var notification = new NotificationMessage(message);
             connections.broadcast(username, notification);
         }
