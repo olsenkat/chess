@@ -89,20 +89,28 @@ public class WebSocketHandler {
         try {
             connections.add(username, session);
             GameData game = gameDAO.getGame(command.getGameID());
-            var message = String.format("%s has joined the game as an observer.\n", username);
-            if (Objects.equals(game.whiteUsername(), username))
-            {
-                message = String.format("%s has joined the game as the white team.\n", username);
-            }
-            else if (Objects.equals(game.blackUsername(), username))
-            {
-                message = String.format("%s has joined the game as the black team.\n", username);
-            }
-            var notification = new NotificationMessage(message);
+
+            String message = new Gson().toJson(new LoadGameMessage(game.game()));
+            session.getRemote().sendString(message);
+
+            var notification = getNotificationMessage(username, game);
             connections.broadcast(username, notification);
         } catch (IOException | DataAccessException e) {
             throw new UnauthorizedException(500, e.getMessage());
         }
+    }
+
+    private static NotificationMessage getNotificationMessage(String username, GameData game) {
+        var message = String.format("%s has joined the game as an observer.\n", username);
+        if (Objects.equals(game.whiteUsername(), username))
+        {
+            message = String.format("%s has joined the game as the white team.\n", username);
+        }
+        else if (Objects.equals(game.blackUsername(), username))
+        {
+            message = String.format("%s has joined the game as the black team.\n", username);
+        }
+        return new NotificationMessage(message);
     }
 
     private void makeMove(String username, MakeMoveCommand command) throws UnauthorizedException
@@ -119,14 +127,39 @@ public class WebSocketHandler {
             GameData currentGameModel = gameDAO.getGame(gameID);
             ChessGame currentGame = currentGameModel.game();
             ChessMove move = command.getMove();
+            ChessGame.TeamColor pieceColor = currentGame.getBoard().getPiece(move.getStartPosition()).getTeamColor();
+
+            if (Objects.equals(currentGameModel.whiteUsername(), username))
+            {
+                if (pieceColor != ChessGame.TeamColor.WHITE)
+                {
+                    throw new UnauthorizedException(500, "Cannot Move Opposing Team's Piece.");
+                }
+            }
+            else if (Objects.equals(currentGameModel.blackUsername(), username))
+            {
+                if (pieceColor != ChessGame.TeamColor.BLACK)
+                {
+                    throw new UnauthorizedException(500, "Cannot Move Opposing Team's Piece.");
+                }
+            }
+            else
+            {
+                throw new UnauthorizedException(500, "Cannot Move Opposing Team's Piece.");
+            }
+
+            ChessGame.TeamColor teamColor = currentGame.getTeamTurn();
+            if (currentGame.getBoard().getPiece(move.getStartPosition()).getTeamColor() != teamColor)
+            {
+                throw new UnauthorizedException(500, "Cannot Move Opposing Team's Piece.");
+            }
 
             currentGame.makeMove(move);
             GameData gameModel  = new GameData(currentGameModel.gameID(), currentGameModel.whiteUsername(),
                     currentGameModel.blackUsername(), currentGameModel.gameName(), currentGame);
             gameDAO.updateGame(gameModel);
 
-            LoadGameMessage newGame = new LoadGameMessage(gameModel.game());
-            connections.broadcast(null, newGame);
+            loadMessage(gameModel);
 
             var message = String.format("%s moved from %s to %s.\n", username, startPosString, endPosString);
             var notification = new NotificationMessage(message);
@@ -239,5 +272,10 @@ public class WebSocketHandler {
             case 8-> row = "8";
         }
         return column + row;
+    }
+
+    private void loadMessage(GameData gameModel) throws IOException {
+        LoadGameMessage newGame = new LoadGameMessage(gameModel.game());
+        connections.broadcast(null, newGame);
     }
 }
