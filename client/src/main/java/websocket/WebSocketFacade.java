@@ -6,7 +6,10 @@ import exception.ResponseException;
 import exception.UnauthorizedException;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -40,11 +43,28 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    NotificationMessage notification = new Gson().fromJson(message, NotificationMessage.class);
-                    notificationHandler.notify(notification);
+                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
+                    switch (notification.getServerMessageType()) {
+                        case NOTIFICATION -> {
+                            notification = new Gson().fromJson(message, NotificationMessage.class);
+                            notificationHandler.notify((NotificationMessage) notification);
+                        }
+                        case LOAD_GAME -> {
+                            notification = new Gson().fromJson(message, LoadGameMessage.class);
+                            NotificationMessage newMessage =
+                                    new NotificationMessage(((LoadGameMessage) notification).getGame().toString());
+                            notificationHandler.notify(newMessage);
+                        }
+                        case ERROR -> {
+                            notification = new Gson().fromJson(message, ErrorMessage.class);
+                            NotificationMessage newMessage =
+                                    new NotificationMessage(((ErrorMessage) notification).getErrorMessage());
+                            notificationHandler.notify(newMessage);
+                        }
+                    }
                 }
             });
-        } catch (DeploymentException | IOException | URISyntaxException ex) {
+        } catch (DeploymentException | IOException | URISyntaxException | IllegalStateException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
     }
