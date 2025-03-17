@@ -10,24 +10,18 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import exception.UnauthorizedException;
 import model.GameData;
-import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import service.ClearService;
-import service.GameService;
-import service.UserService;
+import com.google.gson.Gson;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
-import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import websocket.messages.ErrorMessage;
 import websocket.messages.NotificationMessage;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Timer;
 
 @WebSocket
 public class WebSocketHandler {
@@ -63,13 +57,14 @@ public class WebSocketHandler {
             }
         } catch (UnauthorizedException ex) {
             // Serializes and sends the error message
-            sendMessage(session.getRemote(), new ErrorMessage("Error: unauthorized"));
+            sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
         }
     }
 
     private void sendMessage(RemoteEndpoint remote, ErrorMessage error) throws Exception
     {
-        remote.sendString(error.getErrorMessage());
+        String message = new Gson().toJson(error);
+        remote.sendString(message);
     }
 
     private String getUsername(String authToken) throws UnauthorizedException {
