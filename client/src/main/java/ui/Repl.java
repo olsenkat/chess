@@ -1,6 +1,7 @@
 package ui;
 
 import websocket.NotificationHandler;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
 import java.util.Scanner;
@@ -39,11 +40,18 @@ public class Repl implements NotificationHandler {
         String output = notification.getMessage();
         if (notification.getMessage().contains("Error: "))
         {
-            output = notification.getMessage().replace("Error: ", "");
+//            output = notification.getMessage().replace("Error: ", "");
             color = SET_TEXT_COLOR_RED;
         }
         System.out.println(color + output + SET_TEXT_COLOR_WHITE);
         printPrompt();
+    }
+
+    public void loadGame(LoadGameMessage game)
+    {
+        client.updateGame(game.getGame());
+        System.out.println("\n");
+        client.displayBoard();
     }
 
     private void printPrompt() {
