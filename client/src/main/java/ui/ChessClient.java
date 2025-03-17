@@ -234,9 +234,7 @@ public class ChessClient {
                 throw new ResponseException(400, "Couldn't connect to game");
             }
 
-            // Display our board
             System.out.printf("You successfully joined game %d.\n", gameID);
-            displayBoard();
             return "";
         }
         throw new ResponseException(400, "Expected: <ID> <WHITE|BLACK>\n");
@@ -283,7 +281,6 @@ public class ChessClient {
             serverGameID = gameID;
             System.out.printf("You are observing game %d.\n%n", gameID);
             setTeamColor("WHITE");
-            displayBoard();
             return "";
         }
         throw new ResponseException(400, "Expected: <ID>\n");
@@ -392,10 +389,6 @@ public class ChessClient {
 
             returnString += ".\n";
             ChessPosition start = new ChessPosition(startRow, startCol);
-            if (currentGame.getBoard().getPiece(start) == null)
-            {
-                throw new UnauthorizedException(500, "No piece at start location");
-            }
             ChessPosition end = new ChessPosition(endRow, endCol);
             ChessMove move = new ChessMove(start, end, promotionPiece);
             ws.makeMove(session, authToken, serverGameID, move);
