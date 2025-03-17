@@ -14,9 +14,8 @@ public class DrawBoard
     private final ChessGame currentGame;
     private String darkSquares = SET_BG_COLOR_PURPLE;
     private String lightSquares = SET_BG_COLOR_MAGENTA;
-    private String boardColor = SET_BG_COLOR_LIGHT_GREY;
-    private String darkHighlight = SET_BG_COLOR_DARK_GREEN;
-    private String lightHighlight = SET_BG_COLOR_GREEN;
+    private final String boardColor = SET_BG_COLOR_LIGHT_GREY;
+
 
     // Pass in constructor values
     DrawBoard(ChessPiece[][] chessPieces, String[][] stringChessPieces, ChessGame currentGame)
@@ -88,6 +87,9 @@ public class DrawBoard
                                      ChessPosition startPos, Collection<ChessMove> validMoves,
                                      StringBuilder board)
     {
+        String darkHighlight = SET_BG_COLOR_DARK_GREEN;
+        String lightHighlight = SET_BG_COLOR_GREEN;
+
         boolean oddRow =  ((i % 2) != 0); // Check if the row is odd
         int iArray = i-1; // set if the i is
         String dark;
