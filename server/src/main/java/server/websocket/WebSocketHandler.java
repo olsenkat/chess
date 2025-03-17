@@ -126,6 +126,12 @@ public class WebSocketHandler {
             int gameID = command.getGameID();
             GameData currentGameModel = gameDAO.getGame(gameID);
             ChessGame currentGame = currentGameModel.game();
+
+            if (currentGame.getResign())
+            {
+                throw new UnauthorizedException(500, "Cannot Move After Player Resigns.");
+            }
+
             ChessMove move = command.getMove();
             ChessGame.TeamColor pieceColor = currentGame.getBoard().getPiece(move.getStartPosition()).getTeamColor();
 
@@ -145,7 +151,7 @@ public class WebSocketHandler {
             }
             else
             {
-                throw new UnauthorizedException(500, "Cannot Move Opposing Team's Piece.");
+                throw new UnauthorizedException(500, "Observer cannot participate in the game.");
             }
 
             ChessGame.TeamColor teamColor = currentGame.getTeamTurn();
@@ -219,6 +225,8 @@ public class WebSocketHandler {
                         currentGameModel.blackUsername(), currentGameModel.gameName(), currentGame);
                 gameDAO.updateGame(gameModel);
             }
+            connections.remove(username);
+
 
             var message = String.format("%s has left the game", username);
             var notification = new NotificationMessage(message);
@@ -234,11 +242,29 @@ public class WebSocketHandler {
     {
         try
         {
+            GameData currentGameModel = gameDAO.getGame(command.getGameID());
+            if (!Objects.equals(currentGameModel.whiteUsername(), username) &&
+                    !Objects.equals(currentGameModel.blackUsername(), username))
+            {
+                throw new UnauthorizedException(500, "Observer cannot resign from the game.");
+            }
+
+            ChessGame currentGame = currentGameModel.game();
+            if (currentGame.getResign())
+            {
+                throw new UnauthorizedException(500, "Cannot resign from game twice.");
+            }
+
+            currentGame.setResign(true);
+            GameData gameModel  = new GameData(currentGameModel.gameID(), currentGameModel.whiteUsername(),
+                    currentGameModel.blackUsername(), currentGameModel.gameName(), currentGame);
+            gameDAO.updateGame(gameModel);
+
             var message = String.format("%s has resigned from the game", username);
             var notification = new NotificationMessage(message);
             connections.broadcast(null, notification);
         }
-        catch (IOException e)
+        catch (IOException | DataAccessException e)
         {
             throw new UnauthorizedException(500, e.getMessage());
         }
