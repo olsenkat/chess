@@ -35,7 +35,14 @@ public class Repl implements NotificationHandler {
     }
 
     public void notify(NotificationMessage notification) {
-        System.out.println(SET_TEXT_COLOR_RED + notification.getMessage());
+        String color = SET_TEXT_COLOR_GREEN;
+        String output = notification.getMessage();
+        if (notification.getMessage().contains("Error: "))
+        {
+            output = notification.getMessage().replace("Error: ", "");
+            color = SET_TEXT_COLOR_RED;
+        }
+        System.out.println(color + output + SET_TEXT_COLOR_WHITE);
         printPrompt();
     }
 
