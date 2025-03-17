@@ -127,17 +127,17 @@ public class ChessGame {
         // If there is no piece to move, this is an error
         if (currentPiece==null)
         {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("There is no piece to move.");
         }
         // If the move is not in valid moves, do not allow
         if (!board.getPiece(startPosition).pieceMoves(board, startPosition).contains(move))
         {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("This is an invalid move.");
         }
         // If it is not your turn, don't move
         if (board.getPiece(startPosition).getTeamColor()!=teamTurn)
         {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("It is not your turn.");
         }
 
         // If the promotion piece is not null, change the piece type
@@ -156,7 +156,7 @@ public class ChessGame {
 //        boolean checkmate = test_game.isInCheckmate(test_game.getTeamTurn());
         if (check)
         {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("This would place you in check/checkmate");
         }
         else
         {
