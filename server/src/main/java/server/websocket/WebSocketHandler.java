@@ -52,9 +52,9 @@ public class WebSocketHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, command);
-                case MAKE_MOVE -> makeMove(session, username, new Gson().fromJson(msg, MakeMoveCommand.class));
-                case LEAVE -> leaveGame(session, username, command);
-                case RESIGN -> resign(session, username, command);
+                case MAKE_MOVE -> makeMove(username, new Gson().fromJson(msg, MakeMoveCommand.class));
+                case LEAVE -> leaveGame(username, command);
+                case RESIGN -> resign(username, command);
             }
         } catch (UnauthorizedException ex) {
             // Serializes and sends the error message
@@ -88,15 +88,24 @@ public class WebSocketHandler {
     {
         try {
             connections.add(username, session);
-            var message = String.format("%s joined the game", username);
+            GameData game = gameDAO.getGame(command.getGameID());
+            var message = String.format("%s has joined the game as an observer.\n", username);
+            if (Objects.equals(game.whiteUsername(), username))
+            {
+                message = String.format("%s has joined the game as the white team.\n", username);
+            }
+            else if (Objects.equals(game.blackUsername(), username))
+            {
+                message = String.format("%s has joined the game as the black team.\n", username);
+            }
             var notification = new NotificationMessage(message);
             connections.broadcast(username, notification);
-        } catch (IOException e) {
+        } catch (IOException | DataAccessException e) {
             throw new UnauthorizedException(500, e.getMessage());
         }
     }
 
-    private void makeMove(Session session, String username, MakeMoveCommand command) throws UnauthorizedException
+    private void makeMove(String username, MakeMoveCommand command) throws UnauthorizedException
     {
         var startPos = command.getMove().getStartPosition();
         var startPosString = getPosition(startPos);
@@ -119,17 +128,44 @@ public class WebSocketHandler {
             LoadGameMessage newGame = new LoadGameMessage(gameModel.game());
             connections.broadcast(null, newGame);
 
-            var message = String.format("%s moved from %s to %s", username, startPosString, endPosString);
+            var message = String.format("%s moved from %s to %s.\n", username, startPosString, endPosString);
             var notification = new NotificationMessage(message);
             connections.broadcast(username, notification);
+
+            var daoGame = gameDAO.getGame(command.getGameID());
+            if (daoGame.game().isInCheck(ChessGame.TeamColor.WHITE))
+            {
+                message = String.format("%s is in check.\n", daoGame.whiteUsername());
+                notification = new NotificationMessage(message);
+                connections.broadcast(null, notification);
+            }
+            else if (daoGame.game().isInCheckmate(ChessGame.TeamColor.WHITE))
+            {
+                message = String.format("%s is in checkmate.\n", daoGame.whiteUsername());
+                notification = new NotificationMessage(message);
+                connections.broadcast(null, notification);
+            }
+            else if (daoGame.game().isInCheck(ChessGame.TeamColor.BLACK))
+            {
+                message = String.format("%s is in check.\n", daoGame.blackUsername());
+                notification = new NotificationMessage(message);
+                connections.broadcast(null, notification);
+            }
+            else if (daoGame.game().isInCheckmate(ChessGame.TeamColor.BLACK))
+            {
+                message = String.format("%s is in checkmate.\n", daoGame.blackUsername());
+                notification = new NotificationMessage(message);
+                connections.broadcast(null, notification);
+            }
         }
         catch (IOException | DataAccessException | InvalidMoveException e)
         {
             throw new UnauthorizedException(500, e.getMessage());
         }
+
     }
 
-    private void leaveGame(Session session, String username, UserGameCommand command) throws UnauthorizedException
+    private void leaveGame(String username, UserGameCommand command) throws UnauthorizedException
     {
         try
         {
@@ -151,7 +187,7 @@ public class WebSocketHandler {
                 gameDAO.updateGame(gameModel);
             }
 
-            var message = String.format("%s left the game", username);
+            var message = String.format("%s has left the game", username);
             var notification = new NotificationMessage(message);
             connections.broadcast(username, notification);
         }
@@ -161,13 +197,13 @@ public class WebSocketHandler {
         }
     }
 
-    private void resign(Session session, String username, UserGameCommand command) throws UnauthorizedException
+    private void resign(String username, UserGameCommand command) throws UnauthorizedException
     {
         try
         {
-            var message = String.format("%s has left the game", username);
+            var message = String.format("%s has resigned from the game", username);
             var notification = new NotificationMessage(message);
-            connections.broadcast(username, notification);
+            connections.broadcast(null, notification);
         }
         catch (IOException e)
         {
