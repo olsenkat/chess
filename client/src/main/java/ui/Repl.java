@@ -42,6 +42,10 @@ public class Repl implements NotificationHandler {
         {
             color = SET_TEXT_COLOR_RED;
         }
+        if (notification.getMessage().contains("has resigned from the game"))
+        {
+            client.resignGame();
+        }
         System.out.println(color + output + SET_TEXT_COLOR_WHITE);
         printPrompt();
     }
