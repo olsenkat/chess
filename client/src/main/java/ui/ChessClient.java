@@ -408,8 +408,6 @@ public class ChessClient {
             {
                 throw new UnauthorizedException(500, "Can't update game");
             }
-            currentGame = chessGame.get(serverToClientGameID.get(serverGameID));
-            displayBoard();
 
             return "";
         }
@@ -458,7 +456,7 @@ public class ChessClient {
     }
 
     // Runs functions in DrawBoard. Displays the board
-    private void displayBoard() {
+    public void displayBoard() {
         DrawBoard drawBoard = new DrawBoard(new ChessPiece[8][8], new String[8][8], currentGame);
         if (teamColor == ChessGame.TeamColor.WHITE) {
             drawBoard.drawWhiteBoard();
@@ -521,6 +519,12 @@ public class ChessClient {
             case "knight" -> ChessPiece.PieceType.KNIGHT;
             default -> throw new UnauthorizedException(500, "Invalid Promotion Piece");
         };
+    }
+
+    public void updateGame(ChessGame game)
+    {
+        currentGame = game;
+        chessGame.replace(serverToClientGameID.get(serverGameID), game);
     }
 
 }
