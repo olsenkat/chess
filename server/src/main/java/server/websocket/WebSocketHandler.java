@@ -186,45 +186,7 @@ public class WebSocketHandler {
             var notification = new NotificationMessage(message);
             connectionManagerHashMap.get(command.getGameID()).broadcast(username, notification);
 
-            var daoGame = gameDAO.getGame(command.getGameID());
-            if (daoGame.game().isInCheckmate(ChessGame.TeamColor.WHITE))
-            {
-                message = String.format("%s is in checkmate, and loses the game.", daoGame.whiteUsername());
-                notification = new NotificationMessage(message);
-                connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
-            }
-            else if (daoGame.game().isInCheck(ChessGame.TeamColor.WHITE))
-            {
-                message = String.format("%s is in check.", daoGame.whiteUsername());
-                notification = new NotificationMessage(message);
-                connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
-            }
-            else if (daoGame.game().isInCheckmate(ChessGame.TeamColor.BLACK))
-            {
-                message = String.format("%s is in checkmate, and loses the game", daoGame.blackUsername());
-                notification = new NotificationMessage(message);
-                connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
-            }
-            else if (daoGame.game().isInCheck(ChessGame.TeamColor.BLACK))
-            {
-                message = String.format("%s is in check.", daoGame.blackUsername());
-                notification = new NotificationMessage(message);
-                connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
-            }
-            else if (daoGame.game().isInStalemate(ChessGame.TeamColor.WHITE))
-            {
-                message = String.format("No moves available for %s. Game ends in a stalemate.",
-                        daoGame.whiteUsername());
-                notification = new NotificationMessage(message);
-                connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
-            }
-            else if (daoGame.game().isInStalemate(ChessGame.TeamColor.BLACK))
-            {
-                message = String.format("No moves available for %s. Game ends in a stalemate.",
-                        daoGame.blackUsername());
-                notification = new NotificationMessage(message);
-                connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
-            }
+            determineCheckCheckmateStalemate(command);
         }
         catch (IOException | DataAccessException | InvalidMoveException e)
         {
@@ -347,5 +309,49 @@ public class WebSocketHandler {
     private void loadMessage(GameData gameModel, MakeMoveCommand command) throws IOException {
         LoadGameMessage newGame = new LoadGameMessage(gameModel.game());
         connectionManagerHashMap.get(command.getGameID()).broadcast(null, newGame);
+    }
+
+    private void determineCheckCheckmateStalemate(MakeMoveCommand command) throws DataAccessException, IOException {
+        String message;
+        NotificationMessage notification;
+        var daoGame = gameDAO.getGame(command.getGameID());
+        if (daoGame.game().isInCheckmate(ChessGame.TeamColor.WHITE))
+        {
+            message = String.format("%s is in checkmate, and loses the game.", daoGame.whiteUsername());
+            notification = new NotificationMessage(message);
+            connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
+        }
+        else if (daoGame.game().isInCheck(ChessGame.TeamColor.WHITE))
+        {
+            message = String.format("%s is in check.", daoGame.whiteUsername());
+            notification = new NotificationMessage(message);
+            connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
+        }
+        else if (daoGame.game().isInCheckmate(ChessGame.TeamColor.BLACK))
+        {
+            message = String.format("%s is in checkmate, and loses the game", daoGame.blackUsername());
+            notification = new NotificationMessage(message);
+            connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
+        }
+        else if (daoGame.game().isInCheck(ChessGame.TeamColor.BLACK))
+        {
+            message = String.format("%s is in check.", daoGame.blackUsername());
+            notification = new NotificationMessage(message);
+            connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
+        }
+        else if (daoGame.game().isInStalemate(ChessGame.TeamColor.WHITE))
+        {
+            message = String.format("No moves available for %s. Game ends in a stalemate.",
+                    daoGame.whiteUsername());
+            notification = new NotificationMessage(message);
+            connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
+        }
+        else if (daoGame.game().isInStalemate(ChessGame.TeamColor.BLACK))
+        {
+            message = String.format("No moves available for %s. Game ends in a stalemate.",
+                    daoGame.blackUsername());
+            notification = new NotificationMessage(message);
+            connectionManagerHashMap.get(command.getGameID()).broadcast(null, notification);
+        }
     }
 }
