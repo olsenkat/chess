@@ -41,13 +41,22 @@ public class Repl implements NotificationHandler {
         if (notification.getMessage().contains("Error: "))
         {
             color = SET_TEXT_COLOR_RED;
+            System.out.println(color + output + SET_TEXT_COLOR_WHITE);
         }
-        if (notification.getMessage().contains("has resigned from the game"))
+        else if (notification.getMessage().contains("has resigned from the game") ||
+                notification.getMessage().contains("is in checkmate") ||
+                notification.getMessage().contains("Game ends in a stalemate"))
         {
-            client.resignGame();
+            client.terminateGame();
+            System.out.println(color + output + SET_TEXT_COLOR_WHITE);
+            printPrompt();
         }
-        System.out.println(color + output + SET_TEXT_COLOR_WHITE);
-        printPrompt();
+        else
+        {
+            System.out.println(color + output + SET_TEXT_COLOR_WHITE);
+            printPrompt();
+        }
+
     }
 
     public void loadGame(LoadGameMessage game)
