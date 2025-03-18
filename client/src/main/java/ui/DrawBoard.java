@@ -1,6 +1,7 @@
 package ui;
 
 import chess.*;
+import exception.UnauthorizedException;
 
 import java.util.Collection;
 
@@ -16,6 +17,35 @@ public class DrawBoard
     private String lightSquares = SET_BG_COLOR_MAGENTA;
     private final String boardColor = SET_BG_COLOR_LIGHT_GREY;
 
+    public static int getColumn(char col) throws UnauthorizedException {
+        return switch (col)
+        {
+            case 'a'-> 1;
+            case 'b'-> 2;
+            case 'c'-> 3;
+            case 'd'-> 4;
+            case 'e'-> 5;
+            case 'f'-> 6;
+            case 'g'-> 7;
+            case 'h'-> 8;
+            default -> throw new UnauthorizedException(500, "Invalid Column Letter");
+        };
+    }
+
+    public static int getRow(char row) throws UnauthorizedException {
+        return switch (row)
+        {
+            case '1'-> 1;
+            case '2'-> 2;
+            case '3'-> 3;
+            case '4'-> 4;
+            case '5'-> 5;
+            case '6'-> 6;
+            case '7'-> 7;
+            case '8'-> 8;
+            default -> throw new UnauthorizedException(500, "Invalid Row Number");
+        };
+    }
 
     // Pass in constructor values
     DrawBoard(ChessPiece[][] chessPieces, String[][] stringChessPieces, ChessGame currentGame)
