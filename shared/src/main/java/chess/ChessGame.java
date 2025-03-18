@@ -16,7 +16,7 @@ public class ChessGame {
     private TeamColor teamTurn;
     private ChessPosition kingLocationWhite;
     private ChessPosition kingLocationBlack;
-    private boolean resign = false;
+    private boolean gameOver = false;
 
     public ChessGame() {
         board = new ChessBoard();
@@ -24,16 +24,16 @@ public class ChessGame {
         teamTurn = TeamColor.WHITE;
         kingLocationWhite = new ChessPosition(1,5);
         kingLocationBlack = new ChessPosition(8,5);
-        resign = false;
+        gameOver = false;
     }
 
-    public void setResign(boolean resign) {
-        this.resign = resign;
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
     }
 
-    public boolean getResign()
+    public boolean getGameOver()
     {
-        return resign;
+        return gameOver;
     }
 
     /**
