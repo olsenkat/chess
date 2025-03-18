@@ -401,14 +401,12 @@ public class ChessClient {
             {
                 throw new UnauthorizedException(500, "Can't update game");
             }
-
             return "";
         }
     }
 
     private String resignFromGame() throws UnauthorizedException {
         ws.resign(session, authToken, serverGameID);
-        state = State.GAMEOVER;
         return "";
     }
 
@@ -520,10 +518,10 @@ public class ChessClient {
         chessGame.replace(serverToClientGameID.get(serverGameID), game);
     }
 
-    public void resignGame()
+    public void terminateGame()
     {
         state = State.GAMEOVER;
-        currentGame.setResign(true);
+        currentGame.setGameOver(true);
         chessGame.replace(serverToClientGameID.get(serverGameID), currentGame);
 
     }
