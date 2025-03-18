@@ -104,7 +104,7 @@ public class ChessClient {
                     default ->  help();
                 };
             }
-        } catch (ResponseException | UnauthorizedException ex) {
+        } catch (ResponseException ex) {
             return ex.getMessage();
         }
     }
@@ -374,10 +374,10 @@ public class ChessClient {
         }
         else
         {
-            int startCol = getColumn(params[0].charAt(0));
-            int startRow = getRow(params[0].charAt(1));
-            int endCol = getColumn(params[1].charAt(0));
-            int endRow = getRow(params[1].charAt(1));
+            int startCol = DrawBoard.getColumn(params[0].charAt(0));
+            int startRow = DrawBoard.getRow(params[0].charAt(1));
+            int endCol = DrawBoard.getColumn(params[1].charAt(0));
+            int endRow = DrawBoard.getRow(params[1].charAt(1));
             ChessPiece.PieceType promotionPiece = null;
             String returnString = "You moved from " + params[0] + " to " + params[1];
 
@@ -416,8 +416,8 @@ public class ChessClient {
             throw new UnauthorizedException(500, "Expected highlight <startLocation>");
         }
         else {
-            int col = getColumn(params[0].charAt(0));
-            int row = getRow(params[0].charAt(1));
+            int col = DrawBoard.getColumn(params[0].charAt(0));
+            int row = DrawBoard.getRow(params[0].charAt(1));
             ChessPosition startPos = new ChessPosition(row, col);
             Collection<ChessMove> validMoves = currentGame.validMoves(startPos);
             if (validMoves==null)
@@ -470,36 +470,6 @@ public class ChessClient {
         }
     }
 
-    private int getColumn(char col) throws UnauthorizedException {
-        return switch (col)
-        {
-            case 'a'-> 1;
-            case 'b'-> 2;
-            case 'c'-> 3;
-            case 'd'-> 4;
-            case 'e'-> 5;
-            case 'f'-> 6;
-            case 'g'-> 7;
-            case 'h'-> 8;
-            default -> throw new UnauthorizedException(500, "Invalid Column Letter");
-        };
-    }
-
-    private int getRow(char row) throws UnauthorizedException {
-        return switch (row)
-        {
-            case '1'-> 1;
-            case '2'-> 2;
-            case '3'-> 3;
-            case '4'-> 4;
-            case '5'-> 5;
-            case '6'-> 6;
-            case '7'-> 7;
-            case '8'-> 8;
-            default -> throw new UnauthorizedException(500, "Invalid Row Number");
-        };
-    }
-
     private ChessPiece.PieceType getPromotionPiece(String piece) throws UnauthorizedException
     {
         return switch(piece.toLowerCase())
@@ -523,9 +493,7 @@ public class ChessClient {
         state = State.GAMEOVER;
         currentGame.setGameOver(true);
         chessGame.replace(serverToClientGameID.get(serverGameID), currentGame);
-
     }
-
 }
 
 
