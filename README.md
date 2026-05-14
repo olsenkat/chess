@@ -50,3 +50,26 @@ java -jar client/target/client-jar-with-dependencies.jar
 
 ♕ 240 Chess Client: chess.ChessPiece@7852e922
 ```
+
+## Running the Project in IntelliJ
+
+*Note:* You may need to add or change database properties, you can do that in `src/main/resources/db.properties`
+```
+db.host=localhost
+db.port=1234
+db.name=temp
+db.user=temp
+db.password=temp
+```
+
+Once you have cloned the repository, ensure Maven is installed and configured (IntelliJ should recognize it is a Maven project and ask if you want to install Maven), then to start the server, run server/src/main/java/Main.java with the following configurations:
+<img width="691" height="521" alt="image" src="https://github.com/user-attachments/assets/b9351d9d-55f8-438a-8611-20bae87436d3" />
+
+Then for each client you want to run, in IntelliJ run client/src/main/java/Main.java with the following configurations.
+<img width="690" height="802" alt="Screenshot 2026-05-14 094525" src="https://github.com/user-attachments/assets/7598e00c-f3ef-40a1-817f-0b9ac984d3c9" />
+
+
+The CLI should be self explanatory, type help if you want to know available commands. Have fun
+<img width="890" height="598" alt="chess-client-highlight" src="https://github.com/user-attachments/assets/ff5192ff-60c0-4b46-8605-7646316259bf" />
+
+
